@@ -6,10 +6,8 @@ import { Link } from "react-router-dom";
 const navItems = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
-  { label: "How We Work", href: "/how-it-works" },
-  { label: "Clients", href: "/clients" },
-  { label: "Insights", href: "/insights" },
   { label: "About", href: "/about" },
+  { label: "Blog", href: "/insights" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -38,7 +36,7 @@ const Navbar = () => {
           <li>
             <Link
               to="/login"
-              className="text-xs uppercase tracking-widest text-foreground font-medium hover:text-muted-foreground transition-colors duration-200"
+              className="text-xs uppercase tracking-widest text-primary-foreground bg-primary px-4 py-2 font-medium hover:opacity-90 transition-opacity duration-200"
             >
               Portal
             </Link>
@@ -79,7 +77,7 @@ const Navbar = () => {
               <li>
                 <Link
                   to="/login"
-                  className="text-sm text-foreground font-medium"
+                  className="text-sm text-primary font-medium"
                   onClick={() => setMobileOpen(false)}
                 >
                   Client Portal

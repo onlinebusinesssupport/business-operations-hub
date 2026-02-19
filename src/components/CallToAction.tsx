@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const CallToAction = () => {
@@ -14,34 +13,28 @@ const CallToAction = () => {
           transition={{ duration: 0.6 }}
           className="max-w-xl"
         >
-          <span className="text-[10px] uppercase tracking-[0.25em] opacity-50 font-medium">
-            GET STARTED
-          </span>
-          <h2 className="mt-6 font-serif text-2xl md:text-3xl font-medium leading-snug">
-            Ready to build structure into your operations?
+          <h2 className="font-serif text-2xl md:text-3xl font-bold leading-snug">
+            Ready to reclaim your time?
           </h2>
           <p className="mt-4 text-sm md:text-base leading-relaxed opacity-70">
-            Book a consultation to discuss what operational support looks like for
-            your business, or request access to the client portal.
+            Let's discuss your operational challenges. Book a free discovery call — 30 minutes, no obligation.
           </p>
           <div className="mt-8 flex gap-4">
             <Link to="/contact">
               <Button
-                variant="secondary"
                 size="lg"
-                className="text-sm tracking-wide gap-2"
+                className="text-sm tracking-wide px-8"
               >
-                Book a Consultation
-                <ArrowRight size={16} />
+                Book a Free Discovery Call
               </Button>
             </Link>
-            <Link to="/login">
+            <Link to="/contact">
               <Button
                 variant="outline"
                 size="lg"
                 className="text-sm tracking-wide border-background/30 text-background hover:bg-background/10 hover:text-background"
               >
-                Request Access
+                Schedule a consultation
               </Button>
             </Link>
           </div>

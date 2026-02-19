@@ -4,48 +4,34 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
-    <section className="min-h-[85vh] flex items-center pt-16">
+    <section className="min-h-[85vh] flex items-center pt-16 bg-background">
       <div className="container mx-auto px-6 lg:px-8">
-        <div className="max-w-2xl">
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium"
-          >
-            OPERATIONAL SUPPORT
-          </motion.span>
+        <div className="max-w-3xl">
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-            className="mt-6 font-serif text-4xl md:text-5xl lg:text-6xl font-medium leading-tight tracking-tight text-foreground"
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-foreground"
           >
-            Support for businesses building beyond survival.
+            Structure for the ones still building.
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.25 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: 0.15 }}
             className="mt-6 text-lg md:text-xl leading-relaxed text-muted-foreground max-w-xl"
           >
-            We help South African founders and teams build structure through systems,
-            operational support, and real execution.
+            Operational infrastructure that lets founders focus on growth.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
-            className="mt-10 flex gap-4"
+            transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
+            className="mt-10"
           >
             <Link to="/contact">
-              <Button size="lg" className="text-sm tracking-wide">
-                Work With Us
-              </Button>
-            </Link>
-            <Link to="/services">
-              <Button variant="outline" size="lg" className="text-sm tracking-wide">
-                View Services
+              <Button size="lg" className="text-sm tracking-wide px-8">
+                Book a Free Discovery Call
               </Button>
             </Link>
           </motion.div>
