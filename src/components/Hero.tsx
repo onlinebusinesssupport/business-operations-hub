@@ -12,7 +12,7 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut" }}
             className="font-serif text-4xl md:text-5xl lg:text-6xl font-medium leading-tight tracking-tight text-foreground"
           >
-            Business support that brings structure to how you operate.
+            From chaos to systems. We help founders move.
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 24 }}
@@ -20,8 +20,8 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.15 }}
             className="mt-6 text-lg md:text-xl leading-relaxed text-muted-foreground max-w-xl"
           >
-            I work with founders and teams who need reliable operational support
-            without hiring full-time infrastructure.
+            MOVE is a business support studio for founders who need structure, speed, and
+            clarity — without hiring full-time infrastructure.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 24 }}

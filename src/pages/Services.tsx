@@ -186,15 +186,15 @@ const Services = () => {
             {...fadeUp}
             className="font-serif text-3xl md:text-4xl lg:text-5xl font-medium leading-tight text-foreground"
           >
-            Practical support, structured for real businesses.
+            Structured support for founders building real businesses.
           </motion.h1>
           <motion.p
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-6 text-lg text-muted-foreground leading-relaxed"
           >
-            I work with founders and growing teams who need dependable operational support
-            — not another tool, but a capable person who keeps things running properly.
+            MOVE is not a virtual assistant service. We are operators, systems builders, and
+            execution partners for founders who need structure, speed, and clarity.
           </motion.p>
         </div>
       </section>
