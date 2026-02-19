@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import PageTransition from "./PageTransition";
-import LekoChat from "./LekoChat";
+
 
 /* ─── Nav configs ─── */
 const clientNav = [
@@ -241,8 +241,6 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
           </PageTransition>
         </main>
       </div>
-
-      <LekoChat />
     </div>
   );
 };
