@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import Services from "./pages/Services";
 import NotFound from "./pages/NotFound";
 import PortalLayout from "./components/PortalLayout";
 import PortalDashboard from "./pages/portal/PortalDashboard";
@@ -32,6 +33,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/services" element={<Services />} />
           {/* Client Portal */}
           <Route path="/portal" element={<PortalLayout><PortalDashboard /></PortalLayout>} />
           <Route path="/portal/active-work" element={<PortalLayout><ActiveWork /></PortalLayout>} />
