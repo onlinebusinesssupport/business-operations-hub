@@ -115,7 +115,7 @@ const coreServices = [
 const nicheServices = [
   {
     icon: Heart,
-    title: "Social Impact VA",
+    title: "Social Impact Support",
     items: [
       "Grant readiness packs",
       "B-BBEE documentation prep",
@@ -125,7 +125,7 @@ const nicheServices = [
   },
   {
     icon: Briefcase,
-    title: "Founder-in-the-Trenches VA",
+    title: "Founder Operations Support",
     items: [
       "WhatsApp business ops",
       "Vendor coordination",
@@ -182,9 +182,16 @@ const Services = () => {
       {/* Hero */}
       <section className="pt-32 pb-20">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+          <motion.span
+            {...fadeUp}
+            className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium"
+          >
+            SERVICES
+          </motion.span>
           <motion.h1
             {...fadeUp}
-            className="font-serif text-3xl md:text-4xl lg:text-5xl font-medium leading-tight text-foreground"
+            transition={{ duration: 0.6, delay: 0.05 }}
+            className="mt-6 font-serif text-3xl md:text-4xl lg:text-5xl font-medium leading-tight text-foreground"
           >
             Structured support for founders building real businesses.
           </motion.h1>
