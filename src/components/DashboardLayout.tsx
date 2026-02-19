@@ -27,13 +27,13 @@ import PageTransition from "./PageTransition";
 
 /* ─── Nav configs ─── */
 const clientNav = [
-  { label: "Dashboard", href: "/portal", icon: LayoutDashboard },
-  { label: "Projects", href: "/portal/active-work", icon: Briefcase },
-  { label: "Requests", href: "/portal/requests", icon: MessageSquarePlus },
-  { label: "Documents", href: "/portal/documents", icon: FileText },
-  { label: "Updates", href: "/portal/updates", icon: Bell },
-  { label: "Messages", href: "/portal/messages", icon: MessagesSquare },
-  { label: "Settings", href: "/portal/account", icon: Settings },
+  { label: "Dashboard", href: "/portal", icon: LayoutDashboard, tour: "dashboard" },
+  { label: "Projects", href: "/portal/active-work", icon: Briefcase, tour: "projects" },
+  { label: "Requests", href: "/portal/requests", icon: MessageSquarePlus, tour: "requests" },
+  { label: "Documents", href: "/portal/documents", icon: FileText, tour: "documents" },
+  { label: "Updates", href: "/portal/updates", icon: Bell, tour: "updates" },
+  { label: "Messages", href: "/portal/messages", icon: MessagesSquare, tour: "messages" },
+  { label: "Settings", href: "/portal/account", icon: Settings, tour: "settings" },
 ];
 
 const adminNav = [
@@ -158,6 +158,7 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
                 key={item.label}
                 to={item.href}
                 onClick={() => setMobileOpen(false)}
+                data-tour={"tour" in item ? (item as any).tour : undefined}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-all duration-150 ${
                   active
                     ? "bg-accent text-foreground font-medium"
