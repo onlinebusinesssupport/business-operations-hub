@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const CallToAction = () => {
   return (
-    <section className="py-24 bg-primary text-primary-foreground">
+    <section className="py-24 bg-foreground text-background">
       <div className="container mx-auto px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -39,7 +39,7 @@ const CallToAction = () => {
               <Button
                 variant="outline"
                 size="lg"
-                className="text-sm tracking-wide border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                className="text-sm tracking-wide border-background/30 text-background hover:bg-background/10 hover:text-background"
               >
                 Request Access
               </Button>

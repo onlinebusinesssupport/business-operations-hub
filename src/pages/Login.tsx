@@ -64,7 +64,7 @@ const Login = () => {
             onClick={() => setPortalType("client")}
             className={`flex-1 py-2.5 text-xs uppercase tracking-widest font-medium transition-colors duration-200 ${
               portalType === "client"
-                ? "bg-foreground text-background"
+                ? "bg-terracotta text-terracotta-foreground"
                 : "bg-background text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -75,7 +75,7 @@ const Login = () => {
             onClick={() => setPortalType("admin")}
             className={`flex-1 py-2.5 text-xs uppercase tracking-widest font-medium transition-colors duration-200 ${
               portalType === "admin"
-                ? "bg-foreground text-background"
+                ? "bg-terracotta text-terracotta-foreground"
                 : "bg-background text-muted-foreground hover:text-foreground"
             }`}
           >

@@ -119,7 +119,7 @@ const HowWeWork = () => {
                 className="py-12 md:py-16 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12"
               >
                 <div className="md:col-span-2">
-                  <span className="text-xs font-sans tracking-widest text-muted-foreground uppercase">
+                  <span className="text-xs font-sans tracking-widest text-terracotta uppercase">
                     {step.number}
                   </span>
                 </div>
@@ -175,7 +175,7 @@ const HowWeWork = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-primary text-primary-foreground">
+      <section className="py-24 bg-foreground text-background">
         <div className="container mx-auto px-6 lg:px-8">
           <motion.div {...fadeUp} className="max-w-xl">
             <h2 className="font-serif text-2xl md:text-3xl font-medium leading-snug">
