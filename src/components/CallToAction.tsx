@@ -14,11 +14,11 @@ const CallToAction = () => {
           className="max-w-xl"
         >
           <h2 className="font-serif text-2xl md:text-3xl font-medium leading-snug">
-            Ready to bring structure to your operations?
+            Ready to move?
           </h2>
           <p className="mt-4 text-sm md:text-base leading-relaxed opacity-70">
-            Book a consultation to discuss your needs, or request access to the
-            client portal.
+            Book a consultation to discuss what support looks like for your
+            business, or request access to the client portal.
           </p>
           <div className="mt-8 flex gap-4">
             <Button

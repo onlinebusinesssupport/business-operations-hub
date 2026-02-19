@@ -12,13 +12,13 @@ const Credibility = () => {
           className="max-w-2xl"
         >
           <h2 className="font-serif text-2xl md:text-3xl font-medium text-foreground leading-snug">
-            Hands-on experience, applied directly to your business.
+            Not virtual assistants. Operators, systems builders, and execution partners.
           </h2>
           <p className="mt-6 text-base md:text-lg leading-relaxed text-muted-foreground">
-            I bring practical experience across operations, executive support, and
-            business management. This platform is designed to give you clarity,
-            consistency, and dependable execution — so you can focus on running
-            your business while the operational details are handled properly.
+            MOVE brings hands-on experience across operations, executive support,
+            and business management. We give founders clarity, consistency, and
+            dependable execution — so you can focus on building while the
+            operational details are handled properly.
           </p>
         </motion.div>
       </div>
