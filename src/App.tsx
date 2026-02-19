@@ -7,6 +7,11 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
+import HowWeWork from "./pages/HowWeWork";
+import Clients from "./pages/Clients";
+import Insights from "./pages/Insights";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -42,6 +47,11 @@ const App = () => (
             {/* Public */}
             <Route path="/" element={<Index />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/how-it-works" element={<HowWeWork />} />
+            <Route path="/clients" element={<Clients />} />
+            <Route path="/insights" element={<Insights />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
