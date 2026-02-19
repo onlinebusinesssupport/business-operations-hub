@@ -4,8 +4,8 @@ const Footer = () => {
   return (
     <footer className="py-16 border-t border-divider">
       <div className="container mx-auto px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {/* Column 1 — Brand */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          {/* Brand */}
           <div>
             <span className="font-sans text-sm font-semibold tracking-[0.15em] text-foreground uppercase">
               SUPPORT STUDIO
@@ -15,17 +15,17 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Column 2 — Navigation */}
+          {/* Navigation */}
           <div>
-            <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium">
               NAVIGATE
             </span>
             <ul className="mt-4 space-y-2.5">
               {[
                 { label: "Services", href: "/services" },
+                { label: "About", href: "/about" },
+                { label: "Blog", href: "/insights" },
                 { label: "How We Work", href: "/how-it-works" },
-                { label: "Clients", href: "/clients" },
-                { label: "Insights", href: "/insights" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link
@@ -39,9 +39,9 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 3 — Contact */}
+          {/* Connect */}
           <div>
-            <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium">
               CONNECT
             </span>
             <ul className="mt-4 space-y-2.5">
@@ -54,19 +54,38 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/contact"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Book a Consultation
-                </Link>
-              </li>
-              <li>
                 <a
                   href="#"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   LinkedIn
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:hello@supportstudio.co"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Email
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium">
+              LEGAL
+            </span>
+            <ul className="mt-4 space-y-2.5">
+              <li>
+                <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Terms of Service
                 </a>
               </li>
             </ul>
@@ -82,11 +101,6 @@ const Footer = () => {
             Proudly South African.
           </p>
         </div>
-
-        {/* Disclaimer */}
-        <p className="mt-4 text-[10px] text-muted-foreground/50">
-          Logos represent brands our team has supported directly or indirectly.
-        </p>
       </div>
     </footer>
   );
