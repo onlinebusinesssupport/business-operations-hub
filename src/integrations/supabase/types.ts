@@ -14,16 +14,288 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      clients: {
+        Row: {
+          contact_profile_id: string | null
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          services: string[] | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          contact_profile_id?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          services?: string[] | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          contact_profile_id?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          services?: string[] | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clients_contact_profile_id_fkey"
+            columns: ["contact_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          category: string
+          client_id: string
+          created_at: string
+          file_url: string | null
+          id: string
+          name: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          category?: string
+          client_id: string
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          name: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          category?: string
+          client_id?: string
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          name?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      requests: {
+        Row: {
+          client_id: string
+          created_at: string
+          description: string | null
+          file_url: string | null
+          id: string
+          priority: string | null
+          status: string
+          submitted_by: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          priority?: string | null
+          status?: string
+          submitted_by: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          priority?: string | null
+          status?: string
+          submitted_by?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "requests_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      updates: {
+        Row: {
+          client_id: string
+          content: string
+          created_at: string
+          id: string
+          posted_by: string | null
+          update_type: string | null
+          work_item_id: string | null
+        }
+        Insert: {
+          client_id: string
+          content: string
+          created_at?: string
+          id?: string
+          posted_by?: string | null
+          update_type?: string | null
+          work_item_id?: string | null
+        }
+        Update: {
+          client_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          posted_by?: string | null
+          update_type?: string | null
+          work_item_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "updates_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "updates_work_item_id_fkey"
+            columns: ["work_item_id"]
+            isOneToOne: false
+            referencedRelation: "work_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      work_items: {
+        Row: {
+          client_id: string
+          created_at: string
+          deadline: string | null
+          description: string | null
+          id: string
+          internal_notes: string | null
+          priority: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          id?: string
+          internal_notes?: string | null
+          priority?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          id?: string
+          internal_notes?: string | null
+          priority?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_items_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_my_client_id: { Args: never; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "client"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +422,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "client"],
+    },
   },
 } as const
