@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
+import LekoChat from "@/components/LekoChat";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
 import HowWeWork from "./pages/HowWeWork";
@@ -76,6 +77,7 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <LekoChat />
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
