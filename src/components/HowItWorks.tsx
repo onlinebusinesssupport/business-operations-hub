@@ -3,22 +3,22 @@ import { motion } from "framer-motion";
 const steps = [
   {
     number: "01",
-    title: "Understand your needs",
-    description: "A focused conversation to understand your business, challenges, and what support looks like for you.",
+    title: "Discovery consultation",
+    description: "A structured conversation to understand your business, operational challenges, and the support you need.",
   },
   {
     number: "02",
-    title: "Set up your workspace",
-    description: "Your dedicated client portal is configured with the tools and structure tailored to your operations.",
+    title: "Workspace configuration",
+    description: "Your dedicated client portal is configured with tools, systems, and structure tailored to your operations.",
   },
   {
     number: "03",
-    title: "Deliver ongoing support",
-    description: "Consistent, reliable execution across your operational priorities — week after week.",
+    title: "Ongoing execution",
+    description: "Consistent, reliable delivery across your operational priorities — week after week, with clear reporting.",
   },
   {
     number: "04",
-    title: "Maintain structure as you grow",
+    title: "Scale with structure",
     description: "As your business evolves, the support adapts. Systems and processes scale alongside you.",
   },
 ];
@@ -33,11 +33,14 @@ const HowItWorks = () => {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="font-serif text-2xl md:text-3xl font-medium text-foreground">
-            How it works
+          <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium">
+            PROCESS
+          </span>
+          <h2 className="mt-4 font-serif text-2xl md:text-3xl font-medium text-foreground">
+            How we work
           </h2>
           <p className="mt-3 text-muted-foreground text-base max-w-lg">
-            A straightforward process designed to get you structured support quickly.
+            A clear, structured engagement designed to deliver operational support quickly.
           </p>
         </motion.div>
 

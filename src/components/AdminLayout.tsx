@@ -48,8 +48,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         }`}
       >
         <div className="h-16 flex items-center justify-between px-5 border-b border-background/10">
-          <span className="font-serif text-sm tracking-tight text-background">
-            BACK OFFICE
+          <span className="font-sans text-xs font-semibold tracking-[0.15em] text-background uppercase">
+            SUPPORT STUDIO
           </span>
           <button
             className="lg:hidden text-background/60"

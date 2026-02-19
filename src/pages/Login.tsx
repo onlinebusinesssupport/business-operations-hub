@@ -46,8 +46,8 @@ const Login = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-sm"
       >
-        <Link to="/" className="font-sans text-lg font-semibold tracking-tight text-foreground uppercase block mb-10">
-          MOVE
+        <Link to="/" className="font-sans text-sm font-semibold tracking-[0.15em] text-foreground uppercase block mb-10">
+          SUPPORT STUDIO
         </Link>
         <h1 className="font-serif text-2xl font-medium text-foreground">Sign in</h1>
         <p className="mt-2 text-sm text-muted-foreground">

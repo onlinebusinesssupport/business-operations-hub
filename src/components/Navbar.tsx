@@ -5,9 +5,11 @@ import { Link } from "react-router-dom";
 
 const navItems = [
   { label: "Home", href: "/" },
-  { label: "How It Works", href: "/how-it-works" },
   { label: "Services", href: "/services" },
-  { label: "Client Portal", href: "/login" },
+  { label: "How We Work", href: "/how-it-works" },
+  { label: "Clients", href: "/clients" },
+  { label: "Insights", href: "/insights" },
+  { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -17,9 +19,8 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-divider">
       <div className="container mx-auto flex items-center justify-between h-16 px-6 lg:px-8">
-        <Link to="/" className="font-sans text-lg font-semibold tracking-tight text-foreground uppercase">
-          MOVE
-          <span className="hidden sm:inline text-muted-foreground font-normal text-sm ml-2 tracking-wide">Business Support</span>
+        <Link to="/" className="font-sans text-sm font-semibold tracking-[0.15em] text-foreground uppercase">
+          SUPPORT STUDIO
         </Link>
 
         {/* Desktop */}
@@ -28,12 +29,20 @@ const Navbar = () => {
             <li key={item.label}>
               <Link
                 to={item.href}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors duration-200"
               >
                 {item.label}
               </Link>
             </li>
           ))}
+          <li>
+            <Link
+              to="/login"
+              className="text-xs uppercase tracking-widest text-foreground font-medium hover:text-muted-foreground transition-colors duration-200"
+            >
+              Portal
+            </Link>
+          </li>
         </ul>
 
         {/* Mobile toggle */}
@@ -67,6 +76,15 @@ const Navbar = () => {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  to="/login"
+                  className="text-sm text-foreground font-medium"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Client Portal
+                </Link>
+              </li>
             </ul>
           </motion.div>
         )}

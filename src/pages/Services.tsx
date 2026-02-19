@@ -193,8 +193,8 @@ const Services = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-6 text-lg text-muted-foreground leading-relaxed"
           >
-            MOVE is not a virtual assistant service. We are operators, systems builders, and
-            execution partners for founders who need structure, speed, and clarity.
+            Support Studio delivers operational infrastructure, systems enablement, and
+            execution support for founders who need structure, speed, and clarity.
           </motion.p>
         </div>
       </section>
