@@ -2,32 +2,26 @@ import { motion } from "framer-motion";
 import portraitImg from "@/assets/portrait.png";
 import { Mail, Calendar, Building } from "lucide-react";
 
-const fade = {
-  initial: { opacity: 0, y: 16 },
+const stagger = {
+  initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4 },
 };
 
 const Account = () => {
   return (
     <div className="space-y-8">
-      <motion.div {...fade}>
-        <h2 className="font-serif text-2xl md:text-3xl text-foreground">Account</h2>
+      <motion.div {...stagger} transition={{ duration: 0.3 }}>
+        <h2 className="font-serif text-2xl md:text-3xl text-foreground">Settings</h2>
         <p className="mt-2 text-muted-foreground text-sm max-w-lg">
           Your profile and engagement details.
         </p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Client profile */}
-        <motion.div
-          {...fade}
-          transition={{ ...fade.transition, delay: 0.1 }}
-          className="bg-background border border-divider rounded-md p-6"
-        >
-          <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-5">
+        <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.06 }} className="bg-card border border-divider rounded-xl p-6">
+          <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-5">
             Client Profile
-          </h3>
+          </p>
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <Building size={16} className="text-muted-foreground" strokeWidth={1.5} />
@@ -53,21 +47,12 @@ const Account = () => {
           </div>
         </motion.div>
 
-        {/* Manager */}
-        <motion.div
-          {...fade}
-          transition={{ ...fade.transition, delay: 0.15 }}
-          className="bg-background border border-divider rounded-md p-6"
-        >
-          <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-5">
+        <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.1 }} className="bg-card border border-divider rounded-xl p-6">
+          <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-5">
             Your Manager
-          </h3>
+          </p>
           <div className="flex items-center gap-4">
-            <img
-              src={portraitImg}
-              alt="Nkululeko"
-              className="w-14 h-14 rounded-full object-cover"
-            />
+            <img src={portraitImg} alt="Manager" className="w-14 h-14 rounded-full object-cover" />
             <div>
               <p className="text-sm font-medium text-foreground">Nkululeko</p>
               <p className="text-xs text-muted-foreground">Operations Manager</p>
@@ -79,15 +64,10 @@ const Account = () => {
         </motion.div>
       </div>
 
-      {/* Engagement summary */}
-      <motion.div
-        {...fade}
-        transition={{ ...fade.transition, delay: 0.2 }}
-        className="bg-background border border-divider rounded-md p-6"
-      >
-        <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-5">
+      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.15 }} className="bg-card border border-divider rounded-xl p-6">
+        <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-5">
           Engagement Summary
-        </h3>
+        </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
             { label: "Active Projects", value: "3" },

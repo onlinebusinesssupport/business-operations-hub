@@ -1,10 +1,9 @@
 import { motion } from "framer-motion";
 import { FileText, Download, Upload, Folder } from "lucide-react";
 
-const fade = {
+const stagger = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.35 },
 };
 
 const sections = [
@@ -41,25 +40,25 @@ const sections = [
 const AdminDocuments = () => {
   return (
     <div className="space-y-6">
-      <motion.div {...fade} className="flex items-start justify-between gap-4 flex-wrap">
+      <motion.div {...stagger} transition={{ duration: 0.3 }} className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h2 className="font-serif text-2xl text-foreground">Documents</h2>
           <p className="mt-1 text-sm text-muted-foreground">Internal document management.</p>
         </div>
-        <button className="flex items-center gap-2 text-xs bg-foreground text-background px-4 py-2.5 rounded-md hover:bg-foreground/90 transition-colors">
+        <button className="flex items-center gap-2 text-xs bg-foreground text-background px-4 py-2.5 rounded-lg hover:bg-foreground/90 transition-colors">
           <Upload size={14} /> Upload File
         </button>
       </motion.div>
 
       {sections.map((section, si) => (
-        <motion.div key={section.name} {...fade} transition={{ ...fade.transition, delay: si * 0.06 }}>
-          <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
+        <motion.div key={section.name} {...stagger} transition={{ duration: 0.3, delay: si * 0.06 }}>
+          <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-3 flex items-center gap-2">
             <section.icon size={14} strokeWidth={1.5} />
             {section.name}
-          </h3>
-          <div className="bg-background border border-divider rounded-md divide-y divide-divider">
+          </p>
+          <div className="bg-card border border-divider rounded-xl divide-y divide-divider">
             {section.files.map((file) => (
-              <div key={file.name} className="p-4 flex items-center justify-between gap-4 hover:bg-secondary/40 transition-colors">
+              <div key={file.name} className="p-4 flex items-center justify-between gap-4 hover:bg-accent/40 transition-colors">
                 <div className="flex items-center gap-3 min-w-0">
                   <FileText size={16} className="text-muted-foreground shrink-0" strokeWidth={1.5} />
                   <div className="min-w-0">

@@ -3,10 +3,9 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 
-const fade = {
-  initial: { opacity: 0, y: 16 },
+const stagger = {
+  initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4 },
 };
 
 const priorities = ["Low", "Medium", "High"];
@@ -24,7 +23,6 @@ const Requests = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Placeholder — will connect to backend
     setTitle("");
     setDescription("");
     setPriority("Medium");
@@ -32,20 +30,19 @@ const Requests = () => {
 
   return (
     <div className="space-y-8">
-      <motion.div {...fade}>
+      <motion.div {...stagger} transition={{ duration: 0.3 }}>
         <h2 className="font-serif text-2xl md:text-3xl text-foreground">Requests</h2>
         <p className="mt-2 text-muted-foreground text-sm max-w-lg">
-          Submit a new request or review what's already been raised. Everything
-          is tracked in one place.
+          Submit a new request or review previous submissions. Everything is tracked in one place.
         </p>
       </motion.div>
 
       {/* New request form */}
-      <motion.div {...fade} transition={{ ...fade.transition, delay: 0.1 }}>
-        <div className="bg-background border border-divider rounded-md p-6">
-          <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-5">
+      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.08 }}>
+        <div className="bg-card border border-divider rounded-xl p-6">
+          <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-5">
             New Request
-          </h3>
+          </p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-sm text-foreground block mb-1.5">Title</label>
@@ -54,7 +51,7 @@ const Requests = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="What do you need?"
-                className="w-full bg-secondary border border-divider rounded-md px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full bg-background border border-divider rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               />
             </div>
             <div>
@@ -64,7 +61,7 @@ const Requests = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
                 placeholder="Provide any relevant details..."
-                className="w-full bg-secondary border border-divider rounded-md px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none"
+                className="w-full bg-background border border-divider rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none"
               />
             </div>
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end justify-between">
@@ -76,10 +73,10 @@ const Requests = () => {
                       key={p}
                       type="button"
                       onClick={() => setPriority(p)}
-                      className={`text-xs px-3 py-1.5 rounded-sm border transition-colors ${
+                      className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-150 ${
                         priority === p
                           ? "bg-foreground text-background border-foreground"
-                          : "bg-secondary text-muted-foreground border-divider hover:border-foreground/30"
+                          : "bg-background text-muted-foreground border-divider hover:border-foreground/30"
                       }`}
                     >
                       {p}
@@ -87,7 +84,7 @@ const Requests = () => {
                   ))}
                 </div>
               </div>
-              <Button type="submit" size="sm" className="gap-2 text-xs">
+              <Button type="submit" size="sm" className="gap-2 text-xs rounded-lg">
                 <Send size={14} />
                 Submit Request
               </Button>
@@ -97,11 +94,11 @@ const Requests = () => {
       </motion.div>
 
       {/* Previous requests */}
-      <motion.div {...fade} transition={{ ...fade.transition, delay: 0.2 }}>
-        <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-4">
+      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.15 }}>
+        <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-4">
           Previous Requests
-        </h3>
-        <div className="bg-background border border-divider rounded-md divide-y divide-divider">
+        </p>
+        <div className="bg-card border border-divider rounded-xl divide-y divide-divider">
           {existingRequests.map((r) => (
             <div key={r.title} className="p-4 flex items-center justify-between gap-4">
               <div className="flex-1 min-w-0">
@@ -111,10 +108,10 @@ const Requests = () => {
                 </p>
               </div>
               <span
-                className={`text-xs px-2.5 py-1 rounded-sm ${
+                className={`text-xs px-2.5 py-1 rounded-lg ${
                   r.status === "Completed"
-                    ? "bg-secondary text-muted-foreground"
-                    : "bg-foreground/5 text-foreground"
+                    ? "bg-accent text-muted-foreground"
+                    : "bg-accent text-foreground"
                 }`}
               >
                 {r.status}
