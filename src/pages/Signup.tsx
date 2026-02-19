@@ -67,12 +67,12 @@ const Signup = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-sm"
       >
-        <Link to="/" className="font-sans text-lg font-semibold tracking-tight text-foreground uppercase block mb-10">
-          MOVE
+        <Link to="/" className="font-sans text-sm font-semibold tracking-[0.15em] text-foreground uppercase block mb-10">
+          SUPPORT STUDIO
         </Link>
         <h1 className="font-serif text-2xl font-medium text-foreground">Create an account</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Sign up to access the MOVE client portal.
+          Sign up to access the Support Studio client portal.
         </p>
 
         <form onSubmit={handleSignup} className="mt-8 space-y-4">

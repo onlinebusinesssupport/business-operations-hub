@@ -16,49 +16,49 @@ const services = [
     icon: Mail,
     title: "Executive Admin Support",
     description:
-      "Inbox management, calendar scheduling, travel bookings, and document formatting. The backbone of day-to-day operations.",
+      "Inbox management, calendar scheduling, travel coordination, and document formatting — the backbone of day-to-day operations.",
     pricing: "From R4k/month",
   },
   {
     icon: TrendingUp,
-    title: "Sales Support",
+    title: "Sales Operations",
     description:
-      "CRM setup, lead list building, outreach scheduling, pipeline tracking, and proposal follow-ups. Moving you from admin to revenue.",
+      "CRM configuration, lead pipeline management, outreach scheduling, and proposal follow-ups. Structured support that moves you from admin to revenue.",
     pricing: "From R8k/month",
   },
   {
     icon: Settings,
-    title: "Operations Support",
+    title: "Operational Infrastructure",
     description:
-      "SOP creation, workflow automation, Notion workspace builds, dashboards, and task system setup. Helping chaotic businesses run like systems.",
+      "SOP development, workflow automation, workspace builds, dashboards, and task system configuration for businesses ready to scale.",
     pricing: "From R8k/month",
   },
   {
     icon: Receipt,
-    title: "Finance Admin",
+    title: "Finance Administration",
     description:
-      "Invoice creation, expense tracking, payment reminders, basic bookkeeping prep, and monthly reporting summaries.",
+      "Invoice management, expense tracking, payment reminders, bookkeeping preparation, and monthly reporting summaries.",
     pricing: "From R5k/month",
   },
   {
     icon: PenTool,
-    title: "Content + Online Presence",
+    title: "Content & Digital Presence",
     description:
-      "Social media scheduling, content repurposing, blog uploads, newsletter formatting, and Canva graphics for personal brands.",
+      "Social media scheduling, content repurposing, blog management, newsletter formatting, and branded collateral for professional visibility.",
     pricing: "From R4k/month",
   },
   {
     icon: Search,
-    title: "Research Services",
+    title: "Research & Intelligence",
     description:
-      "Market research, competitor analysis, lead research, grant and funding research, and supplier sourcing.",
+      "Market research, competitor analysis, lead sourcing, grant and funding research, and supplier identification.",
     pricing: "From R5k/month",
   },
   {
     icon: PackageOpen,
-    title: "Systems Setup",
+    title: "Systems Enablement",
     description:
-      "Business-in-a-Box packages: email, workspace, file structure, task systems, and CRM — all configured and ready to go.",
+      "End-to-end business setup: email, workspace, file architecture, task systems, and CRM — configured and operational.",
     pricing: "From R5k/project",
   },
 ];
@@ -73,11 +73,15 @@ const ServicesPreview = () => {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="font-serif text-2xl md:text-3xl font-medium text-foreground">
-            Services
+          <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium">
+            SERVICES
+          </span>
+          <h2 className="mt-4 font-serif text-2xl md:text-3xl font-medium text-foreground">
+            Structured support across the functions that matter most
           </h2>
           <p className="mt-3 text-muted-foreground text-base max-w-lg">
-            Practical, outcome-focused support across the areas that matter most to your operations.
+            Practical, outcome-focused operational support — designed for founders
+            and growing businesses.
           </p>
         </motion.div>
 

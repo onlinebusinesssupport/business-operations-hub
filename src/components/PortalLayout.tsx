@@ -48,8 +48,8 @@ const PortalLayout = ({ children }: PortalLayoutProps) => {
       >
         {/* Logo */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-divider">
-          <span className="font-serif text-sm tracking-tight text-foreground">
-            BUSINESS SUPPORT
+          <span className="font-sans text-xs font-semibold tracking-[0.15em] text-foreground uppercase">
+            SUPPORT STUDIO
           </span>
           <button
             className="lg:hidden text-muted-foreground"
