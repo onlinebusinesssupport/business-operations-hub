@@ -64,6 +64,11 @@ export default {
         "surface-elevated": "hsl(var(--surface-elevated))",
         "text-subtle": "hsl(var(--text-subtle))",
         divider: "hsl(var(--divider))",
+        terracotta: {
+          DEFAULT: "hsl(var(--terracotta))",
+          foreground: "hsl(var(--terracotta-foreground))",
+          light: "hsl(var(--terracotta-light))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

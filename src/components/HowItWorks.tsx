@@ -53,7 +53,7 @@ const HowItWorks = () => {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
             >
-              <span className="text-xs font-sans tracking-widest text-muted-foreground uppercase">
+              <span className="text-xs font-sans tracking-widest text-terracotta uppercase">
                 {step.number}
               </span>
               <h3 className="font-serif text-lg font-medium text-foreground mt-3">
