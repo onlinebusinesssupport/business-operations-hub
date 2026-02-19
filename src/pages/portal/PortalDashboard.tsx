@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Briefcase,
@@ -12,7 +13,9 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
-
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import WelcomeDashboard from "@/components/WelcomeDashboard";
 const stagger = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
@@ -47,6 +50,41 @@ const milestones = [
 ];
 
 const PortalDashboard = () => {
+  const { user } = useAuth();
+  const [showWelcome, setShowWelcome] = useState<boolean | null>(null);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("onboarding_completed, full_name")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (data) {
+        setShowWelcome(!data.onboarding_completed);
+        setUserName(data.full_name || "");
+      } else {
+        setShowWelcome(false);
+      }
+    };
+    checkOnboarding();
+  }, [user]);
+
+  if (showWelcome === null) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <p className="text-sm text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
+
+  if (showWelcome) {
+    return <WelcomeDashboard userName={userName} onDismiss={() => setShowWelcome(false)} />;
+  }
+
   return (
     <div className="space-y-8">
       {/* Welcome */}
