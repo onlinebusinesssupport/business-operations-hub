@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { BarChart3 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
-const fade = {
+const stagger = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.35 },
 };
 
 const clientActivity = [
@@ -19,14 +19,14 @@ const clientActivity = [
 const AdminReports = () => {
   return (
     <div className="space-y-8">
-      <motion.div {...fade}>
+      <motion.div {...stagger} transition={{ duration: 0.3 }}>
         <h2 className="font-serif text-2xl text-foreground">Reports</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Review activity, workload, and consistency.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Review activity, workload, and delivery consistency.</p>
       </motion.div>
 
       {/* Summary metrics */}
-      <motion.div {...fade} transition={{ ...fade.transition, delay: 0.05 }}>
-        <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-3">This Month</h3>
+      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.05 }}>
+        <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-3">This Month</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: "Work Items Completed", value: "9" },
@@ -34,7 +34,7 @@ const AdminReports = () => {
             { label: "Documents Shared", value: "12" },
             { label: "On-Time Delivery", value: "96%" },
           ].map((m) => (
-            <div key={m.label} className="bg-background border border-divider rounded-md p-5">
+            <div key={m.label} className="bg-card border border-divider rounded-xl p-5 hover:shadow-sm transition-all duration-200">
               <p className="font-serif text-2xl text-foreground">{m.value}</p>
               <p className="text-xs text-muted-foreground mt-1">{m.label}</p>
             </div>
@@ -42,25 +42,25 @@ const AdminReports = () => {
         </div>
       </motion.div>
 
-      {/* Client activity */}
-      <motion.div {...fade} transition={{ ...fade.transition, delay: 0.1 }}>
-        <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
+      {/* Client activity table */}
+      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.1 }}>
+        <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-3 flex items-center gap-2">
           <BarChart3 size={14} strokeWidth={1.5} /> Client Activity
-        </h3>
-        <div className="bg-background border border-divider rounded-md overflow-x-auto">
+        </p>
+        <div className="bg-card border border-divider rounded-xl overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-divider">
-                <th className="text-left text-xs text-muted-foreground font-normal px-5 py-3 uppercase tracking-widest">Client</th>
-                <th className="text-left text-xs text-muted-foreground font-normal px-5 py-3 uppercase tracking-widest">Work Items</th>
-                <th className="text-left text-xs text-muted-foreground font-normal px-5 py-3 uppercase tracking-widest">Requests</th>
-                <th className="text-left text-xs text-muted-foreground font-normal px-5 py-3 uppercase tracking-widest">Documents</th>
-                <th className="text-left text-xs text-muted-foreground font-normal px-5 py-3 uppercase tracking-widest">Last Active</th>
+                <th className="text-left text-[10px] text-muted-foreground font-medium px-5 py-3 uppercase tracking-[0.1em]">Client</th>
+                <th className="text-left text-[10px] text-muted-foreground font-medium px-5 py-3 uppercase tracking-[0.1em]">Work Items</th>
+                <th className="text-left text-[10px] text-muted-foreground font-medium px-5 py-3 uppercase tracking-[0.1em]">Requests</th>
+                <th className="text-left text-[10px] text-muted-foreground font-medium px-5 py-3 uppercase tracking-[0.1em]">Documents</th>
+                <th className="text-left text-[10px] text-muted-foreground font-medium px-5 py-3 uppercase tracking-[0.1em]">Last Active</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-divider">
               {clientActivity.map((row) => (
-                <tr key={row.client} className="hover:bg-secondary/40 transition-colors">
+                <tr key={row.client} className="hover:bg-accent/40 transition-colors">
                   <td className="px-5 py-3 text-foreground font-medium">{row.client}</td>
                   <td className="px-5 py-3 text-muted-foreground">{row.workItems}</td>
                   <td className="px-5 py-3 text-muted-foreground">{row.requests}</td>
@@ -74,15 +74,13 @@ const AdminReports = () => {
       </motion.div>
 
       {/* Workload */}
-      <motion.div {...fade} transition={{ ...fade.transition, delay: 0.15 }}>
-        <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Workload Distribution</h3>
-        <div className="bg-background border border-divider rounded-md p-5 space-y-4">
+      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.15 }}>
+        <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-3">Workload Distribution</p>
+        <div className="bg-card border border-divider rounded-xl p-5 space-y-4">
           {clientActivity.filter(c => c.workItems > 0).map((c) => (
             <div key={c.client} className="flex items-center gap-4">
               <span className="text-sm text-foreground w-36 shrink-0">{c.client}</span>
-              <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
-                <div className="h-full bg-foreground rounded-full" style={{ width: `${(c.workItems / 5) * 100}%` }} />
-              </div>
+              <Progress value={(c.workItems / 5) * 100} className="flex-1 h-2" />
               <span className="text-xs text-muted-foreground w-6 text-right">{c.workItems}</span>
             </div>
           ))}

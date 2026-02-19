@@ -2,10 +2,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
-const fade = {
+const stagger = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.35 },
 };
 
 type ReqStatus = "Open" | "In Progress" | "Resolved";
@@ -30,8 +29,8 @@ const requestsData: Request[] = [
 
 const statusStyles: Record<ReqStatus, string> = {
   Open: "bg-foreground text-background",
-  "In Progress": "bg-secondary text-foreground",
-  Resolved: "bg-secondary text-muted-foreground",
+  "In Progress": "bg-accent text-foreground",
+  Resolved: "bg-accent text-muted-foreground",
 };
 
 const AdminRequestsInbox = () => {
@@ -41,21 +40,21 @@ const AdminRequestsInbox = () => {
 
   return (
     <div className="space-y-6">
-      <motion.div {...fade}>
+      <motion.div {...stagger} transition={{ duration: 0.3 }}>
         <h2 className="font-serif text-2xl text-foreground">Requests Inbox</h2>
         <p className="mt-1 text-sm text-muted-foreground">All client requests in one place.</p>
       </motion.div>
 
-      <motion.div {...fade} transition={{ ...fade.transition, delay: 0.05 }}>
+      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.05 }}>
         <div className="flex gap-2 flex-wrap">
           {(["All", "Open", "In Progress", "Resolved"] as const).map((s) => (
             <button
               key={s}
               onClick={() => setFilter(s)}
-              className={`text-xs px-3 py-1.5 rounded-sm border transition-colors ${
+              className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-150 ${
                 filter === s
                   ? "bg-foreground text-background border-foreground"
-                  : "bg-background text-muted-foreground border-divider hover:border-foreground/30"
+                  : "bg-card text-muted-foreground border-divider hover:border-foreground/30"
               }`}
             >
               {s}
@@ -64,21 +63,21 @@ const AdminRequestsInbox = () => {
         </div>
       </motion.div>
 
-      <motion.div {...fade} transition={{ ...fade.transition, delay: 0.1 }}>
-        <div className="bg-background border border-divider rounded-md divide-y divide-divider">
+      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.1 }}>
+        <div className="bg-card border border-divider rounded-xl divide-y divide-divider">
           {filtered.map((req) => (
             <div key={req.id} className="p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-sm font-medium text-foreground">{req.title}</p>
-                    <span className={`text-xs px-2 py-0.5 rounded-sm ${statusStyles[req.status]}`}>{req.status}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-lg ${statusStyles[req.status]}`}>{req.status}</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">{req.client} · {req.priority} priority · {req.date}</p>
                   <p className="text-xs text-muted-foreground mt-2">{req.description}</p>
                 </div>
                 {req.status !== "Resolved" && (
-                  <button className="text-xs bg-secondary text-foreground px-3 py-1.5 rounded-sm hover:bg-accent transition-colors shrink-0 flex items-center gap-1">
+                  <button className="text-xs bg-accent text-foreground px-3 py-1.5 rounded-lg hover:bg-accent/80 transition-colors shrink-0 flex items-center gap-1">
                     Convert to Work <ArrowRight size={12} />
                   </button>
                 )}

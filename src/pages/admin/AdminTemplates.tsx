@@ -1,10 +1,9 @@
 import { motion } from "framer-motion";
 import { Copy, LayoutTemplate, FileText } from "lucide-react";
 
-const fade = {
+const stagger = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.35 },
 };
 
 const templateCategories = [
@@ -19,7 +18,7 @@ const templateCategories = [
   {
     name: "SOP Templates",
     templates: [
-      { title: "Standard Operating Procedure — Blank", description: "Base template for creating new SOPs with sections for purpose, scope, and steps." },
+      { title: "Standard Operating Procedure", description: "Base template for creating new SOPs with sections for purpose, scope, and steps." },
       { title: "Daily Operations Checklist", description: "Recurring task list for daily operational management." },
       { title: "Escalation Procedure", description: "Clear escalation paths and response protocols for issues." },
     ],
@@ -45,24 +44,24 @@ const templateCategories = [
 const AdminTemplates = () => {
   return (
     <div className="space-y-8">
-      <motion.div {...fade}>
+      <motion.div {...stagger} transition={{ duration: 0.3 }}>
         <h2 className="font-serif text-2xl text-foreground">Templates</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Reusable templates to standardise delivery and save time.
+          Reusable templates to standardise delivery and improve efficiency.
         </p>
       </motion.div>
 
       {templateCategories.map((cat, ci) => (
-        <motion.div key={cat.name} {...fade} transition={{ ...fade.transition, delay: ci * 0.06 }}>
-          <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
+        <motion.div key={cat.name} {...stagger} transition={{ duration: 0.3, delay: ci * 0.06 }}>
+          <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-3 flex items-center gap-2">
             <LayoutTemplate size={14} strokeWidth={1.5} />
             {cat.name}
-          </h3>
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {cat.templates.map((tpl) => (
               <div
                 key={tpl.title}
-                className="bg-background border border-divider rounded-md p-5 hover:border-foreground/20 transition-colors group"
+                className="bg-card border border-divider rounded-xl p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
               >
                 <div className="flex items-start justify-between gap-2">
                   <FileText size={16} className="text-muted-foreground mt-0.5 shrink-0" strokeWidth={1.5} />

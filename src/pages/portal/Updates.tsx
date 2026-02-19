@@ -1,10 +1,9 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, ArrowUpRight, MessageSquare, Wrench } from "lucide-react";
 
-const fade = {
-  initial: { opacity: 0, y: 16 },
+const stagger = {
+  initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.4 },
 };
 
 const updates = [
@@ -41,28 +40,26 @@ const updates = [
 const Updates = () => {
   return (
     <div className="space-y-8">
-      <motion.div {...fade}>
+      <motion.div {...stagger} transition={{ duration: 0.3 }}>
         <h2 className="font-serif text-2xl md:text-3xl text-foreground">Updates</h2>
         <p className="mt-2 text-muted-foreground text-sm max-w-lg">
-          A timeline of progress, decisions, and improvements. Full transparency
-          on what's happening.
+          A timeline of progress, decisions, and improvements. Full transparency on project activity.
         </p>
       </motion.div>
 
       <div className="relative">
-        {/* Timeline line */}
         <div className="absolute left-[7px] top-2 bottom-2 w-px bg-divider hidden md:block" />
 
         <div className="space-y-8">
           {updates.map((group, gi) => (
             <motion.div
               key={group.date}
-              {...fade}
-              transition={{ ...fade.transition, delay: gi * 0.08 }}
+              {...stagger}
+              transition={{ duration: 0.3, delay: gi * 0.06 }}
             >
               <div className="flex items-center gap-3 mb-4 md:pl-6">
                 <div className="w-3.5 h-3.5 rounded-full border-2 border-foreground bg-background hidden md:block absolute left-0" />
-                <span className="text-xs font-sans uppercase tracking-widest text-muted-foreground">
+                <span className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
                   {group.date}
                 </span>
               </div>
@@ -70,15 +67,11 @@ const Updates = () => {
                 {group.items.map((item, ii) => (
                   <div
                     key={ii}
-                    className="bg-background border border-divider rounded-md p-4 flex items-start gap-3"
+                    className="bg-card border border-divider rounded-xl p-4 flex items-start gap-3"
                   >
-                    <item.icon
-                      size={16}
-                      className="text-muted-foreground mt-0.5 shrink-0"
-                      strokeWidth={1.5}
-                    />
+                    <item.icon size={16} className="text-muted-foreground mt-0.5 shrink-0" strokeWidth={1.5} />
                     <div>
-                      <span className="text-xs text-muted-foreground">{item.type}</span>
+                      <span className="text-[10px] font-medium tracking-[0.1em] text-muted-foreground uppercase">{item.type}</span>
                       <p className="text-sm text-foreground mt-0.5">{item.text}</p>
                     </div>
                   </div>

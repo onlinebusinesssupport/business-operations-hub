@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import DashboardLayout from "@/components/DashboardLayout";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
 import HowWeWork from "./pages/HowWeWork";
@@ -17,14 +18,12 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
-import PortalLayout from "./components/PortalLayout";
 import PortalDashboard from "./pages/portal/PortalDashboard";
 import ActiveWork from "./pages/portal/ActiveWork";
 import Requests from "./pages/portal/Requests";
 import Documents from "./pages/portal/Documents";
 import Updates from "./pages/portal/Updates";
 import Account from "./pages/portal/Account";
-import AdminLayout from "./components/AdminLayout";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminClients from "./pages/admin/AdminClients";
 import AdminWorkManager from "./pages/admin/AdminWorkManager";
@@ -58,22 +57,22 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Client Portal (authenticated) */}
-            <Route path="/portal" element={<ProtectedRoute><PortalLayout><PortalDashboard /></PortalLayout></ProtectedRoute>} />
-            <Route path="/portal/active-work" element={<ProtectedRoute><PortalLayout><ActiveWork /></PortalLayout></ProtectedRoute>} />
-            <Route path="/portal/requests" element={<ProtectedRoute><PortalLayout><Requests /></PortalLayout></ProtectedRoute>} />
-            <Route path="/portal/documents" element={<ProtectedRoute><PortalLayout><Documents /></PortalLayout></ProtectedRoute>} />
-            <Route path="/portal/updates" element={<ProtectedRoute><PortalLayout><Updates /></PortalLayout></ProtectedRoute>} />
-            <Route path="/portal/account" element={<ProtectedRoute><PortalLayout><Account /></PortalLayout></ProtectedRoute>} />
+            <Route path="/portal" element={<ProtectedRoute><DashboardLayout portal="client"><PortalDashboard /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/active-work" element={<ProtectedRoute><DashboardLayout portal="client"><ActiveWork /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/requests" element={<ProtectedRoute><DashboardLayout portal="client"><Requests /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/documents" element={<ProtectedRoute><DashboardLayout portal="client"><Documents /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/updates" element={<ProtectedRoute><DashboardLayout portal="client"><Updates /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/account" element={<ProtectedRoute><DashboardLayout portal="client"><Account /></DashboardLayout></ProtectedRoute>} />
 
             {/* Admin Back Office (admin only) */}
-            <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminLayout><AdminOverview /></AdminLayout></ProtectedRoute>} />
-            <Route path="/admin/clients" element={<ProtectedRoute requireAdmin><AdminLayout><AdminClients /></AdminLayout></ProtectedRoute>} />
-            <Route path="/admin/work" element={<ProtectedRoute requireAdmin><AdminLayout><AdminWorkManager /></AdminLayout></ProtectedRoute>} />
-            <Route path="/admin/requests" element={<ProtectedRoute requireAdmin><AdminLayout><AdminRequestsInbox /></AdminLayout></ProtectedRoute>} />
-            <Route path="/admin/documents" element={<ProtectedRoute requireAdmin><AdminLayout><AdminDocuments /></AdminLayout></ProtectedRoute>} />
-            <Route path="/admin/templates" element={<ProtectedRoute requireAdmin><AdminLayout><AdminTemplates /></AdminLayout></ProtectedRoute>} />
-            <Route path="/admin/reports" element={<ProtectedRoute requireAdmin><AdminLayout><AdminReports /></AdminLayout></ProtectedRoute>} />
-            <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><AdminLayout><AdminSettings /></AdminLayout></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminOverview /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/clients" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminClients /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/work" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminWorkManager /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/requests" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminRequestsInbox /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/documents" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminDocuments /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/templates" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminTemplates /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/reports" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminReports /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminSettings /></DashboardLayout></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
