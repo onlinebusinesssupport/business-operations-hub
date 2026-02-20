@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle, Clock, Eye, ArrowLeft, Mail } from "lucide-react";
+import { CheckCircle2, XCircle, Eye, ArrowLeft, Loader2 } from "lucide-react";
 
 type AppStatus = "pending" | "approved" | "declined";
 
@@ -32,23 +32,45 @@ const AdminApplications = () => {
     },
   });
 
-  const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+  // Approve via edge function (creates user, profile, client, sends invite)
+  const approveApp = useMutation({
+    mutationFn: async (applicationId: string) => {
+      const { data, error } = await supabase.functions.invoke("approve-application", {
+        body: { application_id: applicationId },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["applications"] });
+      toast({ title: "Application approved", description: data?.message || "Invite sent." });
+      setSelectedId(null);
+    },
+    onError: (err: Error) => {
+      toast({ title: "Approval failed", description: err.message, variant: "destructive" });
+    },
+  });
+
+  // Decline — just update status
+  const declineApp = useMutation({
+    mutationFn: async (id: string) => {
       const { error } = await supabase
         .from("applications")
-        .update({ status })
+        .update({ status: "declined" })
         .eq("id", id);
       if (error) throw error;
     },
-    onSuccess: (_, vars) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["applications"] });
-      toast({ title: `Application ${vars.status}` });
+      toast({ title: "Application declined" });
       setSelectedId(null);
     },
   });
 
   const filtered = filter === "all" ? applications : applications.filter((a) => a.status === filter);
   const selected = applications.find((a) => a.id === selectedId);
+  const isProcessing = approveApp.isPending || declineApp.isPending;
 
   if (selected) {
     return (
@@ -75,7 +97,7 @@ const AdminApplications = () => {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span className="text-foreground">{selected.email}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Country</span><span className="text-foreground">{selected.country}</span></div>
-              {selected.website && <div className="flex justify-between"><span className="text-muted-foreground">Website</span><a href={selected.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{selected.website}</a></div>}
+              {selected.website && <div className="flex justify-between"><span className="text-muted-foreground">Website</span><a href={selected.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate ml-2">{selected.website}</a></div>}
             </div>
           </div>
 
@@ -110,20 +132,30 @@ const AdminApplications = () => {
         {selected.status === "pending" && (
           <div className="flex items-center gap-3 pt-4">
             <Button
-              onClick={() => updateStatus.mutate({ id: selected.id, status: "approved" })}
+              onClick={() => approveApp.mutate(selected.id)}
               className="text-sm tracking-wide gap-2"
-              disabled={updateStatus.isPending}
+              disabled={isProcessing}
             >
-              <CheckCircle2 size={14} /> Approve
+              {approveApp.isPending ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+              {approveApp.isPending ? "Approving..." : "Approve & Invite"}
             </Button>
             <Button
               variant="outline"
-              onClick={() => updateStatus.mutate({ id: selected.id, status: "declined" })}
+              onClick={() => declineApp.mutate(selected.id)}
               className="text-sm tracking-wide gap-2"
-              disabled={updateStatus.isPending}
+              disabled={isProcessing}
             >
               <XCircle size={14} /> Decline
             </Button>
+          </div>
+        )}
+
+        {selected.status === "approved" && (
+          <div className="border border-primary/20 bg-primary/5 p-4 flex items-center gap-3">
+            <CheckCircle2 size={16} className="text-primary shrink-0" />
+            <p className="text-sm text-foreground">
+              This applicant has been approved and invited. Their workspace is active.
+            </p>
           </div>
         )}
       </div>
@@ -137,7 +169,6 @@ const AdminApplications = () => {
         <p className="mt-1 text-sm text-muted-foreground">Review and manage access requests.</p>
       </motion.div>
 
-      {/* Filter tabs */}
       <div className="flex gap-1 bg-accent/50 p-0.5 w-fit">
         {(["all", "pending", "approved", "declined"] as const).map((f) => (
           <button
