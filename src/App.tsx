@@ -22,6 +22,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import Pricing from "./pages/Pricing";
+import MfaVerify from "./pages/MfaVerify";
 import PortalDashboard from "./pages/portal/PortalDashboard";
 import ActiveWork from "./pages/portal/ActiveWork";
 import Requests from "./pages/portal/Requests";
@@ -72,6 +73,7 @@ const App = () => (
             <Route path="/apply" element={<Apply />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/mfa-verify" element={<MfaVerify />} />
 
             {/* Client Portal (authenticated) */}
             <Route path="/portal" element={<ProtectedRoute><DashboardLayout portal="client"><PortalDashboard /></DashboardLayout></ProtectedRoute>} />

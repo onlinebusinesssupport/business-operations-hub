@@ -26,6 +26,16 @@ const Login = () => {
       return;
     }
 
+    // Check if user has MFA enrolled
+    const { data: factors } = await supabase.auth.mfa.listFactors();
+    const hasTotp = factors?.totp?.some((f) => f.status === "verified");
+
+    if (hasTotp) {
+      // Redirect to MFA verification page
+      navigate("/mfa-verify");
+      return;
+    }
+
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const { data: roleData } = await supabase
