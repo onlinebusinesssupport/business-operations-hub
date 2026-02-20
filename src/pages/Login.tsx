@@ -54,18 +54,18 @@ const Login = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-sm"
       >
-        <Link to="/" className="font-sans text-sm font-semibold tracking-[0.15em] text-foreground uppercase block mb-10">
-          SUPPORT STUDIO
+        <Link to="/" className="font-display text-sm font-bold tracking-[0.2em] text-foreground uppercase block mb-10">
+          STUDIO.OS
         </Link>
 
         {/* Portal type selector */}
-        <div className="flex rounded-lg border border-border overflow-hidden mb-8">
+        <div className="flex border border-border overflow-hidden mb-8">
           <button
             type="button"
             onClick={() => setPortalType("client")}
             className={`flex-1 py-2.5 text-xs uppercase tracking-widest font-medium transition-colors duration-200 ${
               portalType === "client"
-                ? "bg-terracotta text-terracotta-foreground"
+                ? "bg-primary text-primary-foreground"
                 : "bg-background text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -76,7 +76,7 @@ const Login = () => {
             onClick={() => setPortalType("admin")}
             className={`flex-1 py-2.5 text-xs uppercase tracking-widest font-medium transition-colors duration-200 ${
               portalType === "admin"
-                ? "bg-terracotta text-terracotta-foreground"
+                ? "bg-primary text-primary-foreground"
                 : "bg-background text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -84,13 +84,13 @@ const Login = () => {
           </button>
         </div>
 
-        <h1 className="font-serif text-2xl font-medium text-foreground">
-          {portalType === "client" ? "Client Portal" : "Admin Workspace"}
+        <h1 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">
+          {portalType === "client" ? "Client Environment" : "Admin Console"}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {portalType === "client"
-            ? "Access your projects, documents, and updates."
-            : "Sign in to manage operations and clients."}
+            ? "Access your studio infrastructure and operations."
+            : "Sign in to manage platform operations."}
         </p>
 
         <form onSubmit={handleLogin} className="mt-8 space-y-4">
@@ -101,7 +101,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-foreground/20"
+              className="w-full px-3 py-2.5 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-foreground/20"
             />
           </div>
           <div>
@@ -111,7 +111,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-foreground/20"
+              className="w-full px-3 py-2.5 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-foreground/20"
             />
           </div>
           <Button type="submit" className="w-full text-sm tracking-wide" size="lg" disabled={loading}>

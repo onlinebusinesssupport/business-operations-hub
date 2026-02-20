@@ -6,15 +6,14 @@ import {
   Target,
   Globe,
   Sparkles,
-  TrendingUp,
   Bell,
   CheckCircle2,
   MessageSquare,
-  ArrowRight,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import WelcomeDashboard from "@/components/WelcomeDashboard";
+import GrowthScore from "@/components/GrowthScore";
 
 const stagger = {
   initial: { opacity: 0, y: 12 },
@@ -26,8 +25,8 @@ const studioModules = [
   { name: "Operations", icon: Settings, active: false },
   { name: "Automation", icon: Zap, active: false },
   { name: "Lead Engine", icon: Target, active: false },
-  { name: "Digital Presence", icon: Globe, active: false },
-  { name: "Experience", icon: Sparkles, active: false },
+  { name: "Socials", icon: Globe, active: false },
+  { name: "Experiences", icon: Sparkles, active: false },
 ];
 
 /* Metric placeholders */
@@ -35,7 +34,7 @@ const metrics = [
   { label: "Leads This Month", value: "—", icon: Target },
   { label: "Automations Live", value: "—", icon: Zap },
   { label: "Tasks Completed", value: "—", icon: CheckCircle2 },
-  { label: "Revenue Pipeline", value: "—", icon: TrendingUp },
+  { label: "Revenue Pipeline", value: "—", icon: Globe },
   { label: "Response Rate", value: "—", icon: MessageSquare },
 ];
 
@@ -54,10 +53,20 @@ const activityIcon = {
   automation: Zap,
 };
 
+/* Placeholder score calculation */
+const calculateGrowthScore = () => {
+  const automationLevel = 0;   // 0-25
+  const leadFlow = 0;          // 0-25
+  const taskCompletion = 0;    // 0-25
+  const digitalResponse = 0;   // 0-25
+  return automationLevel + leadFlow + taskCompletion + digitalResponse;
+};
+
 const PortalDashboard = () => {
   const { user } = useAuth();
   const [showWelcome, setShowWelcome] = useState<boolean | null>(null);
   const [userName, setUserName] = useState("");
+  const growthScore = calculateGrowthScore();
 
   useEffect(() => {
     const checkOnboarding = async () => {
@@ -92,9 +101,9 @@ const PortalDashboard = () => {
 
   return (
     <div className="space-y-10">
-      {/* Header */}
+      {/* Header + Growth Score */}
       <motion.div {...stagger} transition={{ duration: 0.3 }}>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
           <div>
             <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">
               Dashboard
@@ -102,25 +111,48 @@ const PortalDashboard = () => {
             <p className="mt-1 text-sm text-muted-foreground">
               {userName ? `Welcome back, ${userName}.` : "Welcome back."}
             </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 border border-border px-4 py-2">
-              <TrendingUp size={14} className="text-primary" />
-              <span className="text-[11px] uppercase tracking-[0.1em] text-muted-foreground font-medium">
-                Growth Score
-              </span>
-              <span className="font-display text-sm font-bold text-foreground ml-1">—</span>
+            <div className="flex items-center gap-3 mt-4">
+              <button className="relative p-2 border border-border hover:bg-secondary transition-colors">
+                <Bell size={16} className="text-muted-foreground" />
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
+              </button>
             </div>
-            <button className="relative p-2 border border-border hover:bg-secondary transition-colors">
-              <Bell size={16} className="text-muted-foreground" />
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
-            </button>
           </div>
+          <GrowthScore score={growthScore} />
+        </div>
+      </motion.div>
+
+      {/* Score Breakdown */}
+      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.03 }}>
+        <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">
+          Score Breakdown
+        </p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {[
+            { label: "Automation Level", value: 0, max: 25 },
+            { label: "Lead Flow Consistency", value: 0, max: 25 },
+            { label: "Task Completion Rate", value: 0, max: 25 },
+            { label: "Digital Responsiveness", value: 0, max: 25 },
+          ].map((dim) => (
+            <div key={dim.label} className="border border-border p-4">
+              <p className="text-[11px] text-muted-foreground">{dim.label}</p>
+              <div className="flex items-end gap-1 mt-2">
+                <span className="font-display text-lg font-bold text-foreground">{dim.value}</span>
+                <span className="text-[10px] text-muted-foreground/60 mb-0.5">/ {dim.max}</span>
+              </div>
+              <div className="mt-2 h-1 bg-border">
+                <div
+                  className="h-full bg-primary transition-all duration-500"
+                  style={{ width: `${(dim.value / dim.max) * 100}%` }}
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </motion.div>
 
       {/* Studio Overview */}
-      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.05 }}>
+      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.06 }}>
         <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">
           Studio Overview
         </p>
@@ -154,7 +186,7 @@ const PortalDashboard = () => {
       </motion.div>
 
       {/* Metrics Snapshot */}
-      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.15 }}>
+      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.12 }}>
         <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">
           Metrics Snapshot
         </p>
@@ -164,7 +196,7 @@ const PortalDashboard = () => {
               key={metric.label}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.18 + i * 0.04 }}
+              transition={{ duration: 0.3, delay: 0.15 + i * 0.04 }}
               className="border border-border p-5"
             >
               <metric.icon size={16} className="text-muted-foreground mb-3" strokeWidth={1.5} />
@@ -176,7 +208,7 @@ const PortalDashboard = () => {
       </motion.div>
 
       {/* Recent Activity Feed */}
-      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.25 }}>
+      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.2 }}>
         <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">
           Recent Activity
         </p>
