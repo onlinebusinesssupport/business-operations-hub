@@ -43,7 +43,7 @@ const studios: Studio[] = [
     expanded: {
       poeticLine: "Structure is freedom.",
       description:
-        "The Operations Studio builds the invisible infrastructure behind high-performing teams. From SOPs to task orchestration, this is where your business learns to run without you.",
+        "The Operations service builds the invisible infrastructure behind high-performing teams. From SOPs to task orchestration, this is where your business learns to run without you.",
       includes: [
         "Workflow design and process mapping",
         "SOP documentation and governance",
@@ -69,7 +69,7 @@ const studios: Studio[] = [
     expanded: {
       poeticLine: "Build once. Run forever.",
       description:
-        "The Automation Studio eliminates repetitive work through intelligent pipelines. We connect your tools, trigger actions automatically, and give you time back.",
+        "The Automation service eliminates repetitive work through intelligent pipelines. We connect your tools, trigger actions automatically, and give you time back.",
       includes: [
         "Custom automation pipelines",
         "Tool integration and API connections",
@@ -94,7 +94,7 @@ const studios: Studio[] = [
     expanded: {
       poeticLine: "Attention is an asset. We compound it.",
       description:
-        "The Lead Engine Studio builds and runs your demand infrastructure. Campaigns, funnels, and conversion tracking — all managed as a system, not a scramble.",
+        "The Lead Engine service builds and runs your demand infrastructure. Campaigns, funnels, and conversion tracking — all managed as a system, not a scramble.",
       includes: [
         "Pipeline architecture and CRM setup",
         "Campaign design and deployment",
@@ -119,7 +119,7 @@ const studios: Studio[] = [
     expanded: {
       poeticLine: "Perception is reality. We shape it.",
       description:
-        "The Digital Presence Studio manages your brand's online footprint. Reviews, social engagement, content calendars, and brand voice — controlled from a single system.",
+        "The Digital Presence service manages your brand's online footprint. Reviews, social engagement, content calendars, and brand voice — controlled from a single system.",
       includes: [
         "Review monitoring and response management",
         "Content calendar and social scheduling",
@@ -144,7 +144,7 @@ const studios: Studio[] = [
     expanded: {
       poeticLine: "Culture is built in moments.",
       description:
-        "The Experience Studio designs and executes events, activations, and internal culture programs. We turn gatherings into strategic assets.",
+        "The Experience service designs and executes events, activations, and internal culture programs. We turn gatherings into strategic assets.",
       includes: [
         "Event planning and logistics",
         "Budget management and vendor coordination",
@@ -170,7 +170,7 @@ const studios: Studio[] = [
     expanded: {
       poeticLine: "Direction determines speed.",
       description:
-        "The Strategy & Advisory Studio provides structured thinking for founders navigating pivotal decisions. From market entry to operational scaling, we help you move with conviction.",
+        "The Strategy & Advisory service provides structured thinking for founders navigating pivotal decisions. From market entry to operational scaling, we help you move with conviction.",
       includes: [
         "Business model analysis and refinement",
         "Growth roadmap and milestone planning",
@@ -205,7 +205,7 @@ const Studios = () => {
             transition={{ duration: 0.5, ease: easeOut }}
             className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-medium"
           >
-            STUDIOS
+            SERVICES
           </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
@@ -213,7 +213,7 @@ const Studios = () => {
             transition={{ duration: 0.6, delay: 0.05, ease: easeOut }}
             className="mt-6 font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.05] text-foreground uppercase tracking-tight"
           >
-            Choose your Studio.
+            Choose your service.
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
@@ -221,7 +221,7 @@ const Studios = () => {
             transition={{ duration: 0.6, delay: 0.1, ease: easeOut }}
             className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg"
           >
-            Every Studio is designed to remove friction, increase clarity, and create momentum.
+            Every service is designed to remove friction, increase clarity, and create momentum.
           </motion.p>
           <motion.p
             initial={{ opacity: 0 }}
@@ -282,7 +282,7 @@ const Studios = () => {
                 </p>
 
                 <div className="mt-5 flex items-center gap-1.5 text-[11px] text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  Explore Studio <ArrowRight size={12} />
+                  Learn more <ArrowRight size={12} />
                 </div>
               </motion.button>
             ))}
@@ -290,7 +290,6 @@ const Studios = () => {
         </div>
       </section>
 
-      {/* How Studios Work Together */}
       <section className="py-24 bg-secondary">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
           <motion.span
@@ -309,7 +308,7 @@ const Studios = () => {
             transition={{ duration: 0.6, delay: 0.05 }}
             className="mt-6 font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight"
           >
-            How Studios Work Together
+            How Our Services Work Together
           </motion.h2>
 
           {/* Flow diagram */}
@@ -356,7 +355,7 @@ const Studios = () => {
                 size="lg"
                 className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2"
               >
-                Apply for Studio Access
+                Apply for Access
                 <ArrowRight size={14} />
               </Button>
             </Link>

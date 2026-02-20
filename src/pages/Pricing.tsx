@@ -26,32 +26,32 @@ interface Plan {
 const plans: Plan[] = [
   {
     name: "Starter",
-    description: "One Studio, fully activated. For founders ready to delegate one critical function.",
+    description: "One service, fully activated. For founders ready to delegate one critical function.",
     monthly: "R6,500",
     quarterly: "R5,500",
     savings: "Save R3k/quarter",
-    studios: "1 Studio",
+    studios: "1 Service",
     features: [
-      "Choose any two Studios",
+      "Choose any two services",
       "Dedicated operator assigned",
       "Weekly progress reports",
       "Client portal access",
       "Async communication via portal",
     ],
-    cta: "Start with one Studio",
+    cta: "Start with one service",
   },
   {
     name: "Growth",
-    description: "Three Studios working together. For businesses building real operational infrastructure.",
+    description: "Three services working together. For businesses building real operational infrastructure.",
     monthly: "R15,000",
     quarterly: "R12,500",
     savings: "Save R7.5k/quarter",
-    studios: "3 Studios",
+    studios: "3 Services",
     highlight: true,
     label: "Most Popular",
     features: [
-      "Choose any 3 Studios",
-      "Cross-studio coordination",
+      "Choose any 3 services",
+      "Cross-service coordination",
       "Bi-weekly strategy calls",
       "Priority request handling",
       "Monthly performance dashboard",
@@ -60,14 +60,14 @@ const plans: Plan[] = [
     cta: "Activate Growth",
   },
   {
-    name: "Studio Suite",
-    description: "All six Studios, fully integrated. The complete operational backbone for scaling businesses.",
+    name: "Full Suite",
+    description: "All six services, fully integrated. The complete operational backbone for scaling businesses.",
     monthly: "R28,000",
     quarterly: "R24,000",
     savings: "Save R12k/quarter",
-    studios: "All 6 Studios",
+    studios: "All 6 Services",
     features: [
-      "All Studios activated",
+      "All services activated",
       "Dedicated account lead",
       "Weekly strategy sessions",
       "Custom reporting & KPIs",
@@ -80,7 +80,7 @@ const plans: Plan[] = [
 ];
 
 const addOns = [
-  { name: "Additional Studio", price: "R4,500/mo", note: "Add to any plan" },
+  { name: "Additional Service", price: "R4,500/mo", note: "Add to any plan" },
   { name: "Strategy Sprint", price: "R8,000", note: "Once-off deep dive" },
   { name: "Systems Setup", price: "From R5,000", note: "CRM, workspace, tooling" },
   { name: "Event Production", price: "Custom quote", note: "Per event" },
@@ -125,7 +125,7 @@ const Pricing = () => {
             transition={{ duration: 0.6, delay: 0.1, ease: easeOut }}
             className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg mx-auto"
           >
-            Transparent pricing. No retainer surprises. Choose the Studios you need, scale when you're ready.
+            Transparent pricing. No retainer surprises. Choose the services you need, scale when you're ready.
           </motion.p>
 
           {/* Billing Toggle */}
@@ -296,8 +296,8 @@ const Pricing = () => {
           <div className="mt-12 space-y-0 divide-y divide-border">
             {[
               {
-                q: "Can I switch Studios mid-engagement?",
-                a: "Yes. Studios can be swapped at the start of any new billing cycle. We'll help you transition smoothly.",
+                q: "Can I switch services mid-engagement?",
+                a: "Yes. Services can be swapped at the start of any new billing cycle. We'll help you transition smoothly.",
               },
               {
                 q: "What's included in the client portal?",
@@ -312,7 +312,7 @@ const Pricing = () => {
                 a: "Most clients are onboarded within 5 business days. We assess your needs, assign your team, and begin execution immediately.",
               },
               {
-                q: "What if I need more than the Studio Suite?",
+                q: "What if I need more than the Full Suite?",
                 a: "We offer custom enterprise engagements for businesses with complex operational needs. Contact us for a tailored proposal.",
               },
             ].map((faq, i) => (
@@ -350,7 +350,7 @@ const Pricing = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-4 text-sm text-primary-foreground/70"
           >
-            Apply today and we'll match you with the right Studios for your stage.
+            Apply today and we'll match you with the right services for your stage.
           </motion.p>
           <motion.div
             {...fadeUp}

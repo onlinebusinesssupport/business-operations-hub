@@ -22,7 +22,7 @@ const CallToAction = () => {
           </h2>
           <p className="mt-6 text-base leading-relaxed text-primary-foreground/70 max-w-lg">
             We work with a limited number of partners at any given time. 
-            If you're building something serious, apply to explore whether the Studio model is the right support layer for your growth.
+            If you're building something serious, apply to explore whether our model is the right support layer for your growth.
           </p>
           <div className="mt-10">
             <Link to="/apply">
