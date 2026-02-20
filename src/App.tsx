@@ -8,7 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
 import LekoChat from "@/components/LekoChat";
 import Index from "./pages/Index";
-import Services from "./pages/Services";
+import Studios from "./pages/Studios";
 import HowWeWork from "./pages/HowWeWork";
 import Clients from "./pages/Clients";
 import Insights from "./pages/Insights";
@@ -58,7 +58,8 @@ const App = () => (
           <Routes>
             {/* Public */}
             <Route path="/" element={<Index />} />
-            <Route path="/services" element={<Services />} />
+            <Route path="/studios" element={<Studios />} />
+            <Route path="/services" element={<Studios />} />
             <Route path="/how-it-works" element={<HowWeWork />} />
             <Route path="/clients" element={<Clients />} />
             <Route path="/insights" element={<Insights />} />
