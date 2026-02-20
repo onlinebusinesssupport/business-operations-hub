@@ -1,58 +1,47 @@
 import { motion } from "framer-motion";
-import { Clock, DollarSign, Users } from "lucide-react";
 
-const painPoints = [
-  {
-    icon: Clock,
-    title: "Drowning in operational details",
-    stat: "40% of founder time",
-    description: "Spent on tasks that don't generate revenue — admin, scheduling, follow-ups, and internal coordination.",
-  },
-  {
-    icon: DollarSign,
-    title: "Cash flow chaos",
-    stat: "Unpredictable finances",
-    description: "Invoices go out late, expenses aren't tracked, and financial visibility is always a month behind.",
-  },
-  {
-    icon: Users,
-    title: "Team lacks accountability",
-    stat: "No clear systems",
-    description: "Without documented processes and tracking, work falls through the cracks and nothing scales.",
-  },
+const problems = [
+  "Leads fall through the cracks",
+  "Inbox overload",
+  "Manual workflows",
+  "Disconnected tools",
+  "No visibility into performance",
 ];
 
 const ProblemStatement = () => {
   return (
-    <section className="py-24 bg-secondary">
+    <section className="py-28 bg-foreground text-primary-foreground">
       <div className="container mx-auto px-6 lg:px-8">
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6 }}
-          className="font-serif text-2xl md:text-3xl font-bold text-foreground"
+          className="max-w-3xl"
         >
-          Does this sound familiar?
-        </motion.h2>
+          <span className="text-[11px] uppercase tracking-[0.3em] text-primary-foreground/50 font-medium">
+            THE PROBLEM
+          </span>
+          <h2 className="mt-6 font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight leading-[1.1]">
+            Growth Without Systems Creates Chaos.
+          </h2>
+        </motion.div>
 
-        <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {painPoints.map((point, i) => (
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          {problems.map((problem, i) => (
             <motion.div
-              key={point.title}
-              initial={{ opacity: 0, y: 20 }}
+              key={problem}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="border-l-2 border-primary pl-6"
+              transition={{ duration: 0.4, delay: i * 0.08 }}
+              className="border border-primary-foreground/15 p-6"
             >
-              <point.icon size={24} className="text-primary mb-4" strokeWidth={1.5} />
-              <h3 className="font-serif text-lg font-bold text-foreground">
-                {point.title}
-              </h3>
-              <p className="mt-1 text-sm font-medium text-primary">{point.stat}</p>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {point.description}
+              <span className="text-[11px] tracking-[0.2em] text-primary-foreground/40 font-medium">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <p className="mt-3 text-sm font-medium text-primary-foreground/90 leading-relaxed">
+                {problem}
               </p>
             </motion.div>
           ))}

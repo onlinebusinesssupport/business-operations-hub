@@ -5,27 +5,24 @@ const Footer = () => {
     <footer className="py-16 border-t border-divider">
       <div className="container mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-          {/* Brand */}
           <div>
-            <span className="font-sans text-sm font-semibold tracking-[0.15em] text-foreground uppercase">
-              SUPPORT STUDIO
+            <span className="font-display text-sm font-bold tracking-[0.2em] text-foreground uppercase">
+              SUPPORT STUDIO™
             </span>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Operational support for founders and growing businesses.
+              Centralised operating infrastructure for growing businesses.
             </p>
           </div>
 
-          {/* Navigation */}
           <div>
             <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium">
-              NAVIGATE
+              PLATFORM
             </span>
             <ul className="mt-4 space-y-2.5">
               {[
-                { label: "Services", href: "/services" },
+                { label: "Studio Model", href: "/services" },
                 { label: "About", href: "/about" },
-                { label: "Blog", href: "/insights" },
-                { label: "How We Work", href: "/how-it-works" },
+                { label: "Insights", href: "/insights" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link
@@ -39,10 +36,9 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Connect */}
           <div>
             <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium">
-              CONNECT
+              ACCESS
             </span>
             <ul className="mt-4 space-y-2.5">
               <li>
@@ -50,16 +46,16 @@ const Footer = () => {
                   to="/contact"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Contact
+                  Apply
                 </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/login"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  LinkedIn
-                </a>
+                  Client Portal
+                </Link>
               </li>
               <li>
                 <a
@@ -72,7 +68,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Legal */}
           <div>
             <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium">
               LEGAL
@@ -92,13 +87,9 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom bar */}
         <div className="mt-14 pt-6 border-t border-divider flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Support Studio. All rights reserved.
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Proudly South African.
+            © {new Date().getFullYear()} Support Studio™. All rights reserved.
           </p>
         </div>
       </div>

@@ -1,89 +1,59 @@
 import { motion } from "framer-motion";
-import { Lightbulb, BarChart3, Shield } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import portraitImg from "@/assets/portrait.png";
+import { Settings, Zap, Target, Globe, Sparkles } from "lucide-react";
 
-const pillars = [
-  {
-    icon: Lightbulb,
-    title: "Strategic Thinking",
-    description: "We approach every engagement with a systems mindset — building infrastructure, not just completing tasks.",
-  },
-  {
-    icon: BarChart3,
-    title: "Proven Results",
-    description: "From hospitality operations to startup scaling, our track record spans industries and continents.",
-  },
-  {
-    icon: Shield,
-    title: "Affordable Leadership",
-    description: "Access executive-level operational support at a fraction of the cost of a full-time hire.",
-  },
+const modules = [
+  { icon: Settings, name: "OPERATIONS", description: "Centralised systems for daily execution" },
+  { icon: Zap, name: "AUTOMATION", description: "Eliminate manual, repetitive workflows" },
+  { icon: Target, name: "LEAD ENGINE", description: "Pipeline infrastructure that converts" },
+  { icon: Globe, name: "DIGITAL PRESENCE", description: "Cohesive brand and platform architecture" },
+  { icon: Sparkles, name: "EXPERIENCE", description: "Client-facing systems that retain" },
 ];
 
 const SolutionOverview = () => {
   return (
-    <section className="py-24">
+    <section className="py-28">
       <div className="container mx-auto px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Left — Photo */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6 }}
-          >
-            <img
-              src={portraitImg}
-              alt="Nkululeko — Founder of Support Studio"
-              className="w-full max-w-md object-cover"
-            />
-          </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6 }}
+          className="max-w-2xl"
+        >
+          <span className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground font-medium">
+            THE STUDIO MODEL
+          </span>
+          <h2 className="mt-6 font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-foreground">
+            Modular Infrastructure.
+          </h2>
+          <p className="mt-4 text-base text-muted-foreground leading-relaxed max-w-lg">
+            Five interconnected modules. Each one a system — not a service. Deploy what you need, when you need it.
+          </p>
+        </motion.div>
 
-          {/* Right — Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium">
-              YOUR OPERATIONAL PARTNER
-            </span>
-            <h2 className="mt-4 font-serif text-2xl md:text-3xl font-bold text-foreground leading-snug">
-              Meet your operational partner
-            </h2>
-            <p className="mt-4 text-base text-muted-foreground leading-relaxed">
-              With 10+ years of operations leadership — from four-star graded hotels to KPMG audit environments — Support Studio brings executive-level structure to founders and growing teams.
-            </p>
-
-            <div className="mt-10 space-y-6">
-              {pillars.map((pillar, i) => (
-                <div key={pillar.title} className="flex gap-4 items-start">
-                  <div className="mt-1 p-2 bg-primary/10 shrink-0">
-                    <pillar.icon size={18} className="text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-base font-bold text-foreground">
-                      {pillar.title}
-                    </h3>
-                    <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
-                      {pillar.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8">
-              <Link to="/about">
-                <Button variant="outline" className="text-sm tracking-wide">
-                  Learn more about my background
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
+        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {modules.map((mod, i) => (
+            <motion.div
+              key={mod.name}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.4, delay: i * 0.08 }}
+              className="group border border-border p-8 hover:bg-primary hover:border-primary transition-colors duration-300 cursor-pointer"
+            >
+              <mod.icon
+                size={24}
+                className="text-primary group-hover:text-primary-foreground transition-colors duration-300"
+                strokeWidth={1.5}
+              />
+              <h3 className="mt-6 font-display text-sm font-bold tracking-[0.15em] text-foreground group-hover:text-primary-foreground transition-colors duration-300">
+                {mod.name}
+              </h3>
+              <p className="mt-2 text-xs text-muted-foreground group-hover:text-primary-foreground/70 transition-colors duration-300 leading-relaxed">
+                {mod.description}
+              </p>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

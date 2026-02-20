@@ -4,11 +4,10 @@ import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const navItems = [
-  { label: "Home", href: "/" },
-  { label: "Services", href: "/services" },
+  { label: "Studio", href: "/services" },
   { label: "About", href: "/about" },
-  { label: "Blog", href: "/insights" },
-  { label: "Contact", href: "/contact" },
+  { label: "Insights", href: "/insights" },
+  { label: "Apply", href: "/contact" },
 ];
 
 const Navbar = () => {
@@ -17,17 +16,16 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-divider">
       <div className="container mx-auto flex items-center justify-between h-16 px-6 lg:px-8">
-        <Link to="/" className="font-sans text-sm font-semibold tracking-[0.15em] text-foreground uppercase">
-          SUPPORT STUDIO
+        <Link to="/" className="font-display text-sm font-bold tracking-[0.2em] text-foreground uppercase">
+          SUPPORT STUDIO™
         </Link>
 
-        {/* Desktop */}
         <ul className="hidden md:flex items-center gap-8">
           {navItems.map((item) => (
             <li key={item.label}>
               <Link
                 to={item.href}
-                className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors duration-200"
+                className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors duration-200"
               >
                 {item.label}
               </Link>
@@ -36,14 +34,13 @@ const Navbar = () => {
           <li>
             <Link
               to="/login"
-              className="text-xs uppercase tracking-widest text-primary-foreground bg-primary px-4 py-2 font-medium hover:opacity-90 transition-opacity duration-200"
+              className="text-[11px] uppercase tracking-[0.2em] text-primary-foreground bg-primary px-5 py-2 font-medium hover:opacity-90 transition-opacity duration-200"
             >
               Portal
             </Link>
           </li>
         </ul>
 
-        {/* Mobile toggle */}
         <button
           className="md:hidden text-foreground"
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -53,7 +50,6 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div

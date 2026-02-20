@@ -2,9 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import ProblemStatement from "@/components/ProblemStatement";
 import SolutionOverview from "@/components/SolutionOverview";
-import ServiceTiers from "@/components/ServiceTiers";
-import Testimonials from "@/components/Testimonials";
-import BlogPreview from "@/components/BlogPreview";
+import HowItWorks from "@/components/HowItWorks";
 import CallToAction from "@/components/CallToAction";
 import Footer from "@/components/Footer";
 
@@ -15,9 +13,7 @@ const Index = () => {
       <Hero />
       <ProblemStatement />
       <SolutionOverview />
-      <ServiceTiers />
-      <Testimonials />
-      <BlogPreview />
+      <HowItWorks />
       <CallToAction />
       <Footer />
     </div>
