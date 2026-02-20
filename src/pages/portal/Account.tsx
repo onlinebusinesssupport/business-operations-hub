@@ -12,6 +12,7 @@ import {
   Copy,
   Check,
   Save,
+  ShieldCheck,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import PoweredBadge from "@/components/PoweredBadge";
+import MfaEnroll from "@/components/MfaEnroll";
 
 const stagger = {
   initial: { opacity: 0, y: 12 },
@@ -132,6 +134,7 @@ const Account = () => {
       <Tabs defaultValue="profile" className="w-full">
         <TabsList className="bg-secondary border border-border">
           <TabsTrigger value="profile" className="text-xs tracking-wide">Profile</TabsTrigger>
+          <TabsTrigger value="security" className="text-xs tracking-wide">Security</TabsTrigger>
           <TabsTrigger value="global" className="text-xs tracking-wide">Globalization</TabsTrigger>
           <TabsTrigger value="referrals" className="text-xs tracking-wide">Referrals</TabsTrigger>
           <TabsTrigger value="badge" className="text-xs tracking-wide">Badge</TabsTrigger>
@@ -189,6 +192,22 @@ const Account = () => {
                 ))}
               </div>
             </div>
+          </div>
+        </TabsContent>
+
+        {/* Security */}
+        <TabsContent value="security" className="mt-6 space-y-6">
+          <div className="border border-border p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <ShieldCheck size={16} className="text-muted-foreground" strokeWidth={1.5} />
+              <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">
+                Two-Factor Authentication
+              </p>
+            </div>
+            <p className="text-sm text-muted-foreground mb-6 max-w-lg">
+              Protect your account with an authenticator app. Once enabled, you'll need to enter a code from the app each time you sign in.
+            </p>
+            <MfaEnroll />
           </div>
         </TabsContent>
 
