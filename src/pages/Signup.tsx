@@ -131,7 +131,7 @@ const Signup = () => {
         className="w-full max-w-md"
       >
         <Link to="/" className="font-display text-sm font-bold tracking-[0.2em] text-foreground uppercase block mb-10">
-          STUDIO.OS
+          SUPPORT STUDIO™
         </Link>
 
         {/* Step indicator */}

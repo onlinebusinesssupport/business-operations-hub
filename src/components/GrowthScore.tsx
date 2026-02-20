@@ -58,7 +58,7 @@ const GrowthScore = ({ score, size = 120 }: GrowthScoreProps) => {
           Growth Infrastructure Score
         </p>
         <p className="text-[10px] text-muted-foreground/60 mt-0.5">
-          Powered by STUDIO.OS
+          Powered by SUPPORT STUDIO
         </p>
       </div>
     </div>

@@ -6,7 +6,7 @@ const PoweredBadge = () => {
         Powered by
       </span>
       <span className="font-display text-[10px] font-bold tracking-[0.15em] text-foreground uppercase">
-        STUDIO.OS
+        SUPPORT STUDIO
       </span>
     </div>
   );
