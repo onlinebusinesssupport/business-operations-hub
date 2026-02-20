@@ -129,14 +129,14 @@ const Apply = () => {
     <div className="min-h-screen flex items-center justify-center bg-background px-6 py-12">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-lg">
         <Link to="/" className="font-display text-sm font-bold tracking-[0.2em] text-foreground uppercase block mb-10">
-          STUDIO.OS
+          SUPPORT STUDIO™
         </Link>
 
         <h1 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">
           Apply for Studio Access
         </h1>
         <p className="mt-2 text-sm text-muted-foreground mb-8">
-          Access is granted by invitation. Tell us about your business so we can determine fit.
+          We'll tailor your Studio based on how you work. Tell us about your business so we can determine fit.
         </p>
 
         {/* Step indicator */}
@@ -160,7 +160,7 @@ const Apply = () => {
           <AnimatePresence mode="wait" custom={direction}>
             {step === 0 && (
               <motion.div key="s0" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }}>
-                <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">Identity</p>
+                <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">Tell us who you are</p>
                 <div className="space-y-4">
                   <div>
                     <label className="text-xs text-muted-foreground block mb-1.5">Full name *</label>
@@ -191,7 +191,7 @@ const Apply = () => {
 
             {step === 1 && (
               <motion.div key="s1" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }}>
-                <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">Business Snapshot</p>
+                <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">Tell us how you operate</p>
                 <div className="space-y-4">
                   <div>
                     <label className="text-xs text-muted-foreground block mb-1.5">Industry *</label>
@@ -231,7 +231,7 @@ const Apply = () => {
 
             {step === 2 && (
               <motion.div key="s2" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }}>
-                <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">Infrastructure Readiness</p>
+                <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">Select your Studios</p>
                 <div className="space-y-5">
                   <div>
                     <label className="text-xs text-muted-foreground block mb-1.5">What's currently breaking in your business? *</label>
@@ -272,10 +272,10 @@ const Apply = () => {
 
             {step === 3 && (
               <motion.div key="s3" custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25 }}>
-                <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">Intent Signal</p>
+                <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">Set your support rhythm</p>
                 <div className="space-y-5">
                   <div>
-                    <label className="text-xs text-muted-foreground block mb-1.5">Why do you want access to STUDIO.OS? *</label>
+                    <label className="text-xs text-muted-foreground block mb-1.5">Why do you want access to SUPPORT STUDIO™? *</label>
                     <textarea
                       value={intent}
                       onChange={(e) => setIntent(e.target.value)}

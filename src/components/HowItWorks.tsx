@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 const steps = [
-  { label: "DIAGNOSE", description: "Audit existing operations and identify friction" },
-  { label: "DESIGN", description: "Architect systems tailored to your growth stage" },
-  { label: "DEPLOY", description: "Implement infrastructure with zero disruption" },
-  { label: "EMBED", description: "Operate continuously inside your business" },
+  { label: "DIAGNOSE", description: "Audit existing operations and identify friction." },
+  { label: "DESIGN", description: "Architect systems tailored to your growth stage." },
+  { label: "DEPLOY", description: "Implement infrastructure with zero disruption." },
+  { label: "EMBED", description: "Operate continuously inside your business." },
 ];
 
 const HowItWorks = () => {
@@ -23,10 +23,10 @@ const HowItWorks = () => {
             PROCESS
           </span>
           <h2 className="mt-6 font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-foreground">
-            How It Works
+            Support without friction.
           </h2>
           <p className="mt-4 text-base text-muted-foreground max-w-lg">
-            We embed infrastructure directly into your business.
+            We embed support directly into your business. No handoffs, no confusion.
           </p>
         </motion.div>
 

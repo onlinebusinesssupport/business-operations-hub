@@ -20,10 +20,10 @@ const ProblemStatement = () => {
           className="max-w-3xl"
         >
           <span className="text-[11px] uppercase tracking-[0.3em] text-primary-foreground/50 font-medium">
-            THE PROBLEM
+            THE REALITY
           </span>
           <h2 className="mt-6 font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight leading-[1.1]">
-            Growth Without Systems Creates Chaos.
+            Growth without structure creates friction.
           </h2>
         </motion.div>
 

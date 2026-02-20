@@ -68,9 +68,9 @@ const AdminOverview = () => {
       {/* Header */}
       <motion.div {...stagger} transition={{ duration: 0.3 }} className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h2 className="font-serif text-2xl text-foreground">Operational Overview</h2>
+          <h2 className="font-serif text-2xl text-foreground">Studio Control</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            System-wide metrics and activity. Everything at a glance.
+            Oversee operations across every partner workspace.
           </p>
         </div>
         <div className="flex gap-1 bg-accent/50 rounded-lg p-0.5">

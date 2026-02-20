@@ -33,7 +33,7 @@ const studioModules = [
 const metrics = [
   { label: "Leads This Month", value: "—", icon: Target },
   { label: "Automations Live", value: "—", icon: Zap },
-  { label: "Tasks Completed", value: "—", icon: CheckCircle2 },
+  { label: "In Motion", value: "—", icon: CheckCircle2 },
   { label: "Revenue Pipeline", value: "—", icon: Globe },
   { label: "Response Rate", value: "—", icon: MessageSquare },
 ];
@@ -109,7 +109,7 @@ const PortalDashboard = () => {
               Dashboard
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {userName ? `Welcome back, ${userName}.` : "Welcome back."}
+              {userName ? `Welcome back, ${userName}. Let's move.` : "Welcome back. Let's move."}
             </p>
             <div className="flex items-center gap-3 mt-4">
               <button className="relative p-2 border border-border hover:bg-secondary transition-colors">
@@ -125,7 +125,7 @@ const PortalDashboard = () => {
       {/* Score Breakdown */}
       <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.03 }}>
         <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">
-          Score Breakdown
+          Growth Dimensions
         </p>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[
@@ -154,7 +154,7 @@ const PortalDashboard = () => {
       {/* Studio Overview */}
       <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.06 }}>
         <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">
-          Studio Overview
+          Studios
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {studioModules.map((mod, i) => (
@@ -188,7 +188,7 @@ const PortalDashboard = () => {
       {/* Metrics Snapshot */}
       <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.12 }}>
         <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">
-          Metrics Snapshot
+          Insights
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {metrics.map((metric, i) => (

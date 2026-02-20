@@ -10,7 +10,7 @@ const Footer = () => {
               SUPPORT STUDIO™
             </span>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Centralised operating infrastructure for growing businesses.
+              Support that moves at your speed.
             </p>
           </div>
 
@@ -20,7 +20,7 @@ const Footer = () => {
             </span>
             <ul className="mt-4 space-y-2.5">
               {[
-                { label: "Studio Model", href: "/services" },
+                { label: "Studios", href: "/studios" },
                 { label: "About", href: "/about" },
                 { label: "Insights", href: "/insights" },
               ].map((link) => (
@@ -43,7 +43,7 @@ const Footer = () => {
             <ul className="mt-4 space-y-2.5">
               <li>
                 <Link
-                  to="/contact"
+                  to="/apply"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Apply

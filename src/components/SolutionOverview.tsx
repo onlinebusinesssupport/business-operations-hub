@@ -2,11 +2,11 @@ import { motion } from "framer-motion";
 import { Settings, Zap, Target, Globe, Sparkles } from "lucide-react";
 
 const modules = [
-  { icon: Settings, name: "OPERATIONS", description: "Centralised systems for daily execution" },
-  { icon: Zap, name: "AUTOMATION", description: "Eliminate manual, repetitive workflows" },
-  { icon: Target, name: "LEAD ENGINE", description: "Pipeline infrastructure that converts" },
-  { icon: Globe, name: "DIGITAL PRESENCE", description: "Cohesive brand and platform architecture" },
-  { icon: Sparkles, name: "EXPERIENCE", description: "Client-facing systems that retain" },
+  { icon: Settings, name: "OPERATIONS", description: "The backbone of your business." },
+  { icon: Zap, name: "AUTOMATION", description: "Systems that run while you sleep." },
+  { icon: Target, name: "LEAD ENGINE", description: "Predictable demand, engineered." },
+  { icon: Globe, name: "DIGITAL PRESENCE", description: "Reputation, managed with precision." },
+  { icon: Sparkles, name: "EXPERIENCE", description: "Moments that move people." },
 ];
 
 const SolutionOverview = () => {
@@ -24,10 +24,10 @@ const SolutionOverview = () => {
             THE STUDIO MODEL
           </span>
           <h2 className="mt-6 font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-foreground">
-            Modular Infrastructure.
+            Support, organised into Studios.
           </h2>
           <p className="mt-4 text-base text-muted-foreground leading-relaxed max-w-lg">
-            Five interconnected modules. Each one a system — not a service. Deploy what you need, when you need it.
+            Each Studio focuses on a core business function — designed to plug into your workflow without friction.
           </p>
         </motion.div>
 
