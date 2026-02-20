@@ -29,6 +29,12 @@ import Automation from "./pages/portal/Automation";
 import Pipeline from "./pages/portal/Pipeline";
 import Reports from "./pages/portal/Reports";
 import Finance from "./pages/portal/Finance";
+import StudiosHub from "./pages/portal/StudiosHub";
+import OperationsStudio from "./pages/portal/studios/OperationsStudio";
+import AutomationStudio from "./pages/portal/studios/AutomationStudio";
+import LeadEngineStudio from "./pages/portal/studios/LeadEngineStudio";
+import SocialsStudio from "./pages/portal/studios/SocialsStudio";
+import ExperiencesStudio from "./pages/portal/studios/ExperiencesStudio";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminClients from "./pages/admin/AdminClients";
 import AdminWorkManager from "./pages/admin/AdminWorkManager";
@@ -63,7 +69,12 @@ const App = () => (
 
             {/* Client Portal (authenticated) */}
             <Route path="/portal" element={<ProtectedRoute><DashboardLayout portal="client"><PortalDashboard /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/portal/active-work" element={<ProtectedRoute><DashboardLayout portal="client"><ActiveWork /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/active-work" element={<ProtectedRoute><DashboardLayout portal="client"><StudiosHub /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/studios/operations" element={<ProtectedRoute><DashboardLayout portal="client"><OperationsStudio /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/studios/automation" element={<ProtectedRoute><DashboardLayout portal="client"><AutomationStudio /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/studios/lead-engine" element={<ProtectedRoute><DashboardLayout portal="client"><LeadEngineStudio /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/studios/socials" element={<ProtectedRoute><DashboardLayout portal="client"><SocialsStudio /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/studios/experiences" element={<ProtectedRoute><DashboardLayout portal="client"><ExperiencesStudio /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/requests" element={<ProtectedRoute><DashboardLayout portal="client"><Requests /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/documents" element={<ProtectedRoute><DashboardLayout portal="client"><Documents /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/updates" element={<ProtectedRoute><DashboardLayout portal="client"><Updates /></DashboardLayout></ProtectedRoute>} />
