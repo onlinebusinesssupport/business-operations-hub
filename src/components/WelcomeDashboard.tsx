@@ -1,11 +1,24 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, FileText, MessageSquarePlus, User, ArrowRight, Compass } from "lucide-react";
+import { CheckCircle2, FileText, MessageSquarePlus, User, ArrowRight, Compass, Settings, Zap, Target, Globe, Sparkles, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import OnboardingTour from "./OnboardingTour";
+
+const studioCards = [
+  { name: "Operations", icon: Settings, status: "active" as const },
+  { name: "Automation", icon: Zap, status: "building" as const },
+  { name: "Lead Engine", icon: Target, status: "locked" as const },
+  { name: "Digital Presence", icon: Globe, status: "locked" as const },
+  { name: "Experiences", icon: Sparkles, status: "locked" as const },
+];
+
+const statusBadge = {
+  active: { label: "Active", className: "bg-primary/10 text-primary" },
+  building: { label: "Building", className: "bg-yellow-500/10 text-yellow-600" },
+  locked: { label: "Locked", className: "bg-muted text-muted-foreground" },
+};
 
 const quickStartItems = [
   {
@@ -13,21 +26,21 @@ const quickStartItems = [
     title: "Complete your profile",
     description: "Add your details so your team knows who to reach.",
     href: "/portal/account",
-    cta: "Go to Account",
+    cta: "Go to Settings",
   },
   {
     icon: MessageSquarePlus,
     title: "Submit your first request",
-    description: "Tell us what you need. We will get to work.",
+    description: "Tell us what you need. We'll get to work.",
     href: "/portal/requests",
     cta: "Create Request",
   },
   {
     icon: FileText,
-    title: "Explore your documents",
+    title: "Explore your files",
     description: "Access shared files and templates in one place.",
     href: "/portal/documents",
-    cta: "View Documents",
+    cta: "View Files",
   },
 ];
 
@@ -38,20 +51,9 @@ interface WelcomeDashboardProps {
 
 const WelcomeDashboard = ({ onDismiss, userName }: WelcomeDashboardProps) => {
   const { user } = useAuth();
-  const [showTour, setShowTour] = useState(false);
+  const [phase, setPhase] = useState<"welcome" | "studios" | "quickstart">("welcome");
 
-  const handleDismiss = async () => {
-    if (user) {
-      await supabase
-        .from("profiles")
-        .update({ onboarding_completed: true })
-        .eq("user_id", user.id);
-    }
-    onDismiss();
-  };
-
-  const handleTourComplete = async () => {
-    setShowTour(false);
+  const handleFinish = async () => {
     if (user) {
       await supabase
         .from("profiles")
@@ -62,91 +64,100 @@ const WelcomeDashboard = ({ onDismiss, userName }: WelcomeDashboardProps) => {
   };
 
   return (
-    <>
-      {showTour && <OnboardingTour onComplete={handleTourComplete} />}
-
-      <div className="space-y-8">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-2">
-            Welcome
+    <div className="space-y-8">
+      {phase === "welcome" && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex flex-col items-center text-center py-12">
+          <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-6">Welcome</p>
+          <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground uppercase tracking-tight">
+            Welcome to STUDIO.OS
+          </h1>
+          <p className="mt-4 text-sm text-muted-foreground max-w-md leading-relaxed">
+            {userName ? `${userName}, your` : "Your"} growth infrastructure starts here. Let's get you oriented.
           </p>
-          <h2 className="font-serif text-2xl md:text-3xl text-foreground">
-            {userName ? `Welcome, ${userName}.` : "Welcome to Support Studio."}
-          </h2>
-          <p className="mt-2 text-muted-foreground text-sm max-w-lg">
-            Your account is ready. Take a quick tour to learn how your portal works, or jump straight in.
-          </p>
-          <div className="mt-5 flex items-center gap-3">
-            <Button onClick={() => setShowTour(true)} className="text-sm tracking-wide gap-2">
-              <Compass size={14} /> Take the Tour
-            </Button>
-            <Button variant="outline" onClick={handleDismiss} className="text-sm tracking-wide">
-              Skip to Dashboard
-            </Button>
-          </div>
+          <Button onClick={() => setPhase("studios")} className="mt-8 text-sm tracking-wide gap-2">
+            Enter Your Workspace <ArrowRight size={14} />
+          </Button>
         </motion.div>
+      )}
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-        >
-          <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-4">
-            Quick Start
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {phase === "studios" && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+          <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-2">Your Studios</p>
+          <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Studio Activation Preview</h2>
+          <p className="mt-2 text-sm text-muted-foreground mb-8">These are the engines that power your growth. Some are ready, others are being built for you.</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
+            {studioCards.map((studio, i) => {
+              const badge = statusBadge[studio.status];
+              return (
+                <motion.div
+                  key={studio.name}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06 }}
+                  className={`border border-border p-5 flex flex-col gap-3 ${studio.status === "locked" ? "opacity-60" : ""}`}
+                >
+                  <div className="flex items-center justify-between">
+                    {studio.status === "locked" ? (
+                      <Lock size={16} className="text-muted-foreground" strokeWidth={1.5} />
+                    ) : (
+                      <studio.icon size={16} className="text-muted-foreground" strokeWidth={1.5} />
+                    )}
+                    <span className={`text-[10px] uppercase tracking-[0.1em] font-medium px-2 py-0.5 ${badge.className}`}>
+                      {badge.label}
+                    </span>
+                  </div>
+                  <p className="font-display text-xs font-bold tracking-[0.1em] text-foreground uppercase">{studio.name}</p>
+                  {studio.status === "locked" && (
+                    <p className="text-[10px] text-muted-foreground">Unlock when activated</p>
+                  )}
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <Button onClick={() => setPhase("quickstart")} className="text-sm tracking-wide gap-2">
+            Continue <ArrowRight size={14} />
+          </Button>
+        </motion.div>
+      )}
+
+      {phase === "quickstart" && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+          <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-2">Get Started</p>
+          <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Quick Start</h2>
+          <p className="mt-2 text-sm text-muted-foreground mb-6">Three things to do first.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {quickStartItems.map((item, i) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.15 + i * 0.05 }}
-              >
+              <motion.div key={item.title} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }}>
                 <Link
                   to={item.href}
-                  className="block bg-card border border-border rounded-xl p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group h-full"
+                  className="block border border-border p-6 hover:border-primary/40 transition-all duration-200 group h-full"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center mb-4">
-                    <item.icon size={18} className="text-foreground" strokeWidth={1.5} />
-                  </div>
+                  <item.icon size={18} className="text-muted-foreground mb-4" strokeWidth={1.5} />
                   <h3 className="text-sm font-medium text-foreground mb-1">{item.title}</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed mb-4">{item.description}</p>
-                  <span className="text-xs text-foreground font-medium flex items-center gap-1 group-hover:gap-2 transition-all duration-200">
+                  <span className="text-xs text-primary font-medium flex items-center gap-1 group-hover:gap-2 transition-all duration-200">
                     {item.cta} <ArrowRight size={12} />
                   </span>
                 </Link>
               </motion.div>
             ))}
           </div>
-        </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.35 }}
-          className="bg-card border border-border rounded-xl p-6"
-        >
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
-              <CheckCircle2 size={18} className="text-foreground" strokeWidth={1.5} />
+          <div className="border border-border p-5 flex items-center justify-between gap-4">
+            <div>
+              <h3 className="text-sm font-medium text-foreground">You're all set.</h3>
+              <p className="text-xs text-muted-foreground mt-1">Dismiss this guide to see your full dashboard.</p>
             </div>
-            <div className="flex-1">
-              <h3 className="text-sm font-medium text-foreground">You are all set.</h3>
-              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                Once you are comfortable, dismiss this guide to see your full dashboard. You can always find help in your account settings.
-              </p>
-            </div>
-            <Button variant="outline" size="sm" onClick={handleDismiss} className="text-xs tracking-wide shrink-0">
+            <Button variant="outline" size="sm" onClick={handleFinish} className="text-xs tracking-wide shrink-0">
               Go to Dashboard
             </Button>
           </div>
         </motion.div>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 

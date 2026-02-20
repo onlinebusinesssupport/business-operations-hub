@@ -42,9 +42,10 @@ const clientNav = [
 
 const adminNav = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { label: "Applications", href: "/admin/applications", icon: Inbox },
   { label: "Clients", href: "/admin/clients", icon: Users },
   { label: "Work Manager", href: "/admin/work", icon: ListChecks },
-  { label: "Requests", href: "/admin/requests", icon: Inbox },
+  { label: "Requests", href: "/admin/requests", icon: MessageSquare },
   { label: "Documents", href: "/admin/documents", icon: FileText },
   { label: "Templates", href: "/admin/templates", icon: LayoutTemplate },
   { label: "Reports", href: "/admin/reports", icon: BarChart3 },

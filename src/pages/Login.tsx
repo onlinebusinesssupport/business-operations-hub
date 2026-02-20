@@ -171,8 +171,8 @@ const Login = () => {
           {portalType === "client" && (
             <p className="text-xs text-muted-foreground">
               No account?{" "}
-              <Link to="/signup" className="text-foreground hover:underline">
-                Sign up
+              <Link to="/apply" className="text-foreground hover:underline">
+                Apply for access
               </Link>
             </p>
           )}

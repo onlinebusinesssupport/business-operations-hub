@@ -16,6 +16,8 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Apply from "./pages/Apply";
+import AdminApplications from "./pages/admin/AdminApplications";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
@@ -64,6 +66,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/apply" element={<Apply />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
 
@@ -92,6 +95,7 @@ const App = () => (
             <Route path="/admin/documents" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminDocuments /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/templates" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminTemplates /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/reports" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminReports /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/applications" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminApplications /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminSettings /></DashboardLayout></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />

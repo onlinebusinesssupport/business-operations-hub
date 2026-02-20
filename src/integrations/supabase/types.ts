@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      applications: {
+        Row: {
+          admin_notes: string | null
+          areas_of_support: string[] | null
+          business_name: string
+          country: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          industry: string | null
+          intent: string | null
+          pain_points: string | null
+          primary_channel: string | null
+          revenue_range: string | null
+          status: string
+          team_size: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          areas_of_support?: string[] | null
+          business_name: string
+          country?: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          industry?: string | null
+          intent?: string | null
+          pain_points?: string | null
+          primary_channel?: string | null
+          revenue_range?: string | null
+          status?: string
+          team_size?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          areas_of_support?: string[] | null
+          business_name?: string
+          country?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          industry?: string | null
+          intent?: string | null
+          pain_points?: string | null
+          primary_channel?: string | null
+          revenue_range?: string | null
+          status?: string
+          team_size?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           contact_profile_id: string | null
