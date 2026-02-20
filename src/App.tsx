@@ -21,6 +21,7 @@ import AdminApplications from "./pages/admin/AdminApplications";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import Pricing from "./pages/Pricing";
 import PortalDashboard from "./pages/portal/PortalDashboard";
 import ActiveWork from "./pages/portal/ActiveWork";
 import Requests from "./pages/portal/Requests";
@@ -60,6 +61,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/studios" element={<Studios />} />
             <Route path="/services" element={<Studios />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="/how-it-works" element={<HowWeWork />} />
             <Route path="/clients" element={<Clients />} />
             <Route path="/insights" element={<Insights />} />

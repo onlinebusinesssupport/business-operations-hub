@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Settings, Zap, Target, Globe, Sparkles } from "lucide-react";
+import { Settings, Zap, Target, Globe, Sparkles, Compass } from "lucide-react";
 
 const modules = [
   { icon: Settings, name: "OPERATIONS", description: "The backbone of your business." },
@@ -7,6 +7,7 @@ const modules = [
   { icon: Target, name: "LEAD ENGINE", description: "Predictable demand, engineered." },
   { icon: Globe, name: "DIGITAL PRESENCE", description: "Reputation, managed with precision." },
   { icon: Sparkles, name: "EXPERIENCE", description: "Moments that move people." },
+  { icon: Compass, name: "STRATEGY", description: "Clarity before commitment." },
 ];
 
 const SolutionOverview = () => {
@@ -31,7 +32,7 @@ const SolutionOverview = () => {
           </p>
         </motion.div>
 
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           {modules.map((mod, i) => (
             <motion.div
               key={mod.name}
