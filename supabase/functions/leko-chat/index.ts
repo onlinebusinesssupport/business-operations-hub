@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -49,6 +50,9 @@ Rules:
 - Keep responses under 150 words unless the user asks for detail.
 - Format responses with markdown for clarity when listing steps.`;
 
+const MAX_MESSAGES_UNAUTH = 5;
+const MAX_MESSAGE_LENGTH = 500;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -56,6 +60,63 @@ serve(async (req) => {
 
   try {
     const { messages } = await req.json();
+
+    // Input validation
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "Invalid request: messages array required." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate message structure and length
+    for (const msg of messages) {
+      if (!msg || typeof msg.content !== "string" || !["user", "assistant"].includes(msg.role)) {
+        return new Response(
+          JSON.stringify({ error: "Invalid message format." }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (msg.content.length > MAX_MESSAGE_LENGTH) {
+        return new Response(
+          JSON.stringify({ error: `Messages must be under ${MAX_MESSAGE_LENGTH} characters.` }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // Check authentication
+    let isAuthenticated = false;
+    const authHeader = req.headers.get("authorization");
+
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.replace("Bearer ", "");
+      // Skip validation for the anon key itself (unauthenticated callers)
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+      if (token !== anonKey) {
+        const supabaseClient = createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_ANON_KEY")!,
+          { global: { headers: { Authorization: authHeader } } }
+        );
+        const { data, error } = await supabaseClient.auth.getUser();
+        if (!error && data?.user) {
+          isAuthenticated = true;
+        }
+      }
+    }
+
+    // Enforce stricter limits for unauthenticated users
+    if (!isAuthenticated) {
+      const userMessages = messages.filter((m: { role: string }) => m.role === "user");
+      if (userMessages.length > MAX_MESSAGES_UNAUTH) {
+        return new Response(
+          JSON.stringify({ error: "Please sign in to continue the conversation." }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -105,7 +166,7 @@ serve(async (req) => {
   } catch (e) {
     console.error("leko-chat error:", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
+      JSON.stringify({ error: "Something went wrong. Please try again." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
