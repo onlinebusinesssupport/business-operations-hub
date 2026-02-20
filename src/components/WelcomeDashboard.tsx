@@ -69,10 +69,10 @@ const WelcomeDashboard = ({ onDismiss, userName }: WelcomeDashboardProps) => {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex flex-col items-center text-center py-12">
           <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-6">Welcome</p>
           <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground uppercase tracking-tight">
-            Welcome to STUDIO.OS
+            Welcome to SUPPORT STUDIO™
           </h1>
           <p className="mt-4 text-sm text-muted-foreground max-w-md leading-relaxed">
-            {userName ? `${userName}, your` : "Your"} growth infrastructure starts here. Let's get you oriented.
+            {userName ? `${userName}, your` : "Your"} support environment is ready. Let's build momentum.
           </p>
           <Button onClick={() => setPhase("studios")} className="mt-8 text-sm tracking-wide gap-2">
             Enter Your Workspace <ArrowRight size={14} />
@@ -84,7 +84,7 @@ const WelcomeDashboard = ({ onDismiss, userName }: WelcomeDashboardProps) => {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
           <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-2">Your Studios</p>
           <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Studio Activation Preview</h2>
-          <p className="mt-2 text-sm text-muted-foreground mb-8">These are the engines that power your growth. Some are ready, others are being built for you.</p>
+          <p className="mt-2 text-sm text-muted-foreground mb-8">These are the engines powering your support. Some are ready, others are being built for you.</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
             {studioCards.map((studio, i) => {
@@ -148,8 +148,8 @@ const WelcomeDashboard = ({ onDismiss, userName }: WelcomeDashboardProps) => {
 
           <div className="border border-border p-5 flex items-center justify-between gap-4">
             <div>
-              <h3 className="text-sm font-medium text-foreground">You're all set.</h3>
-              <p className="text-xs text-muted-foreground mt-1">Dismiss this guide to see your full dashboard.</p>
+              <h3 className="text-sm font-medium text-foreground">You're in the Studio.</h3>
+              <p className="text-xs text-muted-foreground mt-1">Dismiss this guide to see your full workspace.</p>
             </div>
             <Button variant="outline" size="sm" onClick={handleFinish} className="text-xs tracking-wide shrink-0">
               Go to Dashboard

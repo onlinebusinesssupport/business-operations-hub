@@ -55,7 +55,7 @@ const Login = () => {
         className="w-full max-w-sm"
       >
         <Link to="/" className="font-display text-sm font-bold tracking-[0.2em] text-foreground uppercase block mb-10">
-          STUDIO.OS
+          SUPPORT STUDIO™
         </Link>
 
         {/* Portal type selector */}
@@ -85,11 +85,11 @@ const Login = () => {
         </div>
 
         <h1 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">
-          {portalType === "client" ? "Client Environment" : "Admin Console"}
+          Enter SUPPORT STUDIO
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {portalType === "client"
-            ? "Access your studio infrastructure and operations."
+            ? "Access your Studio and step into structured support."
             : "Sign in to manage platform operations."}
         </p>
 

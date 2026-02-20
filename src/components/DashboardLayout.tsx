@@ -30,26 +30,26 @@ import PageTransition from "./PageTransition";
 const clientNav = [
   { label: "Dashboard", href: "/portal", icon: LayoutDashboard },
   { label: "Studios", href: "/portal/active-work", icon: Layers },
-  { label: "Messages", href: "/portal/updates", icon: MessageSquare },
-  { label: "Tasks", href: "/portal/requests", icon: ListChecks },
+  { label: "Conversations", href: "/portal/updates", icon: MessageSquare },
+  { label: "In Motion", href: "/portal/requests", icon: ListChecks },
   { label: "Automation", href: "/portal/automation", icon: Zap },
   { label: "Pipeline", href: "/portal/pipeline", icon: GitBranch },
-  { label: "Reports", href: "/portal/reports", icon: BarChart3 },
-  { label: "Finance", href: "/portal/finance", icon: DollarSign },
+  { label: "Insights", href: "/portal/reports", icon: BarChart3 },
+  { label: "Billing", href: "/portal/finance", icon: DollarSign },
   { label: "Files", href: "/portal/documents", icon: FolderOpen },
   { label: "Settings", href: "/portal/account", icon: Settings },
 ];
 
 const adminNav = [
-  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { label: "Studio Overview", href: "/admin", icon: LayoutDashboard },
   { label: "Applications", href: "/admin/applications", icon: Inbox },
-  { label: "Clients", href: "/admin/clients", icon: Users },
+  { label: "Partner Workspaces", href: "/admin/clients", icon: Users },
   { label: "Work Manager", href: "/admin/work", icon: ListChecks },
   { label: "Requests", href: "/admin/requests", icon: MessageSquare },
   { label: "Documents", href: "/admin/documents", icon: FileText },
   { label: "Templates", href: "/admin/templates", icon: LayoutTemplate },
-  { label: "Reports", href: "/admin/reports", icon: BarChart3 },
-  { label: "Settings", href: "/admin/settings", icon: Settings },
+  { label: "Revenue", href: "/admin/reports", icon: BarChart3 },
+  { label: "System Health", href: "/admin/settings", icon: Settings },
 ];
 
 type Portal = "client" | "admin";
@@ -127,7 +127,7 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
         <div className="h-14 flex items-center justify-between px-4 border-b border-white/10 shrink-0">
           {!collapsed && (
             <span className="font-display text-[11px] font-bold tracking-[0.2em] text-white/90 uppercase truncate">
-              STUDIO.OS
+              SUPPORT STUDIO™
             </span>
           )}
           <button
@@ -219,7 +219,7 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
               <Menu size={18} />
             </button>
             <span className="text-[11px] font-medium tracking-[0.15em] text-muted-foreground uppercase">
-              {isAdminPortal ? "Admin Console" : "Client Environment"}
+              {isAdminPortal ? "Studio Control" : "Partner Workspace"}
             </span>
           </div>
         </header>

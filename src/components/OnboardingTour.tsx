@@ -18,15 +18,15 @@ const tourSteps = [
     icon: LayoutDashboard,
     title: "Your Dashboard",
     description:
-      "This is your command centre. Get a real-time overview of active projects, pending tasks, and recent updates — all in one place.",
+      "This is your command centre. Get a real-time overview of what's in motion, pending, and recently completed.",
     selector: "[data-tour='dashboard']",
     position: "right" as const,
   },
   {
     icon: Briefcase,
-    title: "Projects",
+    title: "Studios",
     description:
-      "Track every active engagement. View progress, timelines, and deliverables for all ongoing work items assigned to your account.",
+      "Each Studio focuses on a core business function. Track progress, timelines, and deliverables across all active engagements.",
     selector: "[data-tour='projects']",
     position: "right" as const,
   },
@@ -34,31 +34,31 @@ const tourSteps = [
     icon: MessageSquarePlus,
     title: "Requests",
     description:
-      "Need something done? Submit a structured request here. Your team will pick it up, prioritise it, and keep you updated.",
+      "Need something done? Submit a structured request here. Your support partner will pick it up and keep you updated.",
     selector: "[data-tour='requests']",
     position: "right" as const,
   },
   {
     icon: FileText,
-    title: "Documents",
+    title: "Files",
     description:
-      "All shared files, templates, and deliverables live here. No more digging through email threads — everything is organised and accessible.",
+      "All shared files, templates, and deliverables live here. No more digging through email threads — everything is organised.",
     selector: "[data-tour='documents']",
     position: "right" as const,
   },
   {
     icon: Bell,
-    title: "Updates",
+    title: "Conversations",
     description:
-      "Stay informed. Your team posts progress notes, milestone completions, and important notifications here.",
+      "Stay informed. Your support partner posts progress notes, milestone completions, and important updates here.",
     selector: "[data-tour='updates']",
     position: "right" as const,
   },
   {
     icon: Settings,
-    title: "Account Settings",
+    title: "Settings",
     description:
-      "Manage your profile details, contact information, and notification preferences from your account page.",
+      "Manage your profile, preferences, and notification settings from your account page.",
     selector: "[data-tour='settings']",
     position: "right" as const,
   },
@@ -213,7 +213,7 @@ const OnboardingTour = ({ onComplete }: OnboardingTourProps) => {
 
             {isLast ? (
               <Button size="sm" onClick={onComplete} className="text-xs tracking-wide">
-                Get Started
+                Launch Workspace
               </Button>
             ) : (
               <Button

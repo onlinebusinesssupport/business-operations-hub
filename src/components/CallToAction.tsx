@@ -15,23 +15,23 @@ const CallToAction = () => {
           className="max-w-2xl"
         >
           <span className="text-[11px] uppercase tracking-[0.3em] text-primary-foreground/50 font-medium">
-            APPLICATION
+            GET STARTED
           </span>
           <h2 className="mt-6 font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight leading-[1.1]">
-            Apply for Studio Access
+            Operate better. Grow faster. Stay focused.
           </h2>
           <p className="mt-6 text-base leading-relaxed text-primary-foreground/70 max-w-lg">
-            We work with a limited number of businesses at any given time. 
-            If you're building something serious, apply to explore whether the studio model is the right infrastructure layer for your growth.
+            We work with a limited number of partners at any given time. 
+            If you're building something serious, apply to explore whether the Studio model is the right support layer for your growth.
           </p>
           <div className="mt-10">
-            <Link to="/contact">
+            <Link to="/apply">
               <Button
                 size="lg"
                 variant="outline"
                 className="text-sm tracking-[0.1em] uppercase px-8 gap-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
               >
-                Begin Application
+                Enter the Studio
                 <ArrowRight size={16} />
               </Button>
             </Link>

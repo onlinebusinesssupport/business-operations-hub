@@ -14,7 +14,7 @@ const Hero = () => {
             transition={{ duration: 0.5 }}
             className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground font-medium"
           >
-            GROWTH INFRASTRUCTURE
+            BUSINESS ENABLEMENT
           </motion.span>
 
           <motion.h1
@@ -23,7 +23,7 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
             className="mt-6 font-display text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight text-foreground uppercase"
           >
-            SUPPORT STUDIO™
+            Business support, reimagined.
           </motion.h1>
 
           <motion.p
@@ -32,7 +32,7 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
             className="mt-6 text-xl md:text-2xl font-display font-medium text-foreground/80"
           >
-            The Operating System for Growing Businesses.
+            The operating system behind modern founders.
           </motion.p>
 
           <motion.p
@@ -41,7 +41,7 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
             className="mt-4 text-base md:text-lg leading-relaxed text-muted-foreground max-w-xl"
           >
-            We build and run the systems serious founders rely on once growth gets real.
+            SUPPORT STUDIO combines operational support, digital brand management, and curated experiences into one intelligent platform.
           </motion.p>
 
           <motion.div
@@ -50,15 +50,15 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
             className="mt-12 flex flex-col sm:flex-row gap-4"
           >
-            <Link to="/contact">
+            <Link to="/apply">
               <Button size="lg" className="text-sm tracking-[0.1em] uppercase px-8 gap-2">
-                Apply for Infrastructure Access
+                Enter the Studio
                 <ArrowRight size={16} />
               </Button>
             </Link>
-            <Link to="/services">
+            <Link to="/studios">
               <Button variant="outline" size="lg" className="text-sm tracking-[0.1em] uppercase px-8">
-                Explore the Studio Model
+                Explore Studios
               </Button>
             </Link>
           </motion.div>

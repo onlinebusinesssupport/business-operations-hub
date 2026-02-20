@@ -34,11 +34,11 @@ const studios: Studio[] = [
   {
     id: "operations",
     name: "Operations",
-    tagline: "Where clarity replaces chaos.",
+    tagline: "The backbone of your business.",
     icon: Layers,
     label: "Foundational",
     hoverText:
-      "We build and manage the operational backbone of your business — workflows, systems, and structured execution.",
+      "Inbox, scheduling, admin workflows, and execution — handled with precision.",
     expanded: {
       poeticLine: "Structure is freedom.",
       description:
@@ -60,11 +60,11 @@ const studios: Studio[] = [
   {
     id: "automation",
     name: "Automation",
-    tagline: "Systems that run while you sleep.",
+    tagline: "Automate what slows you down.",
     icon: GitBranch,
     label: "Most Popular",
     hoverText:
-      "We design intelligent workflows that eliminate manual work and keep your business moving without friction.",
+      "Lead flows, CRM setup, and smart automations that scale with you.",
     expanded: {
       poeticLine: "Build once. Run forever.",
       description:
@@ -89,7 +89,7 @@ const studios: Studio[] = [
     tagline: "Predictable demand, engineered.",
     icon: Radio,
     hoverText:
-      "From capture to conversion, we build structured pipelines that turn attention into revenue.",
+      "From capture to conversion, structured pipelines that turn attention into revenue.",
     expanded: {
       poeticLine: "Attention is an asset. We compound it.",
       description:
@@ -111,10 +111,10 @@ const studios: Studio[] = [
   {
     id: "digital-presence",
     name: "Digital Presence",
-    tagline: "Reputation, managed with precision.",
+    tagline: "Your digital presence, actively managed.",
     icon: MessageCircle,
     hoverText:
-      "We monitor, manage, and refine how your brand shows up online — conversations, reviews, and perception.",
+      "Social media, reputation management, and online conversations handled daily.",
     expanded: {
       poeticLine: "Perception is reality. We shape it.",
       description:
@@ -136,10 +136,10 @@ const studios: Studio[] = [
   {
     id: "experience",
     name: "Experience",
-    tagline: "Moments that move people.",
+    tagline: "Corporate moments, elevated.",
     icon: Sparkles,
     hoverText:
-      "From team activations to curated events, we design experiences that deepen culture and connection.",
+      "Team experiences, curated gatherings, and memorable brand moments.",
     expanded: {
       poeticLine: "Culture is built in moments.",
       description:
@@ -178,7 +178,7 @@ const Studios = () => {
             transition={{ duration: 0.5, ease: easeOut }}
             className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-medium"
           >
-            MODULES
+            STUDIOS
           </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
@@ -186,7 +186,7 @@ const Studios = () => {
             transition={{ duration: 0.6, delay: 0.05, ease: easeOut }}
             className="mt-6 font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.05] text-foreground uppercase tracking-tight"
           >
-            Studios
+            Choose your Studio.
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
@@ -194,9 +194,7 @@ const Studios = () => {
             transition={{ duration: 0.6, delay: 0.1, ease: easeOut }}
             className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg"
           >
-            Each studio is a modular engine inside SUPPORT STUDIO™.
-            <br />
-            Activate what you need. Expand as you grow.
+            Every Studio is designed to remove friction, increase clarity, and create momentum.
           </motion.p>
           <motion.p
             initial={{ opacity: 0 }}
@@ -204,7 +202,7 @@ const Studios = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-4 text-xs text-muted-foreground/60 tracking-wide"
           >
-            Built for founders who want infrastructure, not noise.
+            Activate what you need. Expand as you grow.
           </motion.p>
         </div>
       </section>
