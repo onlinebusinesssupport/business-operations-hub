@@ -56,9 +56,9 @@ const Hero = () => {
                 <ArrowRight size={16} />
               </Button>
             </Link>
-            <Link to="/studios">
+            <Link to="/services">
               <Button variant="outline" size="lg" className="text-sm tracking-[0.1em] uppercase px-8">
-                Explore Studios
+                Explore Services
               </Button>
             </Link>
           </motion.div>

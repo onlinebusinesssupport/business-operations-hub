@@ -20,7 +20,7 @@ const Footer = () => {
             </span>
             <ul className="mt-4 space-y-2.5">
               {[
-                { label: "Studios", href: "/studios" },
+                { label: "Services", href: "/services" },
                 { label: "About", href: "/about" },
                 { label: "Insights", href: "/insights" },
               ].map((link) => (

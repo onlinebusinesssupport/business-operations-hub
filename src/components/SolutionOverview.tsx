@@ -22,13 +22,13 @@ const SolutionOverview = () => {
           className="max-w-2xl"
         >
           <span className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground font-medium">
-            THE STUDIO MODEL
+            WHAT WE OFFER
           </span>
           <h2 className="mt-6 font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-foreground">
-            Support, organised into Studios.
+            Support, organised into services.
           </h2>
           <p className="mt-4 text-base text-muted-foreground leading-relaxed max-w-lg">
-            Each Studio focuses on a core business function — designed to plug into your workflow without friction.
+            Each service focuses on a core business function — designed to plug into your workflow without friction.
           </p>
         </motion.div>
 

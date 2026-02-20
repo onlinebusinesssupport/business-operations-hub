@@ -60,8 +60,8 @@ const App = () => (
           <Routes>
             {/* Public */}
             <Route path="/" element={<Index />} />
-            <Route path="/studios" element={<Studios />} />
             <Route path="/services" element={<Studios />} />
+            <Route path="/studios" element={<Studios />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/how-it-works" element={<HowWeWork />} />
             <Route path="/clients" element={<Clients />} />
