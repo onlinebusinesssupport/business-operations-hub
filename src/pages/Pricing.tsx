@@ -32,7 +32,7 @@ const plans: Plan[] = [
     savings: "Save R3k/quarter",
     studios: "1 Studio",
     features: [
-      "Choose any single Studio",
+      "Choose any two Studios",
       "Dedicated operator assigned",
       "Weekly progress reports",
       "Client portal access",
