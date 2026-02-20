@@ -25,6 +25,10 @@ import Requests from "./pages/portal/Requests";
 import Documents from "./pages/portal/Documents";
 import Updates from "./pages/portal/Updates";
 import Account from "./pages/portal/Account";
+import Automation from "./pages/portal/Automation";
+import Pipeline from "./pages/portal/Pipeline";
+import Reports from "./pages/portal/Reports";
+import Finance from "./pages/portal/Finance";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminClients from "./pages/admin/AdminClients";
 import AdminWorkManager from "./pages/admin/AdminWorkManager";
@@ -64,6 +68,10 @@ const App = () => (
             <Route path="/portal/documents" element={<ProtectedRoute><DashboardLayout portal="client"><Documents /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/updates" element={<ProtectedRoute><DashboardLayout portal="client"><Updates /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/account" element={<ProtectedRoute><DashboardLayout portal="client"><Account /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/automation" element={<ProtectedRoute><DashboardLayout portal="client"><Automation /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/pipeline" element={<ProtectedRoute><DashboardLayout portal="client"><Pipeline /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/reports" element={<ProtectedRoute><DashboardLayout portal="client"><Reports /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/finance" element={<ProtectedRoute><DashboardLayout portal="client"><Finance /></DashboardLayout></ProtectedRoute>} />
 
             {/* Admin Back Office (admin only) */}
             <Route path="/admin" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminOverview /></DashboardLayout></ProtectedRoute>} />

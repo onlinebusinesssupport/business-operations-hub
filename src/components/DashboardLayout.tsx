@@ -3,16 +3,14 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   LayoutDashboard,
-  Briefcase,
-  MessageSquarePlus,
-  FileText,
-  Bell,
-  User,
-  Users,
+  Layers,
+  MessageSquare,
   ListChecks,
-  Inbox,
-  LayoutTemplate,
+  Zap,
+  GitBranch,
   BarChart3,
+  DollarSign,
+  FolderOpen,
   Settings,
   Menu,
   X,
@@ -20,21 +18,26 @@ import {
   ChevronLeft,
   Moon,
   Sun,
-  MessagesSquare,
+  Users,
+  Inbox,
+  FileText,
+  LayoutTemplate,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import PageTransition from "./PageTransition";
 
-
 /* ─── Nav configs ─── */
 const clientNav = [
-  { label: "Dashboard", href: "/portal", icon: LayoutDashboard, tour: "dashboard" },
-  { label: "Projects", href: "/portal/active-work", icon: Briefcase, tour: "projects" },
-  { label: "Requests", href: "/portal/requests", icon: MessageSquarePlus, tour: "requests" },
-  { label: "Documents", href: "/portal/documents", icon: FileText, tour: "documents" },
-  { label: "Updates", href: "/portal/updates", icon: Bell, tour: "updates" },
-  { label: "Messages", href: "/portal/messages", icon: MessagesSquare, tour: "messages" },
-  { label: "Settings", href: "/portal/account", icon: Settings, tour: "settings" },
+  { label: "Dashboard", href: "/portal", icon: LayoutDashboard },
+  { label: "Studios", href: "/portal/active-work", icon: Layers },
+  { label: "Messages", href: "/portal/updates", icon: MessageSquare },
+  { label: "Tasks", href: "/portal/requests", icon: ListChecks },
+  { label: "Automation", href: "/portal/automation", icon: Zap },
+  { label: "Pipeline", href: "/portal/pipeline", icon: GitBranch },
+  { label: "Reports", href: "/portal/reports", icon: BarChart3 },
+  { label: "Finance", href: "/portal/finance", icon: DollarSign },
+  { label: "Files", href: "/portal/documents", icon: FolderOpen },
+  { label: "Settings", href: "/portal/account", icon: Settings },
 ];
 
 const adminNav = [
@@ -65,7 +68,6 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
   const isAdminPortal = portal === "admin";
   const navItems = isAdminPortal ? adminNav : clientNav;
 
-  // Apply dark class to html when in admin portal
   useEffect(() => {
     const root = document.documentElement;
     if (isAdminPortal) {
@@ -99,7 +101,7 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
   };
 
   return (
-    <div className="min-h-screen flex bg-secondary">
+    <div className="min-h-screen flex w-full">
       {/* Mobile overlay */}
       <AnimatePresence>
         {mobileOpen && (
@@ -113,17 +115,18 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
+      {/* Sidebar — off-black */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 z-50 h-screen ${sidebarWidth} bg-background border-r border-divider flex flex-col transition-all duration-200 ease-out ${
+        className={`fixed lg:sticky top-0 left-0 z-50 h-screen ${sidebarWidth} flex flex-col transition-all duration-200 ease-out ${
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
+        style={{ backgroundColor: "#111111" }}
       >
         {/* Logo */}
-        <div className="h-14 flex items-center justify-between px-4 border-b border-divider shrink-0">
+        <div className="h-14 flex items-center justify-between px-4 border-b border-white/10 shrink-0">
           {!collapsed && (
-            <span className="font-sans text-[11px] font-semibold tracking-[0.15em] text-foreground uppercase truncate">
-              Support Studio
+            <span className="font-display text-[11px] font-bold tracking-[0.2em] text-white/90 uppercase truncate">
+              STUDIO.OS
             </span>
           )}
           <button
@@ -134,7 +137,7 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
                 setCollapsed(!collapsed);
               }
             }}
-            className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            className="text-white/40 hover:text-white/70 transition-colors shrink-0"
           >
             {mobileOpen ? (
               <X size={16} />
@@ -149,8 +152,8 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
 
         {/* Nav */}
         <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
-          <p className="px-3 pb-2 text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase truncate">
-            {collapsed ? "" : isAdminPortal ? "Operations" : "Portal"}
+          <p className="px-3 pb-2 text-[10px] font-medium tracking-[0.12em] text-white/30 uppercase truncate">
+            {collapsed ? "" : isAdminPortal ? "Operations" : "Platform"}
           </p>
           {navItems.map((item) => {
             const active = isActive(item.href);
@@ -159,12 +162,12 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
                 key={item.label}
                 to={item.href}
                 onClick={() => setMobileOpen(false)}
-                data-tour={"tour" in item ? (item as any).tour : undefined}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-all duration-150 ${
+                className={`flex items-center gap-3 px-3 py-2 text-[13px] transition-all duration-150 ${
                   active
-                    ? "bg-accent text-foreground font-medium"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    ? "text-white font-medium"
+                    : "text-white/40 hover:text-white/70"
                 }`}
+                style={active ? { backgroundColor: "#1E3D2F" } : undefined}
               >
                 <item.icon size={16} strokeWidth={1.5} className="shrink-0" />
                 {!collapsed && <span className="truncate">{item.label}</span>}
@@ -174,12 +177,11 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
         </nav>
 
         {/* Bottom section */}
-        <div className="border-t border-divider px-2 py-3 space-y-2 shrink-0">
-          {/* Portal toggle */}
+        <div className="border-t border-white/10 px-2 py-3 space-y-1 shrink-0">
           {isAdmin && (
             <button
               onClick={handleTogglePortal}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all duration-150"
+              className="w-full flex items-center gap-3 px-3 py-2 text-[13px] text-white/40 hover:text-white/70 transition-all duration-150"
             >
               {isAdminPortal ? (
                 <Sun size={16} strokeWidth={1.5} className="shrink-0" />
@@ -194,19 +196,9 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
             </button>
           )}
 
-          {/* Theme indicator */}
-          {!collapsed && (
-            <div className="px-3 py-1">
-              <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground">
-                {isAdminPortal ? "Dark Mode" : "Light Mode"}
-              </span>
-            </div>
-          )}
-
-          {/* Sign out */}
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all duration-150"
+            className="w-full flex items-center gap-3 px-3 py-2 text-[13px] text-white/40 hover:text-white/70 transition-all duration-150"
           >
             <LogOut size={16} strokeWidth={1.5} className="shrink-0" />
             {!collapsed && <span>Sign Out</span>}
@@ -214,23 +206,20 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
         </div>
       </aside>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-screen min-w-0">
+      {/* Main content — off-white */}
+      <div className="flex-1 flex flex-col min-h-screen min-w-0 bg-background">
         {/* Top bar */}
-        <header className="h-14 bg-background border-b border-divider flex items-center px-6 sticky top-0 z-30 shrink-0">
-          <button
-            className="lg:hidden mr-4 text-foreground"
-            onClick={() => setMobileOpen(true)}
-          >
-            <Menu size={18} />
-          </button>
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
-              {isAdminPortal ? "Admin" : "Client Portal"}
+        <header className="h-14 bg-background border-b border-divider flex items-center justify-between px-6 sticky top-0 z-30 shrink-0">
+          <div className="flex items-center gap-4">
+            <button
+              className="lg:hidden text-foreground"
+              onClick={() => setMobileOpen(true)}
+            >
+              <Menu size={18} />
+            </button>
+            <span className="text-[11px] font-medium tracking-[0.15em] text-muted-foreground uppercase">
+              {isAdminPortal ? "Admin Console" : "Client Environment"}
             </span>
-            {isAdminPortal && (
-              <span className="w-1.5 h-1.5 rounded-full bg-foreground/40" />
-            )}
           </div>
         </header>
 
