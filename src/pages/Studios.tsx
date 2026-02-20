@@ -7,6 +7,7 @@ import {
   Radio,
   MessageCircle,
   Sparkles,
+  Compass,
   ArrowRight,
   X,
   Check,
@@ -158,6 +159,32 @@ const studios: Studio[] = [
       ],
     },
   },
+  {
+    id: "strategy",
+    name: "Strategy & Advisory",
+    tagline: "Clarity before commitment.",
+    icon: Compass,
+    label: "New",
+    hoverText:
+      "Business model review, growth planning, and strategic advisory for founders at inflection points.",
+    expanded: {
+      poeticLine: "Direction determines speed.",
+      description:
+        "The Strategy & Advisory Studio provides structured thinking for founders navigating pivotal decisions. From market entry to operational scaling, we help you move with conviction.",
+      includes: [
+        "Business model analysis and refinement",
+        "Growth roadmap and milestone planning",
+        "Market positioning and competitive strategy",
+        "Investor readiness and pitch support",
+        "Quarterly strategic review sessions",
+      ],
+      idealFor: [
+        "Founders approaching a growth inflection point",
+        "Businesses entering new markets or verticals",
+        "Teams preparing for fundraising or partnership",
+      ],
+    },
+  },
 ];
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -293,7 +320,7 @@ const Studios = () => {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="mt-12 flex flex-wrap items-center justify-center gap-2 md:gap-3"
           >
-            {["Operations", "Automation", "Lead Engine", "Presence", "Experience"].map(
+            {["Operations", "Automation", "Lead Engine", "Presence", "Experience", "Strategy"].map(
               (name, i, arr) => (
                 <span key={name} className="flex items-center gap-2 md:gap-3">
                   <span className="text-xs md:text-sm font-display font-medium text-foreground uppercase tracking-wide">

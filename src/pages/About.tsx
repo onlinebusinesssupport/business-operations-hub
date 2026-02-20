@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import portrait from "@/assets/portrait.png";
 
 const values = [
   {
@@ -63,10 +64,23 @@ const About = () => {
         <div className="container mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
             <div className="md:col-span-5">
-              <motion.div {...fadeUp}>
+              <motion.div {...fadeUp} className="space-y-8">
                 <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium">
                   OUR STORY
                 </span>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.7, delay: 0.15 }}
+                  className="mt-6"
+                >
+                  <img
+                    src={portrait}
+                    alt="Founder portrait"
+                    className="w-full max-w-[320px] aspect-[3/4] object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                  />
+                </motion.div>
               </motion.div>
             </div>
             <div className="md:col-span-7">
