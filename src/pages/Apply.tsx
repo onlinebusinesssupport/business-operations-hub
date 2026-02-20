@@ -164,23 +164,23 @@ const Apply = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="text-xs text-muted-foreground block mb-1.5">Full name *</label>
-                    <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className={inputClass} placeholder="Your full name" />
+                    <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={150} className={inputClass} placeholder="Your full name" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground block mb-1.5">Business name *</label>
-                    <input type="text" value={businessName} onChange={(e) => setBusinessName(e.target.value)} className={inputClass} placeholder="Your company" />
+                    <input type="text" value={businessName} onChange={(e) => setBusinessName(e.target.value)} maxLength={200} className={inputClass} placeholder="Your company" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground block mb-1.5">Email *</label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} placeholder="you@company.com" />
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={255} className={inputClass} placeholder="you@company.com" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground block mb-1.5">Country *</label>
-                    <input type="text" value={country} onChange={(e) => setCountry(e.target.value)} className={inputClass} placeholder="e.g. South Africa" />
+                    <input type="text" value={country} onChange={(e) => setCountry(e.target.value)} maxLength={100} className={inputClass} placeholder="e.g. South Africa" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground block mb-1.5">Website <span className="text-muted-foreground/50">(optional)</span></label>
-                    <input type="url" value={website} onChange={(e) => setWebsite(e.target.value)} className={inputClass} placeholder="https://..." />
+                    <input type="url" value={website} onChange={(e) => setWebsite(e.target.value)} maxLength={500} className={inputClass} placeholder="https://..." />
                   </div>
                 </div>
                 <div className="mt-8 flex justify-end">
@@ -239,6 +239,7 @@ const Apply = () => {
                       value={painPoints}
                       onChange={(e) => setPainPoints(e.target.value)}
                       rows={4}
+                      maxLength={2000}
                       className={inputClass + " resize-none"}
                       placeholder="Tell us about the bottlenecks, inefficiencies, or gaps..."
                     />
@@ -280,6 +281,7 @@ const Apply = () => {
                       value={intent}
                       onChange={(e) => setIntent(e.target.value)}
                       rows={5}
+                      maxLength={2000}
                       className={inputClass + " resize-none"}
                       placeholder="What outcome are you looking for?"
                     />
