@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,34 @@ const Login = () => {
   const [portalType, setPortalType] = useState<"client" | "admin">("client");
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Post-OAuth redirect handler: detect existing session and route accordingly
+  useEffect(() => {
+    const checkExistingSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+
+      // Check MFA
+      const { data: factors } = await supabase.auth.mfa.listFactors();
+      const hasTotp = factors?.totp?.some((f) => f.status === "verified");
+      if (hasTotp) {
+        navigate("/mfa-verify");
+        return;
+      }
+
+      // Check role and navigate
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      navigate(roleData ? "/admin" : "/portal");
+    };
+
+    checkExistingSession();
+  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,7 +173,7 @@ const Login = () => {
           size="lg"
           onClick={async () => {
             const { error } = await lovable.auth.signInWithOAuth("google", {
-              redirect_uri: window.location.origin,
+              redirect_uri: window.location.origin + "/login",
             });
             if (error) {
               toast({ title: "Google sign-in failed", description: String(error), variant: "destructive" });
@@ -163,7 +191,7 @@ const Login = () => {
           size="lg"
           onClick={async () => {
             const { error } = await lovable.auth.signInWithOAuth("apple", {
-              redirect_uri: window.location.origin,
+              redirect_uri: window.location.origin + "/login",
             });
             if (error) {
               toast({ title: "Apple sign-in failed", description: String(error), variant: "destructive" });
