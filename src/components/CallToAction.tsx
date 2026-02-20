@@ -1,40 +1,38 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 const CallToAction = () => {
   return (
-    <section className="py-24 bg-foreground text-background">
+    <section className="py-28 bg-primary text-primary-foreground">
       <div className="container mx-auto px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
-          className="max-w-xl"
+          className="max-w-2xl"
         >
-          <h2 className="font-serif text-2xl md:text-3xl font-bold leading-snug">
-            Ready to reclaim your time?
+          <span className="text-[11px] uppercase tracking-[0.3em] text-primary-foreground/50 font-medium">
+            APPLICATION
+          </span>
+          <h2 className="mt-6 font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight leading-[1.1]">
+            Apply for Studio Access
           </h2>
-          <p className="mt-4 text-sm md:text-base leading-relaxed opacity-70">
-            Let's discuss your operational challenges. Book a free discovery call — 30 minutes, no obligation.
+          <p className="mt-6 text-base leading-relaxed text-primary-foreground/70 max-w-lg">
+            We work with a limited number of businesses at any given time. 
+            If you're building something serious, apply to explore whether the studio model is the right infrastructure layer for your growth.
           </p>
-          <div className="mt-8 flex gap-4">
+          <div className="mt-10">
             <Link to="/contact">
               <Button
                 size="lg"
-                className="text-sm tracking-wide px-8"
-              >
-                Book a Free Discovery Call
-              </Button>
-            </Link>
-            <Link to="/contact">
-              <Button
                 variant="outline"
-                size="lg"
-                className="text-sm tracking-wide border-background/30 text-background hover:bg-background/10 hover:text-background"
+                className="text-sm tracking-[0.1em] uppercase px-8 gap-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
               >
-                Schedule a consultation
+                Begin Application
+                <ArrowRight size={16} />
               </Button>
             </Link>
           </div>

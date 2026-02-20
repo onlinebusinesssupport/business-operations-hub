@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Inter", "sans-serif"],
-        serif: ["Merriweather", "serif"],
+        display: ["Space Grotesk", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -64,10 +64,10 @@ export default {
         "surface-elevated": "hsl(var(--surface-elevated))",
         "text-subtle": "hsl(var(--text-subtle))",
         divider: "hsl(var(--divider))",
-        terracotta: {
-          DEFAULT: "hsl(var(--terracotta))",
-          foreground: "hsl(var(--terracotta-foreground))",
-          light: "hsl(var(--terracotta-light))",
+        forest: {
+          DEFAULT: "hsl(var(--forest))",
+          foreground: "hsl(var(--forest-foreground))",
+          light: "hsl(var(--forest-light))",
         },
       },
       borderRadius: {
