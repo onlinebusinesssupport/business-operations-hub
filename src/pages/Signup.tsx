@@ -104,7 +104,7 @@ const Signup = () => {
           <div className="mx-auto w-12 h-12 rounded-full bg-foreground/5 flex items-center justify-center mb-6">
             <CheckCircle2 size={24} className="text-foreground" strokeWidth={1.5} />
           </div>
-          <h1 className="font-serif text-2xl font-medium text-foreground">Check your email</h1>
+          <h1 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Verify your email</h1>
           <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
             We sent a verification link to <strong className="text-foreground">{email}</strong>.
             Click the link to activate your account and access your portal.
@@ -130,8 +130,8 @@ const Signup = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <Link to="/" className="font-sans text-sm font-semibold tracking-[0.15em] text-foreground uppercase block mb-10">
-          SUPPORT STUDIO
+        <Link to="/" className="font-display text-sm font-bold tracking-[0.2em] text-foreground uppercase block mb-10">
+          STUDIO.OS
         </Link>
 
         {/* Step indicator */}
@@ -173,7 +173,7 @@ const Signup = () => {
                 exit="exit"
                 transition={{ duration: 0.25 }}
               >
-                <h1 className="font-serif text-2xl font-medium text-foreground">Personal details</h1>
+                <h1 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Personal details</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Tell us who you are so we can set up your account.
                 </p>
@@ -215,7 +215,7 @@ const Signup = () => {
                 exit="exit"
                 transition={{ duration: 0.25 }}
               >
-                <h1 className="font-serif text-2xl font-medium text-foreground">Business information</h1>
+                <h1 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Business information</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Help us understand your business so we can tailor your experience.
                 </p>
@@ -266,7 +266,7 @@ const Signup = () => {
                 exit="exit"
                 transition={{ duration: 0.25 }}
               >
-                <h1 className="font-serif text-2xl font-medium text-foreground">Confirm your details</h1>
+                <h1 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Confirm your details</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Review your information before creating your account.
                 </p>
