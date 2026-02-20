@@ -47,6 +47,7 @@ import AdminDocuments from "./pages/admin/AdminDocuments";
 import AdminTemplates from "./pages/admin/AdminTemplates";
 import AdminReports from "./pages/admin/AdminReports";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminRevenue from "./pages/admin/AdminRevenue";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,7 @@ const App = () => (
             <Route path="/admin/documents" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminDocuments /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/templates" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminTemplates /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/reports" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminReports /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/revenue" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminRevenue /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/applications" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminApplications /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminSettings /></DashboardLayout></ProtectedRoute>} />
 

@@ -48,7 +48,8 @@ const adminNav = [
   { label: "Requests", href: "/admin/requests", icon: MessageSquare },
   { label: "Documents", href: "/admin/documents", icon: FileText },
   { label: "Templates", href: "/admin/templates", icon: LayoutTemplate },
-  { label: "Revenue", href: "/admin/reports", icon: BarChart3 },
+  { label: "Reports", href: "/admin/reports", icon: BarChart3 },
+  { label: "Revenue", href: "/admin/revenue", icon: DollarSign },
   { label: "System Health", href: "/admin/settings", icon: Settings },
 ];
 
