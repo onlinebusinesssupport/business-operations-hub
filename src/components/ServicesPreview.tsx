@@ -1,65 +1,40 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import {
-  Mail,
-  TrendingUp,
-  Settings,
-  Receipt,
-  PenTool,
-  Search,
-  PackageOpen,
-} from "lucide-react";
+import { MessageCircle, Radio, GitBranch, Layers, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const services = [
   {
-    icon: Mail,
-    title: "Executive Admin Support",
-    description:
-      "Inbox management, calendar scheduling, travel coordination, and document formatting — the backbone of day-to-day operations.",
-    pricing: "From R4k/month",
+    icon: MessageCircle,
+    title: "Digital Presence",
+    label: "Social Media Management",
+    description: "Your digital presence, actively managed.",
+    pricing: "From R2,500/month",
+    href: "/services/digital-presence",
   },
   {
-    icon: TrendingUp,
-    title: "Sales Operations",
-    description:
-      "CRM configuration, lead pipeline management, outreach scheduling, and proposal follow-ups. Structured support that moves you from admin to revenue.",
-    pricing: "From R8k/month",
+    icon: Radio,
+    title: "Lead Engine",
+    label: "Lead Generation",
+    description: "Predictable demand, engineered.",
+    pricing: "From R7,500/month",
+    href: "/services/lead-engine",
   },
   {
-    icon: Settings,
-    title: "Operational Infrastructure",
-    description:
-      "SOP development, workflow automation, workspace builds, dashboards, and task system configuration for businesses ready to scale.",
-    pricing: "From R8k/month",
+    icon: GitBranch,
+    title: "Automation",
+    label: "Business Automation",
+    description: "Automate what slows you down.",
+    pricing: "From R6,500 once-off",
+    href: "/services/automation",
   },
   {
-    icon: Receipt,
-    title: "Finance Administration",
-    description:
-      "Invoice management, expense tracking, payment reminders, bookkeeping preparation, and monthly reporting summaries.",
-    pricing: "From R5k/month",
-  },
-  {
-    icon: PenTool,
-    title: "Content & Digital Presence",
-    description:
-      "Social media scheduling, content repurposing, blog management, newsletter formatting, and branded collateral for professional visibility.",
-    pricing: "From R4k/month",
-  },
-  {
-    icon: Search,
-    title: "Research & Intelligence",
-    description:
-      "Market research, competitor analysis, lead sourcing, grant and funding research, and supplier identification.",
-    pricing: "From R5k/month",
-  },
-  {
-    icon: PackageOpen,
-    title: "Systems Enablement",
-    description:
-      "End-to-end business setup: email, workspace, file architecture, task systems, and CRM — configured and operational.",
-    pricing: "From R5k/project",
+    icon: Layers,
+    title: "Operations",
+    label: "Executive Virtual Support",
+    description: "The backbone of your business.",
+    pricing: "From R6,000/month",
+    href: "/services/operations",
   },
 ];
 
@@ -77,15 +52,14 @@ const ServicesPreview = () => {
             SERVICES
           </span>
           <h2 className="mt-4 font-serif text-2xl md:text-3xl font-medium text-foreground">
-            Structured support across the functions that matter most
+            Activate what you need. Expand as you grow.
           </h2>
           <p className="mt-3 text-muted-foreground text-base max-w-lg">
-            Practical, outcome-focused operational support — designed for founders
-            and growing businesses.
+            Four commercial pillars built for growth — with clear pricing and measurable outcomes.
           </p>
         </motion.div>
 
-        <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-divider">
+        <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-divider">
           {services.map((service, i) => (
             <motion.div
               key={service.title}
@@ -93,18 +67,28 @@ const ServicesPreview = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="bg-secondary p-8 md:p-10 flex flex-col"
             >
-              <service.icon size={22} className="text-foreground mb-5" strokeWidth={1.5} />
-              <h3 className="font-serif text-xl font-medium text-foreground">
-                {service.title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground flex-1">
-                {service.description}
-              </p>
-              <p className="mt-4 text-xs font-medium tracking-wide text-foreground/70">
-                {service.pricing}
-              </p>
+              <Link
+                to={service.href}
+                className="group bg-secondary p-8 md:p-10 flex flex-col h-full hover:bg-background transition-colors duration-200"
+              >
+                <service.icon size={22} className="text-foreground group-hover:text-primary transition-colors mb-5" strokeWidth={1.5} />
+                <h3 className="font-serif text-xl font-medium text-foreground">
+                  {service.title}
+                </h3>
+                <p className="mt-1 text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 font-medium">
+                  {service.label}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground flex-1 italic">
+                  {service.description}
+                </p>
+                <p className="mt-4 text-xs font-medium tracking-wide text-foreground/70">
+                  {service.pricing}
+                </p>
+                <span className="mt-3 flex items-center gap-1.5 text-[11px] text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  View packages <ArrowRight size={12} />
+                </span>
+              </Link>
             </motion.div>
           ))}
         </div>
@@ -118,7 +102,7 @@ const ServicesPreview = () => {
         >
           <Link to="/services">
             <Button variant="outline" size="lg" className="text-sm tracking-wide">
-              View Full Service Catalogue
+              View All Services
             </Button>
           </Link>
         </motion.div>

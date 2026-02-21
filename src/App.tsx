@@ -49,6 +49,12 @@ import AdminReports from "./pages/admin/AdminReports";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminRevenue from "./pages/admin/AdminRevenue";
 
+// Service detail pages
+import DigitalPresence from "./pages/services/DigitalPresence";
+import LeadEngine from "./pages/services/LeadEngine";
+import AutomationService from "./pages/services/AutomationService";
+import OperationsService from "./pages/services/Operations";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -63,6 +69,11 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/services" element={<Studios />} />
             <Route path="/studios" element={<Studios />} />
+            <Route path="/services/digital-presence" element={<DigitalPresence />} />
+            <Route path="/services/lead-engine" element={<LeadEngine />} />
+            <Route path="/services/automation" element={<AutomationService />} />
+            <Route path="/services/operations" element={<OperationsService />} />
+            <Route path="/results" element={<Pricing />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/how-it-works" element={<HowWeWork />} />
             <Route path="/clients" element={<Clients />} />
