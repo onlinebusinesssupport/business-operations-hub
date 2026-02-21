@@ -6,6 +6,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -58,11 +61,13 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Get the application ID from request body
-    const { application_id } = await req.json();
-    if (!application_id) {
+    // Get and validate the application ID from request body
+    const body = await req.json();
+    const { application_id } = body;
+
+    if (!application_id || typeof application_id !== "string" || !UUID_REGEX.test(application_id)) {
       return new Response(
-        JSON.stringify({ error: "application_id is required" }),
+        JSON.stringify({ error: "A valid application_id (UUID) is required" }),
         {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -97,12 +102,23 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Validate email from application before using it
+    if (!application.email || !EMAIL_REGEX.test(application.email)) {
+      return new Response(
+        JSON.stringify({ error: "Application has an invalid email address" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     // Step 1: Create the auth user with invite (sends magic link email)
     const { data: inviteData, error: inviteError } =
       await adminClient.auth.admin.inviteUserByEmail(application.email, {
         data: {
-          full_name: application.full_name,
-          company_name: application.business_name,
+          full_name: application.full_name || "",
+          company_name: application.business_name || "",
           industry: application.industry || "",
           referral_source: "",
         },
@@ -125,9 +141,6 @@ Deno.serve(async (req) => {
 
     // Step 2: If we got a user ID, create the client record
     if (userId) {
-      // The handle_new_user trigger already creates a profile.
-      // Wait a moment for the trigger to fire, then fetch the profile.
-      // We'll use a small delay approach with retries.
       let profileId: string | null = null;
       for (let i = 0; i < 5; i++) {
         const { data: profile } = await adminClient
@@ -140,12 +153,10 @@ Deno.serve(async (req) => {
           profileId = profile.id;
           break;
         }
-        // Wait 500ms before retrying
         await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
       if (profileId) {
-        // Create the client record linked to the profile
         const { error: clientError } = await adminClient
           .from("clients")
           .insert({
@@ -159,7 +170,6 @@ Deno.serve(async (req) => {
           console.error("Client creation error:", clientError);
         }
 
-        // Assign the 'client' role
         const { error: roleError } = await adminClient
           .from("user_roles")
           .insert({
@@ -182,7 +192,7 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Application approved. Invite sent to " + application.email,
+        message: "Application approved successfully.",
       }),
       {
         status: 200,

@@ -6,6 +6,31 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ALLOWED_ROLES = ["admin", "client"];
+
+function validateInput(body: Record<string, unknown>): string | null {
+  const { email, full_name, role, company_name, services } = body;
+
+  if (!email || typeof email !== "string" || !EMAIL_REGEX.test(email.trim()) || email.length > 255) {
+    return "A valid email is required (max 255 characters).";
+  }
+  if (!full_name || typeof full_name !== "string" || full_name.trim().length === 0 || full_name.length > 200) {
+    return "full_name is required (max 200 characters).";
+  }
+  if (role !== undefined && (typeof role !== "string" || !ALLOWED_ROLES.includes(role))) {
+    return `role must be one of: ${ALLOWED_ROLES.join(", ")}`;
+  }
+  if (company_name !== undefined && (typeof company_name !== "string" || company_name.length > 200)) {
+    return "company_name must be a string (max 200 characters).";
+  }
+  if (services !== undefined && (!Array.isArray(services) || services.length > 20 || services.some((s: unknown) => typeof s !== "string" || (s as string).length > 100))) {
+    return "services must be an array of strings (max 20 items, each max 100 chars).";
+  }
+  return null;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -51,22 +76,25 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { email, full_name, company_name, role, services } = await req.json();
-
-    if (!email || !full_name) {
-      return new Response(JSON.stringify({ error: "email and full_name required" }), {
+    const body = await req.json();
+    const validationError = validateInput(body);
+    if (validationError) {
+      return new Response(JSON.stringify({ error: validationError }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    const email = (body.email as string).trim();
+    const full_name = (body.full_name as string).trim();
+    const company_name = body.company_name ? (body.company_name as string).trim() : "";
+    const role = (body.role as string) || "client";
+    const services = (body.services as string[]) || [];
+
     // Invite user
     const { data: inviteData, error: inviteError } =
       await adminClient.auth.admin.inviteUserByEmail(email, {
-        data: {
-          full_name,
-          company_name: company_name || "",
-        },
+        data: { full_name, company_name },
       });
 
     if (inviteError && !inviteError.message?.includes("already been registered")) {
@@ -95,14 +123,13 @@ Deno.serve(async (req) => {
       }
 
       // Assign role
-      const assignRole = role || "client";
       await adminClient.from("user_roles").upsert({
         user_id: userId,
-        role: assignRole,
+        role,
       }, { onConflict: "user_id,role" });
 
       // If client role, create client record
-      if (assignRole === "client" && profileId) {
+      if (role === "client" && profileId) {
         const { data: existingClient } = await adminClient
           .from("clients")
           .select("id")
@@ -114,7 +141,7 @@ Deno.serve(async (req) => {
             name: company_name || `${full_name}'s Workspace`,
             contact_profile_id: profileId,
             status: "onboarding",
-            services: services || [],
+            services,
           });
         }
       }
