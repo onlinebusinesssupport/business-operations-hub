@@ -51,15 +51,12 @@ const AdminDocuments = () => {
         .upload(filePath, file);
       if (uploadError) throw uploadError;
 
-      const { data: urlData } = supabase.storage
-        .from("client-files")
-        .getPublicUrl(filePath);
-
+      // Store the storage path, not a public URL
       const { error: docError } = await supabase.from("documents").insert({
         name: file.name,
         client_id: uploadClientId,
         category: uploadCategory,
-        file_url: urlData.publicUrl,
+        file_url: filePath,
       });
       if (docError) throw docError;
 
@@ -83,12 +80,23 @@ const AdminDocuments = () => {
     },
   });
 
-  const downloadFile = (url: string, name: string) => {
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = name;
-    a.target = "_blank";
-    a.click();
+  const downloadFile = async (storagePath: string, name: string) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("client-files")
+        .createSignedUrl(storagePath, 3600); // 1 hour expiry
+      if (error || !data?.signedUrl) {
+        toast({ title: "Download failed", description: error?.message || "Could not generate download link", variant: "destructive" });
+        return;
+      }
+      const a = document.createElement("a");
+      a.href = data.signedUrl;
+      a.download = name;
+      a.target = "_blank";
+      a.click();
+    } catch (err: any) {
+      toast({ title: "Download failed", description: err.message, variant: "destructive" });
+    }
   };
 
   const filtered = selectedClient === "all" ? documents : documents.filter((d: any) => d.client_id === selectedClient);
