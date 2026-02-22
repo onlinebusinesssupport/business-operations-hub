@@ -54,6 +54,8 @@ import DigitalPresence from "./pages/services/DigitalPresence";
 import LeadEngine from "./pages/services/LeadEngine";
 import AutomationService from "./pages/services/AutomationService";
 import OperationsService from "./pages/services/Operations";
+import TravelActivities from "./pages/services/TravelActivities";
+import GrantsAwards from "./pages/services/GrantsAwards";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +75,8 @@ const App = () => (
             <Route path="/services/lead-engine" element={<LeadEngine />} />
             <Route path="/services/automation" element={<AutomationService />} />
             <Route path="/services/operations" element={<OperationsService />} />
+            <Route path="/services/travel-activities" element={<TravelActivities />} />
+            <Route path="/services/grants-awards" element={<GrantsAwards />} />
             <Route path="/results" element={<Pricing />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/how-it-works" element={<HowWeWork />} />

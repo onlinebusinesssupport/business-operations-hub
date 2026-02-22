@@ -66,7 +66,7 @@ const secondaryServices: Service[] = [
     label: "Premium Add-on",
     tagline: "Curated travel, team experiences, and event logistics.",
     icon: Sparkles,
-    href: "/apply",
+    href: "/services/travel-activities",
   },
   {
     id: "grants-awards",
@@ -75,7 +75,7 @@ const secondaryServices: Service[] = [
     tagline: "Grant writing, award submissions, and funding applications.",
     icon: Compass,
     badge: "New",
-    href: "/apply",
+    href: "/services/grants-awards",
   },
 ];
 
@@ -155,7 +155,7 @@ const Studios = () => {
             transition={{ duration: 0.6, delay: 0.1, ease: easeOut }}
             className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg"
           >
-            Four commercial pillars built for growth. Each one a full service — with clear pricing, dedicated delivery, and measurable outcomes.
+            Six commercial pillars built for growth. Each one a full studio — with defined scope, measurable outcomes, and structured pricing.
           </motion.p>
         </div>
       </section>
@@ -267,10 +267,8 @@ const Studios = () => {
       {/* Editorial closing */}
       <section className="py-20">
         <div className="container mx-auto px-6 lg:px-8 max-w-xl text-center">
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Infrastructure should feel invisible.
-            <br />
-            Until it isn't.
+          <p className="text-sm text-muted-foreground leading-relaxed italic">
+            Clarity builds momentum. Systems build freedom. SUPPORT STUDIO™ builds both.
           </p>
         </div>
       </section>
