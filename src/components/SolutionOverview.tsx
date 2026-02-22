@@ -6,8 +6,8 @@ const modules = [
   { icon: Zap, name: "AUTOMATION", description: "Systems that run while you sleep." },
   { icon: Target, name: "LEAD ENGINE", description: "Predictable demand, engineered." },
   { icon: Globe, name: "DIGITAL PRESENCE", description: "Reputation, managed with precision." },
-  { icon: Sparkles, name: "EXPERIENCE", description: "Moments that move people." },
-  { icon: Compass, name: "STRATEGY", description: "Clarity before commitment." },
+  { icon: Sparkles, name: "TRAVEL & ACTIVITIES", description: "Curated travel, events, and team experiences." },
+  { icon: Compass, name: "GRANTS & AWARDS", description: "Grant writing, award submissions, and funding." },
 ];
 
 const SolutionOverview = () => {

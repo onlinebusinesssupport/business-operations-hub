@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Settings, Zap, Target, Globe, Sparkles, ArrowRight } from "lucide-react";
+import { Settings, Zap, Target, Globe, Sparkles, Compass, ArrowRight } from "lucide-react";
 
 const studios = [
   {
@@ -32,9 +32,16 @@ const studios = [
     href: "/portal/studios/socials",
   },
   {
-    name: "EXPERIENCES",
+    name: "TRAVEL & ACTIVITIES",
     icon: Sparkles,
-    description: "Event planning, budgets, checklists, and post-event reporting.",
+    description: "Curated travel logistics, team experiences, and event coordination.",
+    status: "Inactive" as const,
+    href: "/portal/studios/experiences",
+  },
+  {
+    name: "GRANTS & AWARDS",
+    icon: Compass,
+    description: "Grant writing, award submissions, and funding applications.",
     status: "Inactive" as const,
     href: "/portal/studios/experiences",
   },

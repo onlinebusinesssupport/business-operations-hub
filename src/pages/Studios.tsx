@@ -61,18 +61,18 @@ const primaryServices: Service[] = [
 
 const secondaryServices: Service[] = [
   {
-    id: "experience",
-    name: "Experience",
+    id: "travel-activities",
+    name: "Travel & Activities",
     label: "Premium Add-on",
-    tagline: "Corporate moments, elevated.",
+    tagline: "Curated travel, team experiences, and event logistics.",
     icon: Sparkles,
     href: "/apply",
   },
   {
-    id: "strategy",
-    name: "Strategy & Advisory",
+    id: "grants-awards",
+    name: "Grants & Awards",
     label: "Premium Add-on",
-    tagline: "Clarity before commitment.",
+    tagline: "Grant writing, award submissions, and funding applications.",
     icon: Compass,
     badge: "New",
     href: "/apply",
