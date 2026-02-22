@@ -9,22 +9,22 @@ const values = [
   {
     title: "Structure over hustle",
     description:
-      "We believe that sustainable businesses are built on repeatable systems, not heroic individual effort. Every engagement is designed to create lasting operational infrastructure.",
+      "Sustainable businesses are built on repeatable systems, not heroic individual effort. Every engagement creates lasting operational infrastructure that scales with you.",
   },
   {
     title: "Clarity in delivery",
     description:
-      "We are direct, transparent, and accountable. Our clients always know what has been done, what is in progress, and what is planned.",
+      "We are direct, transparent, and accountable. Our clients always know what has been done, what is in progress, and what is planned — no guesswork, no ghosting.",
   },
   {
-    title: "Grounded in South Africa",
+    title: "Built for emerging markets",
     description:
-      "We understand the complexities of operating in the South African business environment — from regulatory requirements to the realities of building in emerging markets.",
+      "We understand the complexities of operating in Southern Africa and beyond — from regulatory realities to the speed required in fast-moving, underserved markets.",
   },
   {
     title: "Partnership, not dependency",
     description:
-      "Our goal is to build operational capacity within your business, not to create reliance on external support. We build systems that outlast our engagement.",
+      "Our goal is to build operational capacity within your business — whether you're a solo founder, an influencer scaling a brand, or a growing team. We build systems that outlast our engagement.",
   },
 ];
 
@@ -54,8 +54,16 @@ const About = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-6 font-serif text-3xl md:text-4xl lg:text-5xl font-medium leading-tight text-foreground"
           >
-            Built for founders who need execution, not advice.
+            The operational studio for emerging businesses, creators, and market makers.
           </motion.h1>
+          <motion.p
+            {...fadeUp}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mt-6 text-base md:text-lg leading-relaxed text-muted-foreground"
+          >
+            We exist for the founders, influencers, and operators building in markets
+            where the playbook hasn't been written yet. Execution — not advice.
+          </motion.p>
         </div>
       </section>
 
@@ -86,23 +94,83 @@ const About = () => {
             <div className="md:col-span-7">
               <motion.div {...fadeUp} transition={{ duration: 0.6, delay: 0.1 }}>
                 <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-                  Support Studio was founded with a clear premise: South African founders
-                  and growing businesses deserve operational support that is structured,
-                  reliable, and built for the realities of this market.
+                  Support Studio was founded with a clear premise: emerging businesses,
+                  content creators, and influencers deserve operational support that is
+                  structured, reliable, and built for the realities of fast-moving markets.
                 </p>
                 <p className="mt-6 text-base md:text-lg leading-relaxed text-muted-foreground">
                   We are not a virtual assistant service. We are operators, systems builders,
                   and execution partners who bring hands-on experience in business management,
-                  process design, and operational infrastructure.
+                  process design, and operational infrastructure — tailored for businesses
+                  that move quickly and can't afford to stall.
                 </p>
                 <p className="mt-6 text-base md:text-lg leading-relaxed text-muted-foreground">
-                  Our team has worked across fintech, e-commerce, professional services, social
-                  impact, and township enterprise — giving us a broad and practical understanding
-                  of what it takes to build sustainable operations in Southern Africa.
+                  Our team has worked across fintech, e-commerce, professional services,
+                  personal brands, social impact, and township enterprise — giving us a
+                  broad and practical understanding of what it takes to build sustainable
+                  operations in Southern Africa and other emerging markets.
+                </p>
+                <p className="mt-6 text-base md:text-lg leading-relaxed text-muted-foreground">
+                  Whether you're a solo founder scaling your first product, an influencer
+                  turning attention into a real business, or a growing team that needs
+                  structure — we are the studio you call.
                 </p>
               </motion.div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Who We Serve */}
+      <section className="py-20 border-t border-divider">
+        <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+          <motion.div {...fadeUp}>
+            <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium">
+              WHO WE SERVE
+            </span>
+            <h2 className="mt-4 font-serif text-2xl md:text-3xl font-medium text-foreground">
+              Built for the builders
+            </h2>
+          </motion.div>
+          <motion.ul
+            {...fadeUp}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="mt-10 space-y-6"
+          >
+            {[
+              {
+                label: "Founders & Startups",
+                desc: "Early-stage and scaling businesses that need operational infrastructure without the overhead of full-time hires.",
+              },
+              {
+                label: "Influencers & Creators",
+                desc: "Personal brands turning audience into revenue — needing systems for content, leads, partnerships, and admin.",
+              },
+              {
+                label: "SMEs in Emerging Markets",
+                desc: "Businesses navigating the realities of Southern Africa, the continent, and other high-growth, underserved markets.",
+              },
+              {
+                label: "Social Enterprises",
+                desc: "Impact-driven organisations that need commercial-grade operations to sustain their mission.",
+              },
+            ].map((item, i) => (
+              <motion.li
+                key={item.label}
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+              >
+                <h3 className="font-serif text-lg font-medium text-foreground">
+                  {item.label}
+                </h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                  {item.desc}
+                </p>
+              </motion.li>
+            ))}
+          </motion.ul>
         </div>
       </section>
 
@@ -147,15 +215,15 @@ const About = () => {
             {...fadeUp}
             className="font-serif text-2xl md:text-3xl font-medium text-foreground"
           >
-            Let us talk about what you are building.
+            Ready to build with structure?
           </motion.h2>
           <motion.p
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-4 text-muted-foreground"
           >
-            We work with founders and teams who are ready for structure. If that is you,
-            we would like to hear from you.
+            Whether you're a founder, influencer, or growing team — if you're ready
+            for operational infrastructure that actually moves the needle, let's talk.
           </motion.p>
           <motion.div
             {...fadeUp}
