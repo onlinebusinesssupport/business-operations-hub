@@ -10,49 +10,69 @@ const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const tiers = [
   {
     name: "Core Support",
-    price: "From R6,000",
+    price: "R5,500",
     frequency: "/ month",
     features: [
+      "20 hours",
       "Inbox + calendar management",
       "Admin coordination",
       "Weekly check-ins",
     ],
   },
   {
-    name: "Executive Support",
-    price: "From R12,500",
+    name: "Executive Partner",
+    price: "R9,500",
     frequency: "/ month",
     highlight: true,
     features: [
+      "40 hours",
       "Priority support",
       "Stakeholder coordination",
       "Research + reporting",
     ],
   },
   {
-    name: "Chief of Staff Lite",
-    price: "From R25,000",
+    name: "Embedded Operator",
+    price: "R17,500",
     frequency: "/ month",
     features: [
-      "Strategic execution support",
+      "80 hours",
       "Multi-project coordination",
+      "Strategic execution support",
       "Founder enablement",
+    ],
+  },
+  {
+    name: "Private Pod",
+    price: "R35,000+",
+    frequency: "/ month",
+    features: [
+      "Dedicated team",
+      "Full operational coverage",
+      "Custom scope",
     ],
   },
 ];
 
-const deliverables = [
-  "Inbox and calendar governance",
-  "Meeting preparation and follow-ups",
-  "Administrative coordination",
-  "Stakeholder communication",
-  "Research, reporting, and documentation",
+const whatWeDo = [
+  "Calendar & inbox management",
+  "Vendor coordination",
+  "CRM updates",
+  "Research support",
+  "Founder operations",
+];
+
+const outcomes = [
+  "Reclaimed founder time",
+  "Improved operational consistency",
+  "Reduced task switching",
+  "Structured internal communication",
 ];
 
 const idealFor = [
-  "Founders drowning in admin",
-  "Executives who need high-trust operational support",
-  "Growing teams that need structured coordination",
+  "Founders wearing too many hats",
+  "Teams needing structured support",
+  "Executives reclaiming strategic time",
 ];
 
 const OperationsService = () => {
@@ -73,24 +93,61 @@ const OperationsService = () => {
             Operations
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1, ease: easeOut }} className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg">
-            High-trust operational support for busy operators.
+            Leverage, not labour.
           </motion.p>
         </div>
       </section>
 
+      {/* Who This Is For */}
       <section className="py-20 bg-secondary">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">What We Do</h2>
-          <p className="mt-6 text-sm text-muted-foreground leading-relaxed">
-            Premium virtual support, not generic VA work. We provide structured, high-trust operational assistance that lets you focus on what matters most — growing your business.
-          </p>
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">Who This Is For</h2>
+          <ul className="mt-6 space-y-3">
+            {idealFor.map((item) => (
+              <li key={item} className="flex items-start gap-3 text-sm text-muted-foreground">
+                <span className="mt-1.5 h-1.5 w-1.5 bg-primary shrink-0" />{item}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
+      {/* What We Actually Do */}
+      <section className="py-20">
+        <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">What We Actually Do</h2>
+          <p className="mt-6 text-sm text-muted-foreground leading-relaxed">
+            Embedded executive-level virtual support. Not generic VA work — structured, high-trust operational assistance.
+          </p>
+          <ul className="mt-6 space-y-3">
+            {whatWeDo.map((d) => (
+              <li key={d} className="flex items-start gap-3 text-sm text-muted-foreground">
+                <Check size={14} className="mt-0.5 text-primary shrink-0" strokeWidth={2} />{d}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Measurable Outcomes */}
+      <section className="py-20 bg-secondary">
+        <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+          <h2 className="font-display text-xl font-bold text-foreground uppercase tracking-tight">Measurable Outcomes</h2>
+          <ul className="mt-6 space-y-3">
+            {outcomes.map((d) => (
+              <li key={d} className="flex items-start gap-3 text-sm text-muted-foreground">
+                <Check size={14} className="mt-0.5 text-primary shrink-0" strokeWidth={2} />{d}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Tiers */}
       <section className="py-20">
         <div className="container mx-auto px-6 lg:px-8">
           <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight text-center">Packages</h2>
-          <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6">
+          <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
             {tiers.map((tier, i) => (
               <motion.div key={tier.name} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: i * 0.08, ease: easeOut }}
                 className={`relative flex flex-col border p-8 md:p-10 ${tier.highlight ? "border-primary bg-primary/[0.03] shadow-[0_8px_30px_-12px_hsl(var(--primary)/0.12)]" : "border-border bg-background"}`}
@@ -112,7 +169,7 @@ const OperationsService = () => {
                 <div className="mt-8">
                   <Link to="/apply">
                     <Button className="w-full text-[11px] tracking-[0.15em] uppercase gap-2" variant={tier.highlight ? "default" : "outline"}>
-                      Add operational support <ArrowRight size={14} />
+                      Activate Operations <ArrowRight size={14} />
                     </Button>
                   </Link>
                 </div>
@@ -122,39 +179,22 @@ const OperationsService = () => {
         </div>
       </section>
 
-      <section className="py-20 bg-secondary">
-        <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
-          <h2 className="font-display text-xl font-bold text-foreground uppercase tracking-tight">What's Included</h2>
-          <ul className="mt-6 space-y-3">
-            {deliverables.map((d) => (
-              <li key={d} className="flex items-start gap-3 text-sm text-muted-foreground">
-                <Check size={14} className="mt-0.5 text-primary shrink-0" strokeWidth={2} />{d}
-              </li>
-            ))}
-          </ul>
+      {/* CTA */}
+      <section className="py-24 bg-primary text-primary-foreground">
+        <div className="container mx-auto px-6 lg:px-8 text-center max-w-2xl">
+          <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-tight">Activate Operations</h2>
+          <p className="mt-4 text-sm text-primary-foreground/70">Reclaim your time. Get matched with a dedicated operations specialist.</p>
+          <div className="mt-8">
+            <Link to="/apply"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Activate This Studio <ArrowRight size={14} /></Button></Link>
+          </div>
         </div>
       </section>
 
       <section className="py-20">
-        <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
-          <h2 className="font-display text-xl font-bold text-foreground uppercase tracking-tight">Who This Is For</h2>
-          <ul className="mt-6 space-y-3">
-            {idealFor.map((item) => (
-              <li key={item} className="flex items-start gap-3 text-sm text-muted-foreground">
-                <span className="mt-1.5 h-1.5 w-1.5 bg-primary shrink-0" />{item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="py-24 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-6 lg:px-8 text-center max-w-2xl">
-          <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-tight">Ready for operational support?</h2>
-          <p className="mt-4 text-sm text-primary-foreground/70">Apply today and get matched with a dedicated operations specialist.</p>
-          <div className="mt-8">
-            <Link to="/apply"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Add operational support <ArrowRight size={14} /></Button></Link>
-          </div>
+        <div className="container mx-auto px-6 lg:px-8 max-w-xl text-center">
+          <p className="text-sm text-muted-foreground leading-relaxed italic">
+            Clarity builds momentum. Systems build freedom. SUPPORT STUDIO™ builds both.
+          </p>
         </div>
       </section>
 
