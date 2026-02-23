@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import WelcomeDashboard from "@/components/WelcomeDashboard";
+import OnboardingWizard from "@/components/OnboardingWizard";
 import GrowthScore from "@/components/GrowthScore";
 
 const stagger = {
@@ -96,7 +96,7 @@ const PortalDashboard = () => {
   }
 
   if (showWelcome) {
-    return <WelcomeDashboard userName={userName} onDismiss={() => setShowWelcome(false)} />;
+    return <OnboardingWizard initialName={userName} onComplete={() => setShowWelcome(false)} />;
   }
 
   return (
