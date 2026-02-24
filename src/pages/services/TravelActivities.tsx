@@ -7,42 +7,6 @@ import { Button } from "@/components/ui/button";
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-const tiers = [
-  {
-    name: "Team Retreat Design",
-    price: "R15,000",
-    frequency: "per project",
-    features: [
-      "Retreat planning and coordination",
-      "Venue sourcing",
-      "Activity curation",
-      "Full logistics management",
-    ],
-  },
-  {
-    name: "Corporate Experience",
-    price: "R25,000",
-    frequency: "per project",
-    highlight: true,
-    features: [
-      "VIP client entertainment",
-      "Corporate event logistics",
-      "End-to-end coordination",
-      "Post-event reporting",
-    ],
-  },
-  {
-    name: "Executive Travel Management",
-    price: "R8,500",
-    frequency: "/ month retainer",
-    features: [
-      "Ongoing travel coordination",
-      "Itinerary management",
-      "Preferred vendor network",
-    ],
-  },
-];
-
 const whatWeDo = [
   "Travel planning",
   "Retreat coordination",
@@ -124,37 +88,19 @@ const TravelActivities = () => {
         </div>
       </section>
 
+      {/* Custom Quote */}
       <section className="py-20">
-        <div className="container mx-auto px-6 lg:px-8">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight text-center">Packages</h2>
-          <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6">
-            {tiers.map((tier, i) => (
-              <motion.div key={tier.name} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: i * 0.08, ease: easeOut }}
-                className={`relative flex flex-col border p-8 md:p-10 ${tier.highlight ? "border-primary bg-primary/[0.03] shadow-[0_8px_30px_-12px_hsl(var(--primary)/0.12)]" : "border-border bg-background"}`}
-              >
-                {tier.highlight && <span className="absolute top-4 right-4 text-[9px] uppercase tracking-[0.15em] font-medium text-primary bg-accent px-2 py-0.5">Popular</span>}
-                <h3 className="font-display text-lg font-bold text-foreground uppercase tracking-tight">{tier.name}</h3>
-                <div className="mt-4">
-                  <span className="font-display text-3xl font-bold text-foreground">{tier.price}</span>
-                  <span className="ml-2 text-xs text-muted-foreground">{tier.frequency}</span>
-                </div>
-                <div className="mt-6 h-px bg-border" />
-                <ul className="mt-6 space-y-3 flex-1">
-                  {tier.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-sm text-muted-foreground">
-                      <Check size={14} className="mt-0.5 text-primary shrink-0" strokeWidth={2} />{f}
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-8">
-                  <Link to="/apply">
-                    <Button className="w-full text-[11px] tracking-[0.15em] uppercase gap-2" variant={tier.highlight ? "default" : "outline"}>
-                      Plan My Experience <ArrowRight size={14} />
-                    </Button>
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
+        <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">Pricing</h2>
+          <p className="mt-6 text-sm text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            We custom quote all travel and experience projects based on scope, destination, and group size. Projects start at <span className="text-foreground font-medium">$520 / R8,500</span>, and travel management retainers start at <span className="text-foreground font-medium">$520/mo / R8,500/mo</span>.
+          </p>
+          <div className="mt-8">
+            <Link to="/contact">
+              <Button size="lg" className="text-[11px] tracking-[0.15em] uppercase gap-2">
+                Get a Custom Quote <ArrowRight size={14} />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -164,7 +110,7 @@ const TravelActivities = () => {
           <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-tight">Plan My Experience</h2>
           <p className="mt-4 text-sm text-primary-foreground/70">From retreats to VIP experiences — we handle every detail.</p>
           <div className="mt-8">
-            <Link to="/apply"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Activate This Studio <ArrowRight size={14} /></Button></Link>
+            <Link to="/contact"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Let's Partner <ArrowRight size={14} /></Button></Link>
           </div>
         </div>
       </section>

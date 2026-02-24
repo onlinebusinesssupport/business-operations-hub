@@ -91,21 +91,18 @@ const GrantsAwards = () => {
 
       {/* Pricing */}
       <section className="py-20">
-        <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+        <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
           <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">Pricing</h2>
-          <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="mt-8 border border-border p-8 md:p-10">
-            <h3 className="font-display text-lg font-bold text-foreground uppercase tracking-tight">Case by Case</h3>
-            <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-              Each grant application and award submission is unique. We scope, quote, and deliver based on your specific needs and timelines.
-            </p>
-            <div className="mt-6">
-              <Link to="/contact">
-                <Button variant="outline" className="text-[11px] tracking-[0.15em] uppercase gap-2">
-                  Secure Funding Support <ArrowRight size={14} />
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
+          <p className="mt-6 text-sm text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            Each grant application and award submission is unique. We scope, quote, and deliver based on your specific needs and timelines. All projects are quoted on a case-by-case basis.
+          </p>
+          <div className="mt-8">
+            <Link to="/contact">
+              <Button size="lg" className="text-[11px] tracking-[0.15em] uppercase gap-2">
+                Get a Custom Quote <ArrowRight size={14} />
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -114,7 +111,7 @@ const GrantsAwards = () => {
           <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-tight">Secure Funding Support</h2>
           <p className="mt-4 text-sm text-primary-foreground/70">From grant research to award submissions — we build your funding pipeline.</p>
           <div className="mt-8">
-            <Link to="/apply"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Activate This Studio <ArrowRight size={14} /></Button></Link>
+            <Link to="/contact"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Let's Partner <ArrowRight size={14} /></Button></Link>
           </div>
         </div>
       </section>

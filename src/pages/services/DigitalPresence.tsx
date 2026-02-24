@@ -7,56 +7,6 @@ import { Button } from "@/components/ui/button";
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-const tiers = [
-  {
-    name: "Foundation",
-    price: "R3,000",
-    frequency: "/ month",
-    features: [
-      "6 posts",
-      "2 platforms",
-      "Monthly snapshot report",
-    ],
-  },
-  {
-    name: "Momentum",
-    price: "R6,500",
-    frequency: "/ month",
-    highlight: true,
-    badge: "Most Chosen",
-    features: [
-      "12 posts",
-      "2–3 platforms",
-      "Engagement management",
-      "Monthly insights",
-      "Content calendar",
-    ],
-  },
-  {
-    name: "Authority",
-    price: "R11,500",
-    frequency: "/ month",
-    features: [
-      "20+ posts",
-      "Multi-platform",
-      "Inbox management",
-      "Dashboard reporting",
-      "Quarterly strategy session",
-    ],
-  },
-  {
-    name: "Signal",
-    price: "R22,000",
-    frequency: "/ month",
-    features: [
-      "Executive positioning",
-      "Thought leadership narrative",
-      "Advanced strategy",
-      "Monthly strategic advisory call",
-    ],
-  },
-];
-
 const whatWeDo = [
   "Platform strategy",
   "Content planning and narrative mapping",
@@ -150,42 +100,19 @@ const DigitalPresence = () => {
         </div>
       </section>
 
-      {/* Tiers */}
+      {/* Custom Quote */}
       <section className="py-20">
-        <div className="container mx-auto px-6 lg:px-8">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight text-center">Packages</h2>
-          <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
-            {tiers.map((tier, i) => (
-              <motion.div key={tier.name} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: i * 0.08, ease: easeOut }}
-                className={`relative flex flex-col border p-8 md:p-10 ${tier.highlight ? "border-primary bg-primary/[0.03] shadow-[0_8px_30px_-12px_hsl(var(--primary)/0.12)]" : "border-border bg-background"}`}
-              >
-                {tier.badge && (
-                  <span className="absolute top-4 right-4 text-[9px] uppercase tracking-[0.15em] font-medium text-primary bg-accent px-2 py-0.5">
-                    {tier.badge}
-                  </span>
-                )}
-                <h3 className="font-display text-lg font-bold text-foreground uppercase tracking-tight">{tier.name}</h3>
-                <div className="mt-4">
-                  <span className="font-display text-3xl font-bold text-foreground">{tier.price}</span>
-                  <span className="text-sm text-muted-foreground">{tier.frequency}</span>
-                </div>
-                <div className="mt-6 h-px bg-border" />
-                <ul className="mt-6 space-y-3 flex-1">
-                  {tier.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-sm text-muted-foreground">
-                      <Check size={14} className="mt-0.5 text-primary shrink-0" strokeWidth={2} />{f}
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-8">
-                  <Link to="/apply">
-                    <Button className="w-full text-[11px] tracking-[0.15em] uppercase gap-2" variant={tier.highlight ? "default" : "outline"}>
-                      Activate Digital Presence <ArrowRight size={14} />
-                    </Button>
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
+        <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">Pricing</h2>
+          <p className="mt-6 text-sm text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            We custom quote all retainer services and projects based on your specific needs. Digital Presence retainers start at <span className="text-foreground font-medium">$185/mo / R3,000/mo</span>.
+          </p>
+          <div className="mt-8">
+            <Link to="/contact">
+              <Button size="lg" className="text-[11px] tracking-[0.15em] uppercase gap-2">
+                Get a Custom Quote <ArrowRight size={14} />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -196,7 +123,7 @@ const DigitalPresence = () => {
           <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-tight">Activate Digital Presence</h2>
           <p className="mt-4 text-sm text-primary-foreground/70">Your brand deserves more than silence. Let's build a presence that compounds.</p>
           <div className="mt-8">
-            <Link to="/apply"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Activate This Studio <ArrowRight size={14} /></Button></Link>
+            <Link to="/contact"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Let's Partner <ArrowRight size={14} /></Button></Link>
           </div>
         </div>
       </section>
