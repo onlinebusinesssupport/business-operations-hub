@@ -7,43 +7,35 @@ import { Link } from "react-router-dom";
 const steps = [
   {
     number: "01",
-    title: "Discovery Consultation",
+    title: "Reach Out",
     description:
-      "We begin with a structured conversation to understand your business model, team structure, current pain points, and operational priorities. This is not a sales pitch — it is a working session.",
+      "Tell us a little about you. Fill out our quick support form and give us a glimpse of your business, your goals, and what's weighing on you right now. We'll make sure it's a good fit before moving forward.",
     detail:
-      "You walk away with clarity on what support you need, even if you choose not to work with us.",
+      "It takes less than 5 minutes. No commitment required.",
   },
   {
     number: "02",
-    title: "Proposal & Scope",
+    title: "Let's Talk (Or Not!)",
     description:
-      "Based on the discovery session, we prepare a tailored scope of work with clear deliverables, timelines, and pricing. No ambiguity, no hidden costs.",
+      "You choose: discovery call or no-pressure email. Whether you prefer to talk it out or type it up, we'll get to know your needs and explore how our team can support your next phase — calmly and strategically.",
     detail:
-      "We recommend a starting engagement and scale from there based on results.",
+      "We meet you where you're comfortable. No hard sell, ever.",
   },
   {
     number: "03",
-    title: "Onboarding & Setup",
+    title: "Game Plan",
     description:
-      "Your dedicated client portal is configured with the tools, systems, and reporting structure tailored to your operations. We set up communication channels and establish working rhythms.",
+      "We'll take what we've learned, noodle on it some, and then develop a proposal tailored to meet your specific needs. We'll keep your goals and big vision in mind too!",
     detail:
-      "Most clients are fully onboarded within 5 business days.",
+      "Every proposal is custom-built. No cookie-cutter packages.",
   },
   {
     number: "04",
-    title: "Ongoing Execution",
+    title: "We Get to Work",
     description:
-      "We deliver consistent, reliable execution across your operational priorities — week after week. Progress is tracked through your portal with transparent reporting and regular check-ins.",
+      "Once the proposal is approved, we will send you an agreement and invoice. After those boxes are checked, we'll start working our magic. We'll start with an assessment or audit first.",
     detail:
-      "You maintain full visibility without needing to manage the work.",
-  },
-  {
-    number: "05",
-    title: "Review & Scale",
-    description:
-      "Monthly reviews ensure the support remains aligned with your evolving business needs. As your business grows, we adapt systems, processes, and team allocation accordingly.",
-    detail:
-      "Support Studio scales with you — from solo founder to full operational team.",
+      "Most clients are fully onboarded within 5 business days.",
   },
 ];
 
@@ -99,8 +91,7 @@ const HowWeWork = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-6 text-lg text-muted-foreground leading-relaxed"
           >
-            We believe operational support should be structured from the first conversation.
-            Here is exactly how an engagement with Support Studio works.
+            From first contact to full execution — here is exactly how an engagement with Support Studio works.
           </motion.p>
         </div>
       </section>
@@ -182,12 +173,12 @@ const HowWeWork = () => {
               Ready to get started?
             </h2>
             <p className="mt-4 text-sm md:text-base leading-relaxed opacity-70">
-              Book a discovery consultation. It takes 30 minutes and costs nothing.
+              Fill out our quick form. It takes less than 5 minutes and costs nothing.
             </p>
             <div className="mt-8">
               <Link to="/contact">
                 <Button variant="secondary" size="lg" className="text-sm tracking-wide">
-                  Book a Consultation
+                  Let's Partner
                 </Button>
               </Link>
             </div>

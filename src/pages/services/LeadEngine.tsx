@@ -7,49 +7,6 @@ import { Button } from "@/components/ui/button";
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-const tiers = [
-  {
-    name: "Ignition",
-    price: "R9,000",
-    frequency: "/ month",
-    features: [
-      "10 qualified leads",
-      "3-month minimum",
-    ],
-  },
-  {
-    name: "Pipeline",
-    price: "R18,000",
-    frequency: "/ month",
-    highlight: true,
-    features: [
-      "25 qualified leads",
-      "Multi-channel sourcing",
-      "Monthly optimisation",
-    ],
-  },
-  {
-    name: "Velocity",
-    price: "R32,000",
-    frequency: "/ month",
-    features: [
-      "50+ qualified leads",
-      "Advanced targeting",
-      "CRM integration support",
-    ],
-  },
-  {
-    name: "Demand System",
-    price: "Custom",
-    frequency: "",
-    features: [
-      "Custom engagement",
-      "Full pipeline architecture",
-      "Dedicated team",
-    ],
-  },
-];
-
 const whatWeDo = [
   "Ideal client profiling",
   "Prospect sourcing",
@@ -94,7 +51,6 @@ const LeadEngine = () => {
         </div>
       </section>
 
-      {/* Who This Is For */}
       <section className="py-20 bg-secondary">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
           <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">Who This Is For</h2>
@@ -108,7 +64,6 @@ const LeadEngine = () => {
         </div>
       </section>
 
-      {/* What We Actually Do */}
       <section className="py-20">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
           <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">What We Actually Do</h2>
@@ -125,7 +80,6 @@ const LeadEngine = () => {
         </div>
       </section>
 
-      {/* Measurable Outcomes */}
       <section className="py-20 bg-secondary">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
           <h2 className="font-display text-xl font-bold text-foreground uppercase tracking-tight">Measurable Outcomes</h2>
@@ -139,49 +93,29 @@ const LeadEngine = () => {
         </div>
       </section>
 
-      {/* Tiers */}
+      {/* Custom Quote */}
       <section className="py-20">
-        <div className="container mx-auto px-6 lg:px-8">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight text-center">Packages</h2>
-          <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
-            {tiers.map((tier, i) => (
-              <motion.div key={tier.name} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: i * 0.08, ease: easeOut }}
-                className={`relative flex flex-col border p-8 md:p-10 ${tier.highlight ? "border-primary bg-primary/[0.03] shadow-[0_8px_30px_-12px_hsl(var(--primary)/0.12)]" : "border-border bg-background"}`}
-              >
-                {tier.highlight && <span className="absolute top-4 right-4 text-[9px] uppercase tracking-[0.15em] font-medium text-primary bg-accent px-2 py-0.5">Popular</span>}
-                <h3 className="font-display text-lg font-bold text-foreground uppercase tracking-tight">{tier.name}</h3>
-                <div className="mt-4">
-                  <span className="font-display text-3xl font-bold text-foreground">{tier.price}</span>
-                  {tier.frequency && <span className="text-sm text-muted-foreground">{tier.frequency}</span>}
-                </div>
-                <div className="mt-6 h-px bg-border" />
-                <ul className="mt-6 space-y-3 flex-1">
-                  {tier.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-sm text-muted-foreground">
-                      <Check size={14} className="mt-0.5 text-primary shrink-0" strokeWidth={2} />{f}
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-8">
-                  <Link to="/apply">
-                    <Button className="w-full text-[11px] tracking-[0.15em] uppercase gap-2" variant={tier.highlight ? "default" : "outline"}>
-                      Activate Lead Engine <ArrowRight size={14} />
-                    </Button>
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
+        <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">Pricing</h2>
+          <p className="mt-6 text-sm text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            We custom quote all retainer services and projects based on your specific needs. Lead Engine retainers start at <span className="text-foreground font-medium">$555/mo / R9,000/mo</span>.
+          </p>
+          <div className="mt-8">
+            <Link to="/contact">
+              <Button size="lg" className="text-[11px] tracking-[0.15em] uppercase gap-2">
+                Get a Custom Quote <ArrowRight size={14} />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
       <section className="py-24 bg-primary text-primary-foreground">
         <div className="container mx-auto px-6 lg:px-8 text-center max-w-2xl">
           <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-tight">Activate Lead Engine</h2>
           <p className="mt-4 text-sm text-primary-foreground/70">Stop waiting for leads. Start engineering demand.</p>
           <div className="mt-8">
-            <Link to="/apply"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Activate This Studio <ArrowRight size={14} /></Button></Link>
+            <Link to="/contact"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Let's Partner <ArrowRight size={14} /></Button></Link>
           </div>
         </div>
       </section>

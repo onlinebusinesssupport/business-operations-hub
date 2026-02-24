@@ -2,10 +2,26 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 const steps = [
-  { label: "DIAGNOSE", description: "Audit existing operations and identify friction." },
-  { label: "DESIGN", description: "Architect systems tailored to your growth stage." },
-  { label: "DEPLOY", description: "Implement infrastructure with zero disruption." },
-  { label: "EMBED", description: "Operate continuously inside your business." },
+  {
+    label: "REACH OUT",
+    description:
+      "Tell us a little about you. Fill out our quick support form and give us a glimpse of your business, your goals, and what's weighing on you right now. We'll make sure it's a good fit before moving forward.",
+  },
+  {
+    label: "LET'S TALK (OR NOT!)",
+    description:
+      "You choose: discovery call or no-pressure email. Whether you prefer to talk it out or type it up, we'll get to know your needs and explore how our team can support your next phase — calmly and strategically.",
+  },
+  {
+    label: "GAME PLAN",
+    description:
+      "We'll take what we've learned, noodle on it some, and then develop a proposal tailored to meet your specific needs. We'll keep your goals and big vision in mind too!",
+  },
+  {
+    label: "WE GET TO WORK",
+    description:
+      "Once the proposal is approved, we will send you an agreement and invoice. After those boxes are checked, we'll start working our magic. We'll start with an assessment or audit first.",
+  },
 ];
 
 const HowItWorks = () => {
@@ -23,10 +39,10 @@ const HowItWorks = () => {
             PROCESS
           </span>
           <h2 className="mt-6 font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-foreground">
-            Support without friction.
+            How It Works
           </h2>
           <p className="mt-4 text-base text-muted-foreground max-w-lg">
-            We embed support directly into your business. No handoffs, no confusion.
+            A clear path from first contact to full execution. No guesswork, no pressure.
           </p>
         </motion.div>
 

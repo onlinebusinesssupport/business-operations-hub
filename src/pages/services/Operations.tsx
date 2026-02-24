@@ -7,55 +7,11 @@ import { Button } from "@/components/ui/button";
 
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-const tiers = [
-  {
-    name: "Core Support",
-    price: "R5,500",
-    frequency: "/ month",
-    features: [
-      "20 hours",
-      "Inbox + calendar management",
-      "Admin coordination",
-      "Weekly check-ins",
-    ],
-  },
-  {
-    name: "Executive Partner",
-    price: "R9,500",
-    frequency: "/ month",
-    highlight: true,
-    features: [
-      "40 hours",
-      "Priority support",
-      "Stakeholder coordination",
-      "Research + reporting",
-    ],
-  },
-  {
-    name: "Embedded Operator",
-    price: "R17,500",
-    frequency: "/ month",
-    features: [
-      "80 hours",
-      "Multi-project coordination",
-      "Strategic execution support",
-      "Founder enablement",
-    ],
-  },
-  {
-    name: "Private Pod",
-    price: "R35,000+",
-    frequency: "/ month",
-    features: [
-      "Dedicated team",
-      "Full operational coverage",
-      "Custom scope",
-    ],
-  },
-];
-
 const whatWeDo = [
-  "Calendar & inbox management",
+  "Inbox management",
+  "Calendar management",
+  "Newsletter/blog scheduling",
+  "Client communication",
   "Vendor coordination",
   "CRM updates",
   "Research support",
@@ -93,12 +49,11 @@ const OperationsService = () => {
             Operations
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1, ease: easeOut }} className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg">
-            Leverage, not labour.
+            Clear your to-do list. Admin support so that you can focus on the tasks you love.
           </motion.p>
         </div>
       </section>
 
-      {/* Who This Is For */}
       <section className="py-20 bg-secondary">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
           <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">Who This Is For</h2>
@@ -112,7 +67,6 @@ const OperationsService = () => {
         </div>
       </section>
 
-      {/* What We Actually Do */}
       <section className="py-20">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
           <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">What We Actually Do</h2>
@@ -129,7 +83,6 @@ const OperationsService = () => {
         </div>
       </section>
 
-      {/* Measurable Outcomes */}
       <section className="py-20 bg-secondary">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
           <h2 className="font-display text-xl font-bold text-foreground uppercase tracking-tight">Measurable Outcomes</h2>
@@ -143,49 +96,29 @@ const OperationsService = () => {
         </div>
       </section>
 
-      {/* Tiers */}
+      {/* Custom Quote */}
       <section className="py-20">
-        <div className="container mx-auto px-6 lg:px-8">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight text-center">Packages</h2>
-          <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
-            {tiers.map((tier, i) => (
-              <motion.div key={tier.name} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: i * 0.08, ease: easeOut }}
-                className={`relative flex flex-col border p-8 md:p-10 ${tier.highlight ? "border-primary bg-primary/[0.03] shadow-[0_8px_30px_-12px_hsl(var(--primary)/0.12)]" : "border-border bg-background"}`}
-              >
-                {tier.highlight && <span className="absolute top-4 right-4 text-[9px] uppercase tracking-[0.15em] font-medium text-primary bg-accent px-2 py-0.5">Popular</span>}
-                <h3 className="font-display text-lg font-bold text-foreground uppercase tracking-tight">{tier.name}</h3>
-                <div className="mt-4">
-                  <span className="font-display text-3xl font-bold text-foreground">{tier.price}</span>
-                  <span className="text-sm text-muted-foreground">{tier.frequency}</span>
-                </div>
-                <div className="mt-6 h-px bg-border" />
-                <ul className="mt-6 space-y-3 flex-1">
-                  {tier.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-sm text-muted-foreground">
-                      <Check size={14} className="mt-0.5 text-primary shrink-0" strokeWidth={2} />{f}
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-8">
-                  <Link to="/apply">
-                    <Button className="w-full text-[11px] tracking-[0.15em] uppercase gap-2" variant={tier.highlight ? "default" : "outline"}>
-                      Activate Operations <ArrowRight size={14} />
-                    </Button>
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
+        <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">Pricing</h2>
+          <p className="mt-6 text-sm text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            We custom quote all retainer services and projects based on your specific needs. Virtual Assistant retainers start at <span className="text-foreground font-medium">$750/mo / R12,000/mo</span>, and Operations retainers begin at <span className="text-foreground font-medium">$1,500/mo / R24,000/mo</span>.
+          </p>
+          <div className="mt-8">
+            <Link to="/contact">
+              <Button size="lg" className="text-[11px] tracking-[0.15em] uppercase gap-2">
+                Get a Custom Quote <ArrowRight size={14} />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
       <section className="py-24 bg-primary text-primary-foreground">
         <div className="container mx-auto px-6 lg:px-8 text-center max-w-2xl">
           <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-tight">Activate Operations</h2>
           <p className="mt-4 text-sm text-primary-foreground/70">Reclaim your time. Get matched with a dedicated operations specialist.</p>
           <div className="mt-8">
-            <Link to="/apply"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Activate This Studio <ArrowRight size={14} /></Button></Link>
+            <Link to="/contact"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Let's Partner <ArrowRight size={14} /></Button></Link>
           </div>
         </div>
       </section>
