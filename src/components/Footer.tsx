@@ -21,7 +21,7 @@ const Footer = () => {
             <ul className="mt-4 space-y-2.5">
               {[
                 { label: "Services", href: "/services" },
-                { label: "Results", href: "/results" },
+                { label: "Media", href: "/media" },
                 { label: "About", href: "/about" },
                 { label: "Contact", href: "/contact" },
               ].map((link) => (

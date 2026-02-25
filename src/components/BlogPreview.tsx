@@ -42,7 +42,7 @@ const BlogPreview = () => {
               Operational insights for founders
             </h2>
           </div>
-          <Link to="/insights" className="hidden md:block">
+          <Link to="/media" className="hidden md:block">
             <Button variant="outline" className="text-sm tracking-wide">
               Read more articles
             </Button>
@@ -74,7 +74,7 @@ const BlogPreview = () => {
         </div>
 
         <div className="mt-8 md:hidden text-center">
-          <Link to="/insights">
+          <Link to="/media">
             <Button variant="outline" className="text-sm tracking-wide">
               Read more articles
             </Button>
