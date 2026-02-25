@@ -51,6 +51,14 @@ const AutomationService = () => {
         </div>
       </section>
 
+      <section className="w-full">
+        <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: easeOut }} className="aspect-[16/9] overflow-hidden rounded-lg">
+            <img src="/images/service-automation.png" alt="Workflow automation diagrams on a laptop screen" className="w-full h-full object-cover" loading="lazy" />
+          </motion.div>
+        </div>
+      </section>
+
       <section className="py-20 bg-secondary">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
           <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">Who This Is For</h2>
