@@ -11,7 +11,7 @@ import Index from "./pages/Index";
 import Studios from "./pages/Studios";
 import HowWeWork from "./pages/HowWeWork";
 import Clients from "./pages/Clients";
-import Insights from "./pages/Insights";
+
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
@@ -21,7 +21,7 @@ import AdminApplications from "./pages/admin/AdminApplications";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
-import Pricing from "./pages/Pricing";
+import Media from "./pages/Media";
 import MfaVerify from "./pages/MfaVerify";
 import PortalDashboard from "./pages/portal/PortalDashboard";
 import ActiveWork from "./pages/portal/ActiveWork";
@@ -77,11 +77,12 @@ const App = () => (
             <Route path="/services/operations" element={<OperationsService />} />
             <Route path="/services/travel-activities" element={<TravelActivities />} />
             <Route path="/services/grants-awards" element={<GrantsAwards />} />
-            <Route path="/results" element={<Pricing />} />
-            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/results" element={<Media />} />
+            <Route path="/media" element={<Media />} />
+            <Route path="/insights" element={<Media />} />
             <Route path="/how-it-works" element={<HowWeWork />} />
             <Route path="/clients" element={<Clients />} />
-            <Route path="/insights" element={<Insights />} />
+            
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
