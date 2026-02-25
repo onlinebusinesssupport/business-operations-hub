@@ -55,6 +55,15 @@ const DigitalPresence = () => {
         </div>
       </section>
 
+      {/* Hero Image */}
+      <section className="w-full">
+        <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: easeOut }} className="aspect-[16/9] overflow-hidden rounded-lg">
+            <img src="/images/service-digital-presence.png" alt="Social media strategist working on content at a modern co-working space" className="w-full h-full object-cover" loading="lazy" />
+          </motion.div>
+        </div>
+      </section>
+
       {/* Who This Is For */}
       <section className="py-20 bg-secondary">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
