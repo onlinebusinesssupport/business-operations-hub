@@ -128,7 +128,7 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
         <div className="h-14 flex items-center justify-between px-4 border-b border-white/10 shrink-0">
           {!collapsed && (
             <span className="font-display text-[11px] font-bold tracking-[0.2em] text-white/90 uppercase truncate">
-              SUPPORT STUDIO™
+              THE BUSINESS SUPPORT STUDIO™
             </span>
           )}
           <button

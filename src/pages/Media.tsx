@@ -101,7 +101,7 @@ const Media = () => {
             transition={{ duration: 0.6, delay: 0.1, ease: easeOut }}
             className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg mx-auto"
           >
-            Practical thinking from the team at Support Studio — grounded in real experience
+            Practical thinking from the team at The Business Support Studio — grounded in real experience
             supporting South African businesses.
           </motion.p>
         </div>

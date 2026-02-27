@@ -49,7 +49,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       >
         <div className="h-16 flex items-center justify-between px-5 border-b border-background/10">
           <span className="font-sans text-xs font-semibold tracking-[0.15em] text-background uppercase">
-            SUPPORT STUDIO
+            TBSS
           </span>
           <button
             className="lg:hidden text-background/60"

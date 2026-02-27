@@ -24,7 +24,7 @@ const AdminSettings = () => {
           <img src={portraitImg} alt="Manager" className="w-16 h-16 rounded-full object-cover" />
           <div>
             <p className="text-sm font-medium text-foreground">Nkululeko</p>
-            <p className="text-xs text-muted-foreground">admin@supportstudio.co</p>
+            <p className="text-xs text-muted-foreground">thequitehelpinghand@gmail.com</p>
             <p className="text-xs text-muted-foreground">Operations Manager</p>
           </div>
         </div>
@@ -80,7 +80,7 @@ const AdminSettings = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <p className="text-sm text-foreground">Platform</p>
-            <p className="text-xs text-muted-foreground">Support Studio</p>
+            <p className="text-xs text-muted-foreground">The Business Support Studio</p>
           </div>
           <div>
             <p className="text-sm text-foreground">Version</p>

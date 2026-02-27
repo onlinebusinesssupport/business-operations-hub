@@ -48,7 +48,7 @@ const ForgotPassword = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-sm">
-        <Link to="/" className="font-sans text-sm font-semibold tracking-[0.15em] text-foreground uppercase block mb-10">SUPPORT STUDIO</Link>
+        <Link to="/" className="font-sans text-sm font-semibold tracking-[0.15em] text-foreground uppercase block mb-10">THE BUSINESS SUPPORT STUDIO</Link>
         <h1 className="font-serif text-2xl font-medium text-foreground">Reset password</h1>
         <p className="mt-2 text-sm text-muted-foreground">Enter your email and we will send a reset link.</p>
 

@@ -91,7 +91,7 @@ const HowWeWork = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-6 text-lg text-muted-foreground leading-relaxed"
           >
-            From first contact to full execution — here is exactly how an engagement with Support Studio works.
+            From first contact to full execution — here is exactly how an engagement with The Business Support Studio works.
           </motion.p>
         </div>
       </section>

@@ -17,7 +17,7 @@ const logos = [
 
 const testimonials = [
   {
-    quote: "Support Studio brought structure to our internal operations faster than any agency we've worked with. Practical, responsive, and deeply reliable.",
+    quote: "The Business Support Studio brought structure to our internal operations faster than any agency we've worked with. Practical, responsive, and deeply reliable.",
     name: "Sarah M.",
     role: "Operations Manager",
     company: "Fintech Startup",

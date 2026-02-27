@@ -70,7 +70,7 @@ const libraryCategories = [
       { name: "How to Submit a Request.pdf", date: "1 Feb 2026", type: "Guide" },
       { name: "Using the Client Portal.pdf", date: "28 Jan 2026", type: "Guide" },
       { name: "File Naming Conventions.pdf", date: "20 Jan 2026", type: "Guide" },
-      { name: "Getting Started with Support Studio.pdf", date: "15 Jan 2026", type: "Guide" },
+      { name: "Getting Started with The Business Support Studio.pdf", date: "15 Jan 2026", type: "Guide" },
     ],
   },
   {

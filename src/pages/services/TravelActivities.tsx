@@ -126,7 +126,7 @@ const TravelActivities = () => {
       <section className="py-20">
         <div className="container mx-auto px-6 lg:px-8 max-w-xl text-center">
           <p className="text-sm text-muted-foreground leading-relaxed italic">
-            Clarity builds momentum. Systems build freedom. SUPPORT STUDIO™ builds both.
+            Clarity builds momentum. Systems build freedom. THE BUSINESS SUPPORT STUDIO™ builds both.
           </p>
         </div>
       </section>

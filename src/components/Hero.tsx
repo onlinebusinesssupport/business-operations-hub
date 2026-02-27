@@ -41,7 +41,7 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
             className="mt-4 text-base md:text-lg leading-relaxed text-muted-foreground max-w-xl"
           >
-            SUPPORT STUDIO combines operational support, digital brand management, and curated experiences into one intelligent platform.
+            THE BUSINESS SUPPORT STUDIO combines operational support, digital brand management, and curated experiences into one intelligent platform.
           </motion.p>
 
           <motion.div

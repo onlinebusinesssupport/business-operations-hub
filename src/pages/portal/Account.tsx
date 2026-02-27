@@ -102,7 +102,7 @@ const Account = () => {
     load();
   }, [user]);
 
-  const badgeSnippet = `<a href="https://supportstudio.co" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;border:1px solid #e5e5e5;padding:4px 10px;font-family:sans-serif;text-decoration:none;color:#111"><span style="width:5px;height:5px;background:#1E3D2F;display:block"></span><span style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:#888">Powered by</span><span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#111">SUPPORT STUDIO</span></a>`;
+  const badgeSnippet = `<a href="https://thebusinesssupportstudio.co" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;border:1px solid #e5e5e5;padding:4px 10px;font-family:sans-serif;text-decoration:none;color:#111"><span style="width:5px;height:5px;background:#1E3D2F;display:block"></span><span style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:#888">Powered by</span><span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#111">THE BUSINESS SUPPORT STUDIO</span></a>`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(badgeSnippet);
@@ -329,7 +329,7 @@ const Account = () => {
               Embeddable Badge
             </p>
             <p className="text-sm text-muted-foreground mb-6 max-w-lg">
-              Add this badge to your website to signal that your business infrastructure is powered by SUPPORT STUDIO.
+              Add this badge to your website to signal that your business infrastructure is powered by THE BUSINESS SUPPORT STUDIO.
             </p>
             <div className="mb-6">
               <PoweredBadge />

@@ -94,7 +94,7 @@ const About = () => {
             <div className="md:col-span-7">
               <motion.div {...fadeUp} transition={{ duration: 0.6, delay: 0.1 }}>
                 <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-                  Support Studio was founded with a clear premise: emerging businesses,
+                  The Business Support Studio was founded with a clear premise: emerging businesses,
                   content creators, and influencers deserve operational support that is
                   structured, reliable, and built for the realities of fast-moving markets.
                 </p>

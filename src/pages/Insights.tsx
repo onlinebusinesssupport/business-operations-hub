@@ -80,7 +80,7 @@ const Insights = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-6 text-lg text-muted-foreground leading-relaxed"
           >
-            Practical thinking from the team at Support Studio — grounded in real experience
+            Practical thinking from the team at The Business Support Studio — grounded in real experience
             supporting South African businesses.
           </motion.p>
         </div>
