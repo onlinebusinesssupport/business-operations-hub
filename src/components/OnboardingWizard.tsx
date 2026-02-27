@@ -118,7 +118,7 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
       {/* Header */}
       <div className="flex items-center justify-between px-6 md:px-12 py-4 border-b border-border">
         <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
-          Support Studio™ — Setup
+          The Business Support Studio™ — Setup
         </p>
         <p className="text-[10px] text-muted-foreground">
           Step {step + 1} of {TOTAL_STEPS}

@@ -93,7 +93,7 @@ const Login = () => {
         className="w-full max-w-sm"
       >
         <Link to="/" className="font-display text-sm font-bold tracking-[0.2em] text-foreground uppercase block mb-10">
-          SUPPORT STUDIO™
+          THE BUSINESS SUPPORT STUDIO™
         </Link>
 
         {/* Portal type selector */}
@@ -123,7 +123,7 @@ const Login = () => {
         </div>
 
         <h1 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">
-          Enter SUPPORT STUDIO
+          Enter THE BUSINESS SUPPORT STUDIO
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {portalType === "client"

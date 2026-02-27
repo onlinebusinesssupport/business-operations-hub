@@ -80,7 +80,7 @@ const MfaVerify = () => {
         className="w-full max-w-sm"
       >
         <Link to="/" className="font-display text-sm font-bold tracking-[0.2em] text-foreground uppercase block mb-10">
-          SUPPORT STUDIO™
+          THE BUSINESS SUPPORT STUDIO™
         </Link>
 
         <div className="flex items-center gap-3 mb-6">

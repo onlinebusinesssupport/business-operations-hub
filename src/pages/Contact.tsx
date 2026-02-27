@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Mail, Clock, MapPin } from "lucide-react";
+import { ArrowRight, Mail, Clock, MapPin, Phone } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
@@ -39,8 +40,24 @@ const Contact = () => {
   const [submitted, setSubmitted] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const { error } = await supabase.from("contact_submissions").insert({
+      name: name.trim(),
+      email: email.trim(),
+      company: company.trim() || null,
+      website: website.trim() || null,
+      service_interest: serviceInterest || null,
+      connect_preference: connectPreference || null,
+      message: message.trim(),
+    });
+
+    if (error) {
+      toast({ title: "Submission failed", description: error.message, variant: "destructive" });
+      return;
+    }
+
     setSubmitted(true);
     toast({ title: "Message received", description: "We will be in touch within 24 hours." });
   };
@@ -67,8 +84,8 @@ const Contact = () => {
             className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl"
           >
             Please complete the contact form below to learn more about our services. We custom quote based on support needs. On the form below, you will indicate how you would like to connect. If you'd like to connect via phone or Zoom, you will be taken to our calendar after submitting. If you have questions, please drop us a line at{" "}
-            <a href="mailto:hello@thesupportstudio.co" className="text-foreground font-medium underline underline-offset-4 hover:text-primary transition-colors">
-              hello@thesupportstudio.co
+            <a href="mailto:thequitehelpinghand@gmail.com" className="text-foreground font-medium underline underline-offset-4 hover:text-primary transition-colors">
+              thequitehelpinghand@gmail.com
             </a>.
           </motion.p>
         </div>
@@ -238,11 +255,21 @@ const Contact = () => {
                     <Mail size={16} className="mt-0.5 text-primary shrink-0" />
                     <div>
                       <span className="text-xs font-medium text-foreground uppercase tracking-wide block mb-1">Email</span>
-                      <a href="mailto:hello@thesupportstudio.co" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                        hello@thesupportstudio.co
+                      <a href="mailto:thequitehelpinghand@gmail.com" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        thequitehelpinghand@gmail.com
                       </a>
                     </div>
+                    </div>
                   </div>
+
+                  <div className="flex items-start gap-3">
+                    <Phone size={16} className="mt-0.5 text-primary shrink-0" />
+                    <div>
+                      <span className="text-xs font-medium text-foreground uppercase tracking-wide block mb-1">Phone</span>
+                      <a href="tel:+27749534914" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        +27 74 953 4914
+                      </a>
+                    </div>
 
                   <div className="flex items-start gap-3">
                     <Clock size={16} className="mt-0.5 text-primary shrink-0" />
@@ -271,7 +298,7 @@ const Contact = () => {
 
                 <div>
                   <a
-                    href="https://wa.me/27000000000"
+                    href="https://wa.me/27749534914"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-xs text-primary font-medium hover:underline"

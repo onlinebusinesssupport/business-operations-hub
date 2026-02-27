@@ -197,7 +197,7 @@ const LekoChat = () => {
                   />
                   <p className="text-sm font-medium text-foreground mb-1">Hello, I am LEKO.</p>
                   <p className="text-xs text-muted-foreground leading-relaxed max-w-[260px] mx-auto">
-                    Your Support Studio assistant. Ask me about navigating the portal, submitting requests, or anything else.
+                    Your Business Support Studio assistant. Ask me about navigating the portal, submitting requests, or anything else.
                   </p>
                   <div className="mt-4 flex flex-wrap justify-center gap-2">
                     {["How do I submit a request?", "What services do you offer?", "Help me navigate"].map((q) => (

@@ -129,7 +129,7 @@ const Apply = () => {
     <div className="min-h-screen flex items-center justify-center bg-background px-6 py-12">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-lg">
         <Link to="/" className="font-display text-sm font-bold tracking-[0.2em] text-foreground uppercase block mb-10">
-          SUPPORT STUDIO™
+          THE BUSINESS SUPPORT STUDIO™
         </Link>
 
         <h1 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">
@@ -276,7 +276,7 @@ const Apply = () => {
                 <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">Set your support rhythm</p>
                 <div className="space-y-5">
                   <div>
-                    <label className="text-xs text-muted-foreground block mb-1.5">Why do you want access to SUPPORT STUDIO™? *</label>
+                    <label className="text-xs text-muted-foreground block mb-1.5">Why do you want access to THE BUSINESS SUPPORT STUDIO™? *</label>
                     <textarea
                       value={intent}
                       onChange={(e) => setIntent(e.target.value)}

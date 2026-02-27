@@ -80,7 +80,7 @@ const templateCategories = [
       {
         title: "Welcome Pack",
         description: "Introduction to services, communication protocols, and portal access instructions.",
-        content: `# Welcome to Support Studio™
+        content: `# Welcome to The Business Support Studio™
 
 ## Your Team
 - **Account Operator**: [Name]
@@ -327,7 +327,7 @@ Let me know if you have any questions.
 
 Best,
 [Your Name]
-Support Studio™`,
+The Business Support Studio™`,
       },
       {
         title: "Request Acknowledgment",
@@ -346,7 +346,7 @@ I'll keep you updated via the portal. If anything changes or you need to add con
 
 Best,
 [Your Name]
-Support Studio™`,
+The Business Support Studio™`,
       },
       {
         title: "Meeting Follow-Up",
@@ -373,7 +373,7 @@ Let me know if I've missed anything.
 
 Best,
 [Your Name]
-Support Studio™`,
+The Business Support Studio™`,
       },
     ],
   },

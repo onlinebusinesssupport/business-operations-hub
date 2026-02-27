@@ -18,7 +18,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-divider">
       <div className="container mx-auto flex items-center justify-between h-16 px-6 lg:px-8">
         <Link to="/" className="font-display text-sm font-bold tracking-[0.2em] text-foreground uppercase">
-          SUPPORT STUDIO™
+          THE BUSINESS SUPPORT STUDIO™
         </Link>
 
         <ul className="hidden md:flex items-center gap-8">

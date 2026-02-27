@@ -7,7 +7,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div>
             <span className="font-display text-sm font-bold tracking-[0.2em] text-foreground uppercase">
-              SUPPORT STUDIO™
+              THE BUSINESS SUPPORT STUDIO™
             </span>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-xs">
               Support that moves at your speed.
@@ -60,10 +60,18 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="mailto:hello@supportstudio.co"
+                  href="mailto:thequitehelpinghand@gmail.com"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Email
+                </a>
+              </li>
+              <li>
+                <a
+                  href="tel:+27749534914"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  +27 74 953 4914
                 </a>
               </li>
             </ul>
@@ -90,7 +98,7 @@ const Footer = () => {
 
         <div className="mt-14 pt-6 border-t border-divider flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Support Studio™. All rights reserved.
+            © {new Date().getFullYear()} The Business Support Studio™. All rights reserved.
           </p>
         </div>
       </div>

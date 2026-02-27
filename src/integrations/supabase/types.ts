@@ -115,6 +115,42 @@ export type Database = {
           },
         ]
       }
+      contact_submissions: {
+        Row: {
+          company: string | null
+          connect_preference: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          service_interest: string | null
+          website: string | null
+        }
+        Insert: {
+          company?: string | null
+          connect_preference?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          service_interest?: string | null
+          website?: string | null
+        }
+        Update: {
+          company?: string | null
+          connect_preference?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          service_interest?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           category: string

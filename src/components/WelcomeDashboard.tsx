@@ -69,7 +69,7 @@ const WelcomeDashboard = ({ onDismiss, userName }: WelcomeDashboardProps) => {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex flex-col items-center text-center py-12">
           <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-6">Welcome</p>
           <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground uppercase tracking-tight">
-            Welcome to SUPPORT STUDIO™
+            Welcome to THE BUSINESS SUPPORT STUDIO™
           </h1>
           <p className="mt-4 text-sm text-muted-foreground max-w-md leading-relaxed">
             {userName ? `${userName}, your` : "Your"} support environment is ready. Let's build momentum.
