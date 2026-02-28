@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Send } from "lucide-react";
+import { Send, Inbox, Loader2 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const stagger = {
   initial: { opacity: 0, y: 12 },
@@ -10,22 +14,70 @@ const stagger = {
 
 const priorities = ["Low", "Medium", "High"];
 
-const existingRequests = [
-  { title: "Update weekly report format", priority: "Medium", date: "12 Feb", status: "In progress" },
-  { title: "Add vendor to contact list", priority: "Low", date: "10 Feb", status: "Completed" },
-  { title: "Prepare board meeting notes", priority: "High", date: "8 Feb", status: "Completed" },
-];
+const statusLabel: Record<string, string> = {
+  new: "Open",
+  in_progress: "In Progress",
+  resolved: "Completed",
+};
 
 const Requests = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("Medium");
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Get the client's ID
+  const { data: clientId } = useQuery({
+    queryKey: ["my-client-id"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_my_client_id");
+      if (error) throw error;
+      return data as string | null;
+    },
+  });
+
+  // Fetch requests for this client
+  const { data: requests = [], isLoading } = useQuery({
+    queryKey: ["portal-requests", clientId],
+    enabled: !!clientId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("requests")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const createRequest = useMutation({
+    mutationFn: async () => {
+      if (!clientId || !user) throw new Error("Not linked to a client account");
+      const { error } = await supabase.from("requests").insert({
+        title: title.trim(),
+        description: description.trim() || null,
+        priority: priority.toLowerCase(),
+        client_id: clientId,
+        submitted_by: user.id,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["portal-requests"] });
+      toast({ title: "Request submitted", description: "Your team will review it shortly." });
+      setTitle("");
+      setDescription("");
+      setPriority("Medium");
+    },
+    onError: (err: Error) => toast({ title: "Error", description: err.message, variant: "destructive" }),
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setTitle("");
-    setDescription("");
-    setPriority("Medium");
+    if (!title.trim()) return;
+    createRequest.mutate();
   };
 
   return (
@@ -43,53 +95,58 @@ const Requests = () => {
           <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-5">
             New Request
           </p>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="text-sm text-foreground block mb-1.5">Title</label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="What do you need?"
-                className="w-full bg-background border border-divider rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-              />
-            </div>
-            <div>
-              <label className="text-sm text-foreground block mb-1.5">Description</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={4}
-                placeholder="Provide any relevant details..."
-                className="w-full bg-background border border-divider rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none"
-              />
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end justify-between">
+          {!clientId && !isLoading ? (
+            <p className="text-sm text-muted-foreground">Your account is not yet linked to a client profile. Please contact your administrator.</p>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="text-sm text-foreground block mb-1.5">Priority</label>
-                <div className="flex gap-2">
-                  {priorities.map((p) => (
-                    <button
-                      key={p}
-                      type="button"
-                      onClick={() => setPriority(p)}
-                      className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-150 ${
-                        priority === p
-                          ? "bg-foreground text-background border-foreground"
-                          : "bg-background text-muted-foreground border-divider hover:border-foreground/30"
-                      }`}
-                    >
-                      {p}
-                    </button>
-                  ))}
-                </div>
+                <label className="text-sm text-foreground block mb-1.5">Title</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="What do you need?"
+                  required
+                  className="w-full bg-background border border-divider rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                />
               </div>
-              <Button type="submit" size="sm" className="gap-2 text-xs rounded-lg">
-                <Send size={14} />
-                Submit Request
-              </Button>
-            </div>
-          </form>
+              <div>
+                <label className="text-sm text-foreground block mb-1.5">Description</label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={4}
+                  placeholder="Provide any relevant details..."
+                  className="w-full bg-background border border-divider rounded-lg px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none"
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end justify-between">
+                <div>
+                  <label className="text-sm text-foreground block mb-1.5">Priority</label>
+                  <div className="flex gap-2">
+                    {priorities.map((p) => (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setPriority(p)}
+                        className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-150 ${
+                          priority === p
+                            ? "bg-foreground text-background border-foreground"
+                            : "bg-background text-muted-foreground border-divider hover:border-foreground/30"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <Button type="submit" size="sm" className="gap-2 text-xs rounded-lg" disabled={createRequest.isPending || !title.trim()}>
+                  {createRequest.isPending ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                  Submit Request
+                </Button>
+              </div>
+            </form>
+          )}
         </div>
       </motion.div>
 
@@ -98,27 +155,36 @@ const Requests = () => {
         <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-4">
           Previous Requests
         </p>
-        <div className="bg-card border border-divider rounded-xl divide-y divide-divider">
-          {existingRequests.map((r) => (
-            <div key={r.title} className="p-4 flex items-center justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-foreground">{r.title}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {r.priority} priority · {r.date}
-                </p>
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground py-4">Loading...</p>
+        ) : requests.length === 0 ? (
+          <div className="border border-border p-8 text-center">
+            <Inbox size={28} className="mx-auto text-muted-foreground mb-2" strokeWidth={1} />
+            <p className="text-sm text-muted-foreground">No requests yet.</p>
+          </div>
+        ) : (
+          <div className="bg-card border border-divider rounded-xl divide-y divide-divider">
+            {requests.map((r: any) => (
+              <div key={r.id} className="p-4 flex items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-foreground">{r.title}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {r.priority} priority · {new Date(r.created_at).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
+                  </p>
+                </div>
+                <span
+                  className={`text-xs px-2.5 py-1 rounded-lg ${
+                    r.status === "resolved"
+                      ? "bg-accent text-muted-foreground"
+                      : "bg-accent text-foreground"
+                  }`}
+                >
+                  {statusLabel[r.status] || r.status}
+                </span>
               </div>
-              <span
-                className={`text-xs px-2.5 py-1 rounded-lg ${
-                  r.status === "Completed"
-                    ? "bg-accent text-muted-foreground"
-                    : "bg-accent text-foreground"
-                }`}
-              >
-                {r.status}
-              </span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </motion.div>
     </div>
   );

@@ -9,9 +9,11 @@ import {
   Bell,
   CheckCircle2,
   MessageSquare,
+  Inbox,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import GrowthScore from "@/components/GrowthScore";
 
@@ -20,7 +22,6 @@ const stagger = {
   animate: { opacity: 1, y: 0 },
 };
 
-/* Studio modules */
 const studioModules = [
   { name: "Operations", icon: Settings, active: false },
   { name: "Automation", icon: Zap, active: false },
@@ -29,44 +30,17 @@ const studioModules = [
   { name: "Experiences", icon: Sparkles, active: false },
 ];
 
-/* Metric placeholders */
-const metrics = [
-  { label: "Leads This Month", value: "—", icon: Target },
-  { label: "Automations Live", value: "—", icon: Zap },
-  { label: "In Motion", value: "—", icon: CheckCircle2 },
-  { label: "Revenue Pipeline", value: "—", icon: Globe },
-  { label: "Response Rate", value: "—", icon: MessageSquare },
-];
-
-/* Activity feed placeholder */
-const activityFeed: { type: "task" | "message" | "automation"; text: string; time: string }[] = [
-  { type: "task", text: "Task updated: Onboarding checklist finalised", time: "Just now" },
-  { type: "message", text: "New message from your operations lead", time: "2h ago" },
-  { type: "automation", text: "Automation deployed: Weekly digest pipeline", time: "Yesterday" },
-  { type: "task", text: "Task completed: Vendor agreement review", time: "2 days ago" },
-  { type: "message", text: "Quarterly review notes shared", time: "3 days ago" },
-];
-
-const activityIcon = {
-  task: CheckCircle2,
-  message: MessageSquare,
-  automation: Zap,
-};
-
-/* Placeholder score calculation */
-const calculateGrowthScore = () => {
-  const automationLevel = 0;   // 0-25
-  const leadFlow = 0;          // 0-25
-  const taskCompletion = 0;    // 0-25
-  const digitalResponse = 0;   // 0-25
-  return automationLevel + leadFlow + taskCompletion + digitalResponse;
+const activityIcon: Record<string, any> = {
+  progress: CheckCircle2,
+  decision: MessageSquare,
+  improvement: Zap,
+  note: MessageSquare,
 };
 
 const PortalDashboard = () => {
   const { user } = useAuth();
   const [showWelcome, setShowWelcome] = useState<boolean | null>(null);
   const [userName, setUserName] = useState("");
-  const growthScore = calculateGrowthScore();
 
   useEffect(() => {
     const checkOnboarding = async () => {
@@ -86,6 +60,52 @@ const PortalDashboard = () => {
     };
     checkOnboarding();
   }, [user]);
+
+  // Fetch real data for dashboard
+  const { data: workItems = [] } = useQuery({
+    queryKey: ["portal-dash-work"],
+    queryFn: async () => {
+      const { data } = await supabase.from("work_items").select("id, status, priority");
+      return data || [];
+    },
+  });
+
+  const { data: requests = [] } = useQuery({
+    queryKey: ["portal-dash-requests"],
+    queryFn: async () => {
+      const { data } = await supabase.from("requests").select("id, status");
+      return data || [];
+    },
+  });
+
+  const { data: recentUpdates = [] } = useQuery({
+    queryKey: ["portal-dash-updates"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("updates")
+        .select("id, content, update_type, created_at")
+        .order("created_at", { ascending: false })
+        .limit(5);
+      return data || [];
+    },
+  });
+
+  // Calculate real metrics
+  const inProgress = workItems.filter((w: any) => w.status === "in_progress").length;
+  const completed = workItems.filter((w: any) => w.status === "done").length;
+  const totalWork = workItems.length;
+  const openRequests = requests.filter((r: any) => r.status === "new" || r.status === "in_progress").length;
+
+  // Growth score based on real data
+  const taskCompletion = totalWork > 0 ? Math.round((completed / totalWork) * 25) : 0;
+  const growthScore = taskCompletion; // Other dimensions placeholder
+
+  const metrics = [
+    { label: "Active Projects", value: String(inProgress || "—"), icon: Target },
+    { label: "Completed", value: String(completed || "—"), icon: CheckCircle2 },
+    { label: "Open Requests", value: String(openRequests || "—"), icon: MessageSquare },
+    { label: "Total Work Items", value: String(totalWork || "—"), icon: Globe },
+  ];
 
   if (showWelcome === null) {
     return (
@@ -114,7 +134,7 @@ const PortalDashboard = () => {
             <div className="flex items-center gap-3 mt-4">
               <button className="relative p-2 border border-border hover:bg-secondary transition-colors">
                 <Bell size={16} className="text-muted-foreground" />
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
+                {openRequests > 0 && <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />}
               </button>
             </div>
           </div>
@@ -131,7 +151,7 @@ const PortalDashboard = () => {
           {[
             { label: "Automation Level", value: 0, max: 25 },
             { label: "Lead Flow Consistency", value: 0, max: 25 },
-            { label: "Task Completion Rate", value: 0, max: 25 },
+            { label: "Task Completion Rate", value: taskCompletion, max: 25 },
             { label: "Digital Responsiveness", value: 0, max: 25 },
           ].map((dim) => (
             <div key={dim.label} className="border border-border p-4">
@@ -190,7 +210,7 @@ const PortalDashboard = () => {
         <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">
           Insights
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {metrics.map((metric, i) => (
             <motion.div
               key={metric.label}
@@ -213,22 +233,41 @@ const PortalDashboard = () => {
           Recent Activity
         </p>
         <div className="border border-border divide-y divide-border">
-          {activityFeed.map((item, i) => {
-            const Icon = activityIcon[item.type];
-            return (
-              <div key={i} className="p-4 flex items-center justify-between gap-4 hover:bg-secondary/50 transition-colors">
-                <div className="flex items-center gap-3 min-w-0">
-                  <Icon size={14} className="text-muted-foreground shrink-0" strokeWidth={1.5} />
-                  <p className="text-sm text-foreground truncate">{item.text}</p>
+          {recentUpdates.length === 0 ? (
+            <div className="p-8 text-center">
+              <Inbox size={24} className="mx-auto text-muted-foreground mb-2" strokeWidth={1} />
+              <p className="text-sm text-muted-foreground">No recent activity yet.</p>
+            </div>
+          ) : (
+            recentUpdates.map((item: any) => {
+              const Icon = activityIcon[item.update_type] || CheckCircle2;
+              const timeAgo = getTimeAgo(item.created_at);
+              return (
+                <div key={item.id} className="p-4 flex items-center justify-between gap-4 hover:bg-secondary/50 transition-colors">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Icon size={14} className="text-muted-foreground shrink-0" strokeWidth={1.5} />
+                    <p className="text-sm text-foreground truncate">{item.content}</p>
+                  </div>
+                  <span className="text-[11px] text-muted-foreground shrink-0">{timeAgo}</span>
                 </div>
-                <span className="text-[11px] text-muted-foreground shrink-0">{item.time}</span>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </motion.div>
     </div>
   );
 };
+
+function getTimeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
 
 export default PortalDashboard;
