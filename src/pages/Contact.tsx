@@ -259,7 +259,6 @@ const Contact = () => {
                         thequitehelpinghand@gmail.com
                       </a>
                     </div>
-                    </div>
                   </div>
 
                   <div className="flex items-start gap-3">
@@ -270,6 +269,7 @@ const Contact = () => {
                         +27 74 953 4914
                       </a>
                     </div>
+                  </div>
 
                   <div className="flex items-start gap-3">
                     <Clock size={16} className="mt-0.5 text-primary shrink-0" />
