@@ -1,38 +1,46 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Mail, Globe, Calendar, User, Building2, Eye, ArrowLeft } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, Mail, Globe, Building2, Eye, Sparkles } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { KanbanBoard, KanbanColumn } from "@/components/KanbanBoard";
+import InlineEdit from "@/components/InlineEdit";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
-type Stage = "all" | "new_inquiry" | "qualification" | "discovery" | "proposal" | "activation";
+type PipelineStage = "new_inquiry" | "qualification" | "discovery" | "proposal" | "won";
 
-const stageConfig: Record<Exclude<Stage, "all">, { label: string; color: string }> = {
-  new_inquiry: { label: "New Inquiry", color: "bg-primary/20 text-primary" },
-  qualification: { label: "Qualification", color: "bg-accent text-foreground" },
-  discovery: { label: "Discovery", color: "bg-primary/30 text-primary" },
-  proposal: { label: "Proposal", color: "bg-foreground/10 text-foreground" },
-  activation: { label: "Activated", color: "bg-foreground text-background" },
+const stageConfig: Record<PipelineStage, { label: string; dotColor: string; bgColor: string }> = {
+  new_inquiry: { label: "New Inquiry", dotColor: "bg-blue-500", bgColor: "bg-blue-500/10" },
+  qualification: { label: "Qualification", dotColor: "bg-amber-500", bgColor: "bg-amber-500/10" },
+  discovery: { label: "Discovery", dotColor: "bg-purple-500", bgColor: "bg-purple-500/10" },
+  proposal: { label: "Proposal", dotColor: "bg-primary", bgColor: "bg-primary/10" },
+  won: { label: "Won", dotColor: "bg-emerald-500", bgColor: "bg-emerald-500/10" },
 };
 
-interface Lead {
+const stages: PipelineStage[] = ["new_inquiry", "qualification", "discovery", "proposal", "won"];
+
+interface PipelineLead {
   id: string;
+  db_id: string;
   type: "contact" | "application";
   name: string;
   email: string;
   business: string;
-  stage: Exclude<Stage, "all">;
+  stage: PipelineStage;
   service_interest?: string;
   website?: string;
+  notes?: string;
+  value?: string;
   created_at: string;
   raw: any;
 }
 
 const AdminLeadPipeline = () => {
-  const [filter, setFilter] = useState<Stage>("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: contacts = [] } = useQuery({
     queryKey: ["pipeline-contacts"],
@@ -50,45 +58,166 @@ const AdminLeadPipeline = () => {
     },
   });
 
-  // Map to unified leads
-  const leads: Lead[] = [
+  // Map status to pipeline stage
+  const appStageMap = (status: string): PipelineStage => {
+    switch (status) {
+      case "approved": return "won";
+      case "declined": return "qualification";
+      case "in_review": return "discovery";
+      case "proposal": return "proposal";
+      default: return "qualification";
+    }
+  };
+
+  const leads: PipelineLead[] = [
     ...contacts.map((c: any) => ({
       id: `contact-${c.id}`,
+      db_id: c.id,
       type: "contact" as const,
       name: c.name,
       email: c.email,
       business: c.company || "—",
-      stage: "new_inquiry" as const,
+      stage: "new_inquiry" as PipelineStage,
       service_interest: c.service_interest,
       website: c.website,
+      notes: c.message,
       created_at: c.created_at,
       raw: c,
     })),
     ...applications.map((a: any) => ({
       id: `app-${a.id}`,
+      db_id: a.id,
       type: "application" as const,
       name: a.full_name,
       email: a.email,
       business: a.business_name,
-      stage: a.status === "approved" ? "activation" as const
-        : a.status === "declined" ? "qualification" as const
-        : "qualification" as const,
+      stage: appStageMap(a.status),
       service_interest: a.areas_of_support?.join(", "),
       website: a.website,
+      notes: a.admin_notes || a.pain_points,
       created_at: a.created_at,
       raw: a,
     })),
   ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-  const filtered = filter === "all" ? leads : leads.filter((l) => l.stage === filter);
+  // Columns for Kanban
+  const columns: KanbanColumn<PipelineLead>[] = stages.map((stage) => ({
+    id: stage,
+    title: stageConfig[stage].label,
+    color: stageConfig[stage].dotColor,
+    items: leads.filter((l) => l.stage === stage),
+  }));
+
+  // Mutation to update stage
+  const updateStage = useMutation({
+    mutationFn: async ({ lead, newStage }: { lead: PipelineLead; newStage: PipelineStage }) => {
+      if (lead.type === "application") {
+        const statusMap: Record<PipelineStage, string> = {
+          new_inquiry: "pending",
+          qualification: "pending",
+          discovery: "in_review",
+          proposal: "proposal",
+          won: "approved",
+        };
+        const { error } = await supabase.from("applications").update({ status: statusMap[newStage] }).eq("id", lead.db_id);
+        if (error) throw error;
+      }
+      // For contacts, we don't have a status field — they stay as new_inquiry in DB
+      // In a full system, you'd add a `stage` column to contact_submissions
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pipeline-contacts"] });
+      queryClient.invalidateQueries({ queryKey: ["pipeline-applications"] });
+    },
+  });
+
+  // Auto-activation when dragged to "Won"
+  const activateClient = useMutation({
+    mutationFn: async (lead: PipelineLead) => {
+      // 1. Create the client
+      const { data: newClient, error: clientErr } = await supabase.from("clients").insert({
+        name: lead.business !== "—" ? lead.business : lead.name,
+        status: "active",
+        services: lead.service_interest ? lead.service_interest.split(",").map(s => s.trim()) : ["Operations"],
+        notes: `Auto-created from ${lead.type} pipeline. Contact: ${lead.email}`,
+      }).select("id").single();
+      if (clientErr) throw clientErr;
+
+      // 2. Create default onboarding work items
+      const onboardingTasks = [
+        { title: "Welcome & Orientation", description: "Initial welcome call and workspace setup", priority: "high", status: "to_do" },
+        { title: "Discovery Audit", description: "Conduct initial audit of current operations", priority: "high", status: "to_do" },
+        { title: "Strategy Development", description: "Develop initial strategy and roadmap", priority: "medium", status: "to_do" },
+        { title: "First Deliverable", description: "Prepare and deliver first milestone", priority: "medium", status: "to_do" },
+      ];
+
+      for (const task of onboardingTasks) {
+        await supabase.from("work_items").insert({
+          ...task,
+          client_id: newClient.id,
+        });
+      }
+
+      // 3. Create welcome update
+      await supabase.from("updates").insert({
+        client_id: newClient.id,
+        content: `Welcome to SUPPORT STUDIO™. ${lead.business !== "—" ? lead.business : lead.name} has been activated as a new partner. Onboarding has begun.`,
+        update_type: "progress",
+      });
+
+      return newClient;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["overview-clients"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-work-items"] });
+      queryClient.invalidateQueries({ queryKey: ["overview-work"] });
+      toast({
+        title: "Client Activated ✨",
+        description: "Workspace created. Onboarding tasks generated. Welcome notification sent.",
+      });
+    },
+    onError: (err: Error) => {
+      toast({ title: "Activation failed", description: err.message, variant: "destructive" });
+    },
+  });
+
+  const handleDragEnd = useCallback((itemId: string, sourceColumn: string, destColumn: string) => {
+    if (sourceColumn === destColumn) return;
+    const lead = leads.find((l) => l.id === itemId);
+    if (!lead) return;
+
+    const newStage = destColumn as PipelineStage;
+
+    // Optimistic: update stage via mutation
+    updateStage.mutate({ lead, newStage });
+
+    // If moved to "Won", trigger activation
+    if (newStage === "won" && sourceColumn !== "won") {
+      activateClient.mutate(lead);
+    }
+
+    toast({
+      title: "Stage updated",
+      description: `${lead.name} moved to ${stageConfig[newStage].label}`,
+    });
+  }, [leads, updateStage, activateClient, toast]);
+
+  // Inline edit handler
+  const handleInlineUpdate = useCallback(async (lead: PipelineLead, field: string, value: string) => {
+    if (lead.type === "application") {
+      const updateData: any = {};
+      if (field === "business") updateData.business_name = value;
+      if (field === "notes") updateData.admin_notes = value;
+      if (Object.keys(updateData).length > 0) {
+        await supabase.from("applications").update(updateData).eq("id", lead.db_id);
+        queryClient.invalidateQueries({ queryKey: ["pipeline-applications"] });
+      }
+    }
+  }, [queryClient]);
+
   const selected = leads.find((l) => l.id === selectedId);
 
-  // Stage counts
-  const stageCounts = Object.keys(stageConfig).reduce((acc, key) => {
-    acc[key] = leads.filter((l) => l.stage === key).length;
-    return acc;
-  }, {} as Record<string, number>);
-
+  // Detail view
   if (selected) {
     const r = selected.raw;
     return (
@@ -102,7 +231,7 @@ const AdminLeadPipeline = () => {
             <h2 className="font-display text-2xl font-bold text-foreground">{selected.name}</h2>
             <p className="text-sm text-muted-foreground mt-1">{selected.business} · {selected.type === "application" ? "Application" : "Contact Form"}</p>
           </div>
-          <span className={`text-[10px] uppercase tracking-[0.1em] font-medium px-3 py-1 ${stageConfig[selected.stage].color}`}>
+          <span className={`text-[10px] uppercase tracking-[0.1em] font-medium px-3 py-1 ${stageConfig[selected.stage].bgColor}`}>
             {stageConfig[selected.stage].label}
           </span>
         </div>
@@ -113,133 +242,133 @@ const AdminLeadPipeline = () => {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span className="text-foreground">{selected.email}</span></div>
               {selected.website && <div className="flex justify-between"><span className="text-muted-foreground">Website</span><a href={selected.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate ml-2">{selected.website}</a></div>}
-              <div className="flex justify-between"><span className="text-muted-foreground">Source</span><span className="text-foreground capitalize">{selected.type === "application" ? "Application Form" : "Contact Form"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Source</span><span className="text-foreground capitalize">{selected.type}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Date</span><span className="text-foreground">{new Date(selected.created_at).toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" })}</span></div>
             </div>
           </div>
-
           <div className="bg-card border border-divider p-5 space-y-3">
             <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Interest</p>
             <div className="space-y-2 text-sm">
               {selected.service_interest && <div className="flex justify-between"><span className="text-muted-foreground">Services</span><span className="text-foreground">{selected.service_interest}</span></div>}
-              {selected.type === "contact" && r.connect_preference && <div className="flex justify-between"><span className="text-muted-foreground">Prefers</span><span className="text-foreground capitalize">{r.connect_preference}</span></div>}
               {selected.type === "application" && r.industry && <div className="flex justify-between"><span className="text-muted-foreground">Industry</span><span className="text-foreground">{r.industry}</span></div>}
-              {selected.type === "application" && r.team_size && <div className="flex justify-between"><span className="text-muted-foreground">Team Size</span><span className="text-foreground">{r.team_size}</span></div>}
               {selected.type === "application" && r.revenue_range && <div className="flex justify-between"><span className="text-muted-foreground">Revenue</span><span className="text-foreground">{r.revenue_range}</span></div>}
             </div>
           </div>
         </div>
 
-        {(selected.type === "contact" && r.message) && (
+        {selected.notes && (
           <div className="bg-card border border-divider p-5 space-y-2">
-            <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Message</p>
-            <p className="text-sm text-foreground leading-relaxed">{r.message}</p>
-          </div>
-        )}
-
-        {(selected.type === "application" && r.pain_points) && (
-          <div className="bg-card border border-divider p-5 space-y-2">
-            <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Pain Points</p>
-            <p className="text-sm text-foreground leading-relaxed">{r.pain_points}</p>
-          </div>
-        )}
-
-        {(selected.type === "application" && r.intent) && (
-          <div className="bg-card border border-divider p-5 space-y-2">
-            <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Intent Signal</p>
-            <p className="text-sm text-foreground leading-relaxed">{r.intent}</p>
+            <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Notes</p>
+            <p className="text-sm text-foreground leading-relaxed">{selected.notes}</p>
           </div>
         )}
       </div>
     );
   }
 
+  // Pipeline counts
+  const totalLeads = leads.length;
+  const wonCount = leads.filter(l => l.stage === "won").length;
+
   return (
     <div className="space-y-6">
       <motion.div {...fade} transition={{ duration: 0.3 }}>
-        <h2 className="font-display text-2xl font-bold text-foreground">Lead Pipeline</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Unified view of all inbound interest — contact forms and applications.
-        </p>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h2 className="font-display text-2xl font-bold text-foreground">Lead Pipeline</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Drag leads across stages. Drop into "Won" to auto-activate a client workspace.
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="font-display text-2xl font-bold text-foreground">{totalLeads}</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total Leads</p>
+            </div>
+            <div className="text-right">
+              <p className="font-display text-2xl font-bold text-primary">{wonCount}</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Won</p>
+            </div>
+          </div>
+        </div>
       </motion.div>
 
-      {/* Stage funnel */}
+      {/* Kanban Board */}
       <motion.div {...fade} transition={{ duration: 0.3, delay: 0.05 }}>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          {(Object.entries(stageConfig) as [Exclude<Stage, "all">, typeof stageConfig[keyof typeof stageConfig]][]).map(([key, cfg]) => (
-            <button
-              key={key}
-              onClick={() => setFilter(filter === key ? "all" : key)}
-              className={`p-4 border transition-all text-left ${
-                filter === key ? "border-primary bg-primary/5" : "border-divider bg-card hover:border-primary/30"
+        <KanbanBoard
+          columns={columns}
+          onDragEnd={handleDragEnd}
+          getItemId={(lead) => lead.id}
+          renderCard={(lead, isDragging) => (
+            <div
+              className={`bg-card border border-divider p-4 cursor-grab active:cursor-grabbing transition-all duration-150 ${
+                isDragging ? "rotate-1 scale-[1.02]" : "hover:border-primary/30"
               }`}
+              onClick={() => !isDragging && setSelectedId(lead.id)}
             >
-              <p className="font-display text-2xl font-bold text-foreground">{stageCounts[key] || 0}</p>
-              <p className="text-[10px] font-medium tracking-[0.1em] text-muted-foreground uppercase mt-1">{cfg.label}</p>
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Filter tabs */}
-      <motion.div {...fade} transition={{ duration: 0.3, delay: 0.1 }}>
-        <div className="flex gap-2 flex-wrap">
-          <button onClick={() => setFilter("all")} className={`text-xs px-3 py-1.5 border transition-all ${filter === "all" ? "bg-foreground text-background border-foreground" : "bg-card text-muted-foreground border-divider hover:border-foreground/30"}`}>
-            All ({leads.length})
-          </button>
-          {(Object.entries(stageConfig) as [Exclude<Stage, "all">, typeof stageConfig[keyof typeof stageConfig]][]).map(([key, cfg]) => (
-            <button
-              key={key}
-              onClick={() => setFilter(key)}
-              className={`text-xs px-3 py-1.5 border transition-all ${filter === key ? "bg-foreground text-background border-foreground" : "bg-card text-muted-foreground border-divider hover:border-foreground/30"}`}
-            >
-              {cfg.label} ({stageCounts[key] || 0})
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Lead list */}
-      <motion.div {...fade} transition={{ duration: 0.3, delay: 0.15 }}>
-        {filtered.length === 0 ? (
-          <div className="border border-divider p-8 text-center">
-            <p className="text-sm text-muted-foreground">No leads in this stage.</p>
-          </div>
-        ) : (
-          <div className="bg-card border border-divider divide-y divide-divider">
-            {filtered.map((lead) => (
-              <button
-                key={lead.id}
-                onClick={() => setSelectedId(lead.id)}
-                className="w-full p-4 flex items-center justify-between gap-4 hover:bg-accent/40 transition-colors text-left"
-              >
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                    <span className="text-xs font-medium text-primary">{lead.name[0]}</span>
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{lead.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{lead.business} · {lead.email}</p>
-                  </div>
+              {/* Header */}
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                  <span className="text-[10px] font-bold text-primary">{lead.name[0]}</span>
                 </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  {lead.service_interest && (
-                    <span className="text-[10px] px-2 py-0.5 bg-accent text-foreground hidden md:block truncate max-w-[120px]">
-                      {lead.service_interest}
-                    </span>
-                  )}
-                  <span className={`text-[10px] uppercase tracking-[0.1em] font-medium px-2 py-0.5 ${stageConfig[lead.stage].color}`}>
-                    {stageConfig[lead.stage].label}
+                <span className="text-[9px] uppercase tracking-widest text-muted-foreground">
+                  {lead.type}
+                </span>
+              </div>
+
+              {/* Name (inline editable for applications) */}
+              <div className="text-sm font-medium text-foreground truncate">
+                {lead.type === "application" ? (
+                  <InlineEdit
+                    value={lead.business}
+                    onSave={(v) => handleInlineUpdate(lead, "business", v)}
+                    className="text-sm font-medium"
+                    placeholder="Company name"
+                  />
+                ) : (
+                  lead.business !== "—" ? lead.business : lead.name
+                )}
+              </div>
+
+              {/* Contact */}
+              <p className="text-[11px] text-muted-foreground mt-1 truncate">{lead.name} · {lead.email}</p>
+
+              {/* Service tag */}
+              {lead.service_interest && (
+                <div className="mt-2">
+                  <span className="text-[9px] px-1.5 py-0.5 bg-accent text-foreground uppercase tracking-wider truncate inline-block max-w-full">
+                    {lead.service_interest.split(",")[0].trim()}
                   </span>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap hidden md:block">
-                    {new Date(lead.created_at).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
-                  </span>
-                  <Eye size={14} className="text-muted-foreground" />
                 </div>
-              </button>
-            ))}
-          </div>
-        )}
+              )}
+
+              {/* Notes (inline editable) */}
+              {lead.type === "application" && (
+                <div className="mt-2">
+                  <InlineEdit
+                    value={lead.notes || ""}
+                    onSave={(v) => handleInlineUpdate(lead, "notes", v)}
+                    className="text-[11px] text-muted-foreground"
+                    placeholder="Add notes..."
+                    multiline
+                  />
+                </div>
+              )}
+
+              {/* Date */}
+              <p className="text-[10px] text-muted-foreground/60 mt-2">
+                {new Date(lead.created_at).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
+              </p>
+
+              {/* Won indicator */}
+              {lead.stage === "won" && (
+                <div className="mt-2 flex items-center gap-1 text-[10px] text-emerald-600 font-medium">
+                  <Sparkles size={10} /> Activated
+                </div>
+              )}
+            </div>
+          )}
+        />
       </motion.div>
     </div>
   );
