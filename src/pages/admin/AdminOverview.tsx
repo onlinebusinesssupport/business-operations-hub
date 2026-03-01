@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { ActivityFeed } from "@/components/ActivityFeed";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -230,8 +231,13 @@ const AdminOverview = () => {
         </motion.div>
       </div>
 
-      {/* Engagement feed */}
+      {/* Activity Feed */}
       <motion.div {...fade} transition={{ duration: 0.3, delay: 0.2 }}>
+        <ActivityFeed title="Global Activity" limit={10} />
+      </motion.div>
+
+      {/* Engagement feed */}
+      <motion.div {...fade} transition={{ duration: 0.3, delay: 0.25 }}>
         <p className="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase mb-3">Engagement</p>
         <div className="bg-card border border-divider divide-y divide-divider">
           {updates.length === 0 ? (

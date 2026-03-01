@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { KanbanBoard, KanbanColumn } from "@/components/KanbanBoard";
 import InlineEdit from "@/components/InlineEdit";
+import { logActivity } from "@/lib/activity";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -57,6 +58,12 @@ const AdminWorkManager = () => {
         status: "to_do",
       });
       if (error) throw error;
+      await logActivity({
+        client_id: f.client_id,
+        action: "created",
+        entity_type: "work_item",
+        details: { summary: `Created task "${f.title}"` },
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-work-items"] });
@@ -68,24 +75,40 @@ const AdminWorkManager = () => {
   });
 
   const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: Status }) => {
+    mutationFn: async ({ id, status, item }: { id: string; status: Status; item: any }) => {
       const { error } = await supabase.from("work_items").update({ status }).eq("id", id);
       if (error) throw error;
+      await logActivity({
+        client_id: item.client_id,
+        action: "drag",
+        entity_type: "work_item",
+        entity_id: id,
+        details: { summary: `Moved "${item.title}" → ${statusConfig[status].label}` },
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-work-items"] });
     },
   });
 
-  const updateField = useCallback(async (id: string, field: string, value: string) => {
-    await supabase.from("work_items").update({ [field]: value }).eq("id", id);
+  const updateField = useCallback(async (item: any, field: string, value: string) => {
+    await supabase.from("work_items").update({ [field]: value }).eq("id", item.id);
     queryClient.invalidateQueries({ queryKey: ["admin-work-items"] });
+    await logActivity({
+      client_id: item.client_id,
+      action: "field_edit",
+      entity_type: "work_item",
+      entity_id: item.id,
+      details: { summary: `Updated ${field} on "${item.title}"`, field, new_value: value },
+    });
   }, [queryClient]);
 
   const handleDragEnd = useCallback((itemId: string, _source: string, destColumn: string) => {
-    updateStatus.mutate({ id: itemId, status: destColumn as Status });
+    const item = workItems.find((w: any) => w.id === itemId);
+    if (!item) return;
+    updateStatus.mutate({ id: itemId, status: destColumn as Status, item });
     toast({ title: "Status updated" });
-  }, [updateStatus, toast]);
+  }, [updateStatus, toast, workItems]);
 
   const columns: KanbanColumn<any>[] = statusOrder.map((status) => ({
     id: status,
@@ -154,7 +177,6 @@ const AdminWorkManager = () => {
         </motion.div>
       )}
 
-      {/* Kanban Board */}
       <motion.div {...fade} transition={{ duration: 0.3, delay: 0.05 }}>
         {isLoading ? (
           <p className="text-sm text-muted-foreground py-8">Loading...</p>
@@ -171,26 +193,40 @@ const AdminWorkManager = () => {
               >
                 <InlineEdit
                   value={item.title}
-                  onSave={(v) => updateField(item.id, "title", v)}
+                  onSave={(v) => updateField(item, "title", v)}
                   className="text-sm font-medium text-foreground"
                 />
                 <p className="text-[11px] text-muted-foreground mt-1">
                   {item.clients?.name || "—"}
                 </p>
                 <div className="flex items-center justify-between mt-2">
-                  <span className={`text-[10px] uppercase tracking-wider font-medium ${priorityColor(item.priority)}`}>
-                    {item.priority}
-                  </span>
-                  {item.deadline && (
-                    <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                      <Clock size={9} />
-                      {new Date(item.deadline).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
+                  <InlineEdit
+                    value={item.priority || "medium"}
+                    onSave={(v) => updateField(item, "priority", v)}
+                    className={`text-[10px] uppercase tracking-wider font-medium ${priorityColor(item.priority)}`}
+                  />
+                  {item.deadline ? (
+                    <InlineEdit
+                      value={item.deadline}
+                      onSave={(v) => updateField(item, "deadline", v)}
+                      className="text-[10px] text-muted-foreground"
+                    />
+                  ) : (
+                    <span
+                      className="text-[10px] text-muted-foreground/40 italic cursor-pointer hover:text-muted-foreground"
+                      onClick={(e) => { e.stopPropagation(); }}
+                    >
+                      + deadline
                     </span>
                   )}
                 </div>
-                {item.description && (
-                  <p className="text-[10px] text-muted-foreground/70 mt-2 line-clamp-2">{item.description}</p>
-                )}
+                <InlineEdit
+                  value={item.description || ""}
+                  onSave={(v) => updateField(item, "description", v)}
+                  className="text-[10px] text-muted-foreground/70 mt-2"
+                  placeholder="Add notes..."
+                  multiline
+                />
               </div>
             )}
           />

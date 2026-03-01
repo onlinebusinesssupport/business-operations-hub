@@ -20,6 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import GrowthScore from "@/components/GrowthScore";
+import { ActivityFeed } from "@/components/ActivityFeed";
 
 const fade = {
   initial: { opacity: 0, y: 12 },
@@ -271,7 +272,7 @@ const PortalDashboard = () => {
         )}
       </motion.div>
 
-      {/* Recent Movement Feed */}
+      {/* Recent Movement Feed — now powered by activity_log */}
       <motion.div {...fade} transition={{ duration: 0.4, delay: 0.2 }}>
         <div className="flex items-center justify-between mb-4">
           <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">
@@ -281,30 +282,7 @@ const PortalDashboard = () => {
             Full timeline <ArrowRight size={10} />
           </Link>
         </div>
-        <div className="border border-border divide-y divide-border">
-          {recentUpdates.length === 0 ? (
-            <div className="p-8 text-center">
-              <Inbox size={24} className="mx-auto text-muted-foreground/40 mb-2" strokeWidth={1} />
-              <p className="text-sm text-muted-foreground">No recent activity yet.</p>
-              <p className="text-xs text-muted-foreground/60 mt-1">Activity will appear as work progresses.</p>
-            </div>
-          ) : (
-            recentUpdates.map((item: any) => {
-              const Icon = activityIcon[item.update_type] || CheckCircle2;
-              return (
-                <div key={item.id} className="p-4 flex items-center justify-between gap-4 hover:bg-secondary/50 transition-colors">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Icon size={12} className="text-primary" strokeWidth={1.5} />
-                    </div>
-                    <p className="text-sm text-foreground truncate">{item.content}</p>
-                  </div>
-                  <span className="text-[11px] text-muted-foreground shrink-0">{getTimeAgo(item.created_at)}</span>
-                </div>
-              );
-            })
-          )}
-        </div>
+        <ActivityFeed clientId={clientServices ? undefined : undefined} title="" limit={8} />
       </motion.div>
     </div>
   );
