@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, Building2, Briefcase, Users, MapPin, Check } from "lucide-react";
+import { ArrowRight, ArrowLeft, Building2, Briefcase, Users, MapPin, Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,33 +9,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 const industries = [
-  "Technology",
-  "Creative & Media",
-  "Professional Services",
-  "E-commerce & Retail",
-  "Health & Wellness",
-  "Education & Training",
-  "Hospitality & Travel",
-  "Non-Profit & Social Enterprise",
-  "Finance & Insurance",
-  "Other",
+  "Technology", "Creative & Media", "Professional Services", "E-commerce & Retail",
+  "Health & Wellness", "Education & Training", "Hospitality & Travel",
+  "Non-Profit & Social Enterprise", "Finance & Insurance", "Other",
 ];
 
-const teamSizes = [
-  "Just me",
-  "2–5 people",
-  "6–15 people",
-  "16–50 people",
-  "50+",
-];
-
-const referralSources = [
-  "Google Search",
-  "Social Media",
-  "Referral",
-  "Event or Conference",
-  "Other",
-];
+const teamSizes = ["Just me", "2–5 people", "6–15 people", "16–50 people", "50+"];
+const referralSources = ["Google Search", "Social Media", "Referral", "Event or Conference", "Other"];
 
 interface OnboardingWizardProps {
   onComplete: () => void;
@@ -48,19 +28,31 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
   const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [showComplete, setShowComplete] = useState(false);
 
-  const [fullName, setFullName] = useState(initialName || "");
+  // Pre-fill from auth metadata
+  const meta = user?.user_metadata || {};
+  const [fullName, setFullName] = useState(initialName || meta.full_name || "");
   const [phone, setPhone] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [industry, setIndustry] = useState("");
+  const [companyName, setCompanyName] = useState(meta.company_name || "");
+  const [industry, setIndustry] = useState(meta.industry || "");
   const [teamSize, setTeamSize] = useState("");
   const [referralSource, setReferralSource] = useState("");
 
+  // Update pre-fills if user data loads later
+  useEffect(() => {
+    if (meta.full_name && !fullName) setFullName(meta.full_name);
+    if (meta.company_name && !companyName) setCompanyName(meta.company_name);
+    if (meta.industry && !industry) setIndustry(meta.industry);
+  }, [user]);
+
+  const firstName = fullName.split(" ")[0] || "there";
+
   const canAdvance = () => {
-    if (step === 0) return true; // welcome
+    if (step === 0) return true;
     if (step === 1) return fullName.trim().length > 0;
     if (step === 2) return companyName.trim().length > 0 && industry.length > 0;
-    if (step === 3) return true; // optional
+    if (step === 3) return true;
     return true;
   };
 
@@ -84,7 +76,8 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
       toast.error("Something went wrong. Please try again.");
       return;
     }
-    onComplete();
+    setShowComplete(true);
+    setTimeout(() => onComplete(), 2500);
   };
 
   const next = () => {
@@ -102,6 +95,46 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
     center: { opacity: 1, x: 0 },
     exit: { opacity: 0, x: -40 },
   };
+
+  // Completion screen
+  if (showComplete) {
+    return (
+      <div className="fixed inset-0 z-50 bg-background flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="text-center space-y-6 max-w-md px-6"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+          >
+            <Sparkles size={40} className="mx-auto text-primary" strokeWidth={1.5} />
+          </motion.div>
+          <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground uppercase tracking-tight">
+            You're all set.
+          </h1>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Welcome to SUPPORT STUDIO™ — Clarity builds momentum. Systems build freedom.
+          </p>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: "100%" }}
+            transition={{ delay: 0.4, duration: 1.5, ease: "easeInOut" }}
+            className="h-0.5 bg-primary mx-auto max-w-[200px]"
+          />
+        </motion.div>
+      </div>
+    );
+  }
+
+  const stepOverview = [
+    { num: "01", label: "Your Details" },
+    { num: "02", label: "Your Business" },
+    { num: "03", label: "Final Touches" },
+  ];
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
@@ -133,21 +166,46 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
               <motion.div
                 key="welcome"
                 variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
+                initial="enter" animate="center" exit="exit"
                 transition={{ duration: 0.3 }}
-                className="text-center space-y-6"
+                className="text-center space-y-8"
               >
-                <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
-                  Welcome
-                </p>
-                <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground uppercase tracking-tight">
-                  Let's set up your workspace
-                </h1>
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.1, duration: 0.4 }}
+                >
+                  <div className="w-16 h-16 mx-auto border-2 border-primary flex items-center justify-center mb-6">
+                    <span className="font-display text-lg font-bold text-primary">SS</span>
+                  </div>
+                </motion.div>
+                <div>
+                  <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-3">
+                    Welcome{firstName !== "there" ? `, ${firstName}` : ""}
+                  </p>
+                  <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground uppercase tracking-tight">
+                    Let's set up your workspace
+                  </h1>
+                </div>
                 <p className="text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
                   We'll walk you through a few quick steps to personalise your Support Studio™ experience. This takes less than a minute.
                 </p>
+
+                {/* Step preview */}
+                <div className="flex flex-col gap-3 max-w-xs mx-auto text-left">
+                  {stepOverview.map((s, i) => (
+                    <motion.div
+                      key={s.num}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + i * 0.1, duration: 0.3 }}
+                      className="flex items-center gap-3 text-sm"
+                    >
+                      <span className="text-[10px] font-medium tracking-wider text-primary w-6">{s.num}</span>
+                      <span className="text-muted-foreground">{s.label}</span>
+                    </motion.div>
+                  ))}
+                </div>
               </motion.div>
             )}
 
@@ -155,47 +213,27 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
               <motion.div
                 key="personal"
                 variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
+                initial="enter" animate="center" exit="exit"
                 transition={{ duration: 0.3 }}
                 className="space-y-8"
               >
                 <div>
-                  <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">
-                    About You
-                  </p>
-                  <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">
-                    Your Details
-                  </h2>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    So your team knows who they're working with.
-                  </p>
+                  <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">About You</p>
+                  <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Your Details</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">So your team knows who they're working with.</p>
                 </div>
                 <div className="space-y-5">
                   <div className="space-y-2">
-                    <Label htmlFor="fullName" className="text-xs uppercase tracking-wider text-muted-foreground">
-                      Full Name *
-                    </Label>
-                    <Input
-                      id="fullName"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Your full name"
-                      className="bg-card border-border"
-                    />
+                    <Label htmlFor="fullName" className="text-xs uppercase tracking-wider text-muted-foreground">Full Name *</Label>
+                    <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your full name" className="bg-card border-border" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-xs uppercase tracking-wider text-muted-foreground">
-                      Phone (optional)
-                    </Label>
-                    <Input
-                      id="phone"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+27 000 000 0000"
-                      className="bg-card border-border"
-                    />
+                    <Label htmlFor="email-display" className="text-xs uppercase tracking-wider text-muted-foreground">Email</Label>
+                    <Input id="email-display" value={user?.email || ""} disabled className="bg-muted border-border text-muted-foreground" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="text-xs uppercase tracking-wider text-muted-foreground">Phone (optional)</Label>
+                    <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+27 000 000 0000" className="bg-card border-border" />
                   </div>
                 </div>
               </motion.div>
@@ -205,73 +243,41 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
               <motion.div
                 key="business"
                 variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
+                initial="enter" animate="center" exit="exit"
                 transition={{ duration: 0.3 }}
                 className="space-y-8"
               >
                 <div>
-                  <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">
-                    Your Business
-                  </p>
-                  <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">
-                    Tell Us About Your Business
-                  </h2>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    This helps us tailor your studio experience.
-                  </p>
+                  <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">Your Business</p>
+                  <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Tell Us About Your Business</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">This helps us tailor your studio experience.</p>
                 </div>
                 <div className="space-y-5">
                   <div className="space-y-2">
-                    <Label htmlFor="companyName" className="text-xs uppercase tracking-wider text-muted-foreground">
-                      Company / Brand Name *
-                    </Label>
-                    <Input
-                      id="companyName"
-                      value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
-                      placeholder="Your company name"
-                      className="bg-card border-border"
-                    />
+                    <Label htmlFor="companyName" className="text-xs uppercase tracking-wider text-muted-foreground">Company / Brand Name *</Label>
+                    <Input id="companyName" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Your company name" className="bg-card border-border" />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-                      Industry *
-                    </Label>
+                    <Label className="text-xs uppercase tracking-wider text-muted-foreground">Industry *</Label>
                     <div className="grid grid-cols-2 gap-2">
                       {industries.map((ind) => (
-                        <button
-                          key={ind}
-                          onClick={() => setIndustry(ind)}
+                        <button key={ind} onClick={() => setIndustry(ind)}
                           className={`text-left text-xs px-3 py-2.5 border transition-all duration-200 ${
-                            industry === ind
-                              ? "border-primary bg-primary/5 text-foreground"
-                              : "border-border text-muted-foreground hover:border-primary/40"
+                            industry === ind ? "border-primary bg-primary/5 text-foreground" : "border-border text-muted-foreground hover:border-primary/40"
                           }`}
-                        >
-                          {ind}
-                        </button>
+                        >{ind}</button>
                       ))}
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-                      Team Size
-                    </Label>
+                    <Label className="text-xs uppercase tracking-wider text-muted-foreground">Team Size</Label>
                     <div className="flex flex-wrap gap-2">
                       {teamSizes.map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => setTeamSize(size)}
+                        <button key={size} onClick={() => setTeamSize(size)}
                           className={`text-xs px-3 py-2 border transition-all duration-200 ${
-                            teamSize === size
-                              ? "border-primary bg-primary/5 text-foreground"
-                              : "border-border text-muted-foreground hover:border-primary/40"
+                            teamSize === size ? "border-primary bg-primary/5 text-foreground" : "border-border text-muted-foreground hover:border-primary/40"
                           }`}
-                        >
-                          {size}
-                        </button>
+                        >{size}</button>
                       ))}
                     </div>
                   </div>
@@ -283,41 +289,25 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
               <motion.div
                 key="final"
                 variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
+                initial="enter" animate="center" exit="exit"
                 transition={{ duration: 0.3 }}
                 className="space-y-8"
               >
                 <div>
-                  <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">
-                    Almost Done
-                  </p>
-                  <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">
-                    One Last Thing
-                  </h2>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    How did you hear about us? This is optional.
-                  </p>
+                  <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">Almost Done</p>
+                  <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">One Last Thing</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">How did you hear about us? This is optional.</p>
                 </div>
                 <div className="space-y-5">
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase tracking-wider text-muted-foreground">
-                      How did you find us?
-                    </Label>
+                    <Label className="text-xs uppercase tracking-wider text-muted-foreground">How did you find us?</Label>
                     <div className="grid grid-cols-2 gap-2">
                       {referralSources.map((src) => (
-                        <button
-                          key={src}
-                          onClick={() => setReferralSource(src)}
+                        <button key={src} onClick={() => setReferralSource(src)}
                           className={`text-left text-xs px-3 py-2.5 border transition-all duration-200 ${
-                            referralSource === src
-                              ? "border-primary bg-primary/5 text-foreground"
-                              : "border-border text-muted-foreground hover:border-primary/40"
+                            referralSource === src ? "border-primary bg-primary/5 text-foreground" : "border-border text-muted-foreground hover:border-primary/40"
                           }`}
-                        >
-                          {src}
-                        </button>
+                        >{src}</button>
                       ))}
                     </div>
                   </div>
@@ -325,9 +315,7 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
 
                 {/* Summary */}
                 <div className="border border-border p-5 space-y-3">
-                  <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">
-                    Profile Summary
-                  </p>
+                  <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Profile Summary</p>
                   <div className="grid grid-cols-2 gap-3 text-xs">
                     <div className="flex items-center gap-2">
                       <Users size={12} className="text-muted-foreground" />
@@ -359,15 +347,8 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
           <Button variant="ghost" size="sm" onClick={back} className="text-xs gap-1">
             <ArrowLeft size={12} /> Back
           </Button>
-        ) : (
-          <div />
-        )}
-        <Button
-          onClick={next}
-          disabled={!canAdvance() || saving}
-          size="sm"
-          className="text-xs tracking-wide gap-1"
-        >
+        ) : <div />}
+        <Button onClick={next} disabled={!canAdvance() || saving} size="sm" className="text-xs tracking-wide gap-1">
           {saving ? "Saving…" : step === TOTAL_STEPS - 1 ? (
             <>Complete Setup <Check size={12} /></>
           ) : (

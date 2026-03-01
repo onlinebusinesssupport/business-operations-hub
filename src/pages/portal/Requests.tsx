@@ -96,7 +96,13 @@ const Requests = () => {
             New Request
           </p>
           {!clientId && !isLoading ? (
-            <p className="text-sm text-muted-foreground">Your account is not yet linked to a client profile. Please contact your administrator.</p>
+            <div className="text-center py-6 space-y-3">
+              <div className="w-12 h-12 mx-auto border border-primary/30 bg-primary/5 flex items-center justify-center">
+                <Inbox size={20} className="text-primary" strokeWidth={1.5} />
+              </div>
+              <p className="text-sm text-foreground font-medium">Your workspace is being prepared</p>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">Your team is setting things up. You'll have full access to submit requests shortly.</p>
+            </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>

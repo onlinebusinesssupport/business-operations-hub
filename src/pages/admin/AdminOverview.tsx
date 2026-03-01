@@ -34,7 +34,7 @@ const AdminOverview = () => {
   });
   const { data: applications = [] } = useQuery({
     queryKey: ["overview-applications"],
-    queryFn: async () => { const { data } = await supabase.from("applications").select("id, status").order("created_at", { ascending: false }); return data || []; },
+    queryFn: async () => { const { data } = await supabase.from("applications").select("id, status, full_name, business_name, updated_at").order("created_at", { ascending: false }); return data || []; },
   });
   const { data: contacts = [] } = useQuery({
     queryKey: ["overview-contacts"],
@@ -231,8 +231,31 @@ const AdminOverview = () => {
         </motion.div>
       </div>
 
+      {/* Recent Activations */}
+      {applications.filter((a: any) => a.status === "approved").length > 0 && (
+        <motion.div {...fade} transition={{ duration: 0.3, delay: 0.2 }}>
+          <p className="text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase mb-3">Recent Activations</p>
+          <div className="bg-card border border-divider divide-y divide-divider">
+            {applications.filter((a: any) => a.status === "approved").slice(0, 3).map((a: any) => (
+              <div key={a.id} className="p-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-primary/10 flex items-center justify-center">
+                    <CheckCircle2 size={14} className="text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-foreground font-medium">{a.business_name}</p>
+                    <p className="text-[10px] text-muted-foreground">{a.full_name}</p>
+                  </div>
+                </div>
+                <span className="text-[10px] text-muted-foreground">{timeAgo(a.updated_at)}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
       {/* Activity Feed */}
-      <motion.div {...fade} transition={{ duration: 0.3, delay: 0.2 }}>
+      <motion.div {...fade} transition={{ duration: 0.3, delay: 0.25 }}>
         <ActivityFeed title="Global Activity" limit={10} />
       </motion.div>
 
