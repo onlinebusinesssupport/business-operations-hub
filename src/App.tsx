@@ -48,6 +48,7 @@ import AdminTemplates from "./pages/admin/AdminTemplates";
 import AdminReports from "./pages/admin/AdminReports";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminRevenue from "./pages/admin/AdminRevenue";
+import AdminLeadPipeline from "./pages/admin/AdminLeadPipeline";
 
 // Service detail pages
 import DigitalPresence from "./pages/services/DigitalPresence";
@@ -119,6 +120,7 @@ const App = () => (
             <Route path="/admin/reports" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminReports /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/revenue" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminRevenue /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/applications" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminApplications /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/pipeline" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminLeadPipeline /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminSettings /></DashboardLayout></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
