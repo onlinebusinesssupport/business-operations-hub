@@ -23,22 +23,23 @@ import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import Media from "./pages/Media";
 import MfaVerify from "./pages/MfaVerify";
+
+// Client Portal
 import PortalDashboard from "./pages/portal/PortalDashboard";
-import ActiveWork from "./pages/portal/ActiveWork";
-import Requests from "./pages/portal/Requests";
-import Documents from "./pages/portal/Documents";
-import Updates from "./pages/portal/Updates";
-import Account from "./pages/portal/Account";
-import Automation from "./pages/portal/Automation";
-import Pipeline from "./pages/portal/Pipeline";
-import Reports from "./pages/portal/Reports";
-import Finance from "./pages/portal/Finance";
 import StudiosHub from "./pages/portal/StudiosHub";
+import Requests from "./pages/portal/Requests";
+import Progress from "./pages/portal/Progress";
+import ClientReports from "./pages/portal/ClientReports";
+import Files from "./pages/portal/Files";
+import Billing from "./pages/portal/Billing";
+import ClientSettings from "./pages/portal/ClientSettings";
 import OperationsStudio from "./pages/portal/studios/OperationsStudio";
 import AutomationStudio from "./pages/portal/studios/AutomationStudio";
 import LeadEngineStudio from "./pages/portal/studios/LeadEngineStudio";
 import SocialsStudio from "./pages/portal/studios/SocialsStudio";
 import ExperiencesStudio from "./pages/portal/studios/ExperiencesStudio";
+
+// Admin
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminClients from "./pages/admin/AdminClients";
 import AdminWorkManager from "./pages/admin/AdminWorkManager";
@@ -93,24 +94,22 @@ const App = () => (
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/mfa-verify" element={<MfaVerify />} />
 
-            {/* Client Portal (authenticated) */}
+            {/* Client Portal */}
             <Route path="/portal" element={<ProtectedRoute><DashboardLayout portal="client"><PortalDashboard /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/portal/active-work" element={<ProtectedRoute><DashboardLayout portal="client"><StudiosHub /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/studios" element={<ProtectedRoute><DashboardLayout portal="client"><StudiosHub /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/studios/operations" element={<ProtectedRoute><DashboardLayout portal="client"><OperationsStudio /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/studios/automation" element={<ProtectedRoute><DashboardLayout portal="client"><AutomationStudio /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/studios/lead-engine" element={<ProtectedRoute><DashboardLayout portal="client"><LeadEngineStudio /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/studios/socials" element={<ProtectedRoute><DashboardLayout portal="client"><SocialsStudio /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/studios/experiences" element={<ProtectedRoute><DashboardLayout portal="client"><ExperiencesStudio /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/requests" element={<ProtectedRoute><DashboardLayout portal="client"><Requests /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/portal/documents" element={<ProtectedRoute><DashboardLayout portal="client"><Documents /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/portal/updates" element={<ProtectedRoute><DashboardLayout portal="client"><Updates /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/portal/account" element={<ProtectedRoute><DashboardLayout portal="client"><Account /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/portal/automation" element={<ProtectedRoute><DashboardLayout portal="client"><Automation /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/portal/pipeline" element={<ProtectedRoute><DashboardLayout portal="client"><Pipeline /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/portal/reports" element={<ProtectedRoute><DashboardLayout portal="client"><Reports /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/portal/finance" element={<ProtectedRoute><DashboardLayout portal="client"><Finance /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/progress" element={<ProtectedRoute><DashboardLayout portal="client"><Progress /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/reports" element={<ProtectedRoute><DashboardLayout portal="client"><ClientReports /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/files" element={<ProtectedRoute><DashboardLayout portal="client"><Files /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/billing" element={<ProtectedRoute><DashboardLayout portal="client"><Billing /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/settings" element={<ProtectedRoute><DashboardLayout portal="client"><ClientSettings /></DashboardLayout></ProtectedRoute>} />
 
-            {/* Admin Back Office (admin only) */}
+            {/* Admin */}
             <Route path="/admin" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminOverview /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/clients" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminClients /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/work" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminWorkManager /></DashboardLayout></ProtectedRoute>} />

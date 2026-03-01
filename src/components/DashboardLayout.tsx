@@ -4,10 +4,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   LayoutDashboard,
   Layers,
+  MessageSquarePlus,
   MessageSquare,
-  ListChecks,
-  Zap,
-  GitBranch,
+  Activity,
   BarChart3,
   DollarSign,
   FolderOpen,
@@ -22,6 +21,9 @@ import {
   Inbox,
   FileText,
   LayoutTemplate,
+  ListChecks,
+  GitBranch,
+  Zap,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import PageTransition from "./PageTransition";
@@ -29,15 +31,13 @@ import PageTransition from "./PageTransition";
 /* ─── Nav configs ─── */
 const clientNav = [
   { label: "Dashboard", href: "/portal", icon: LayoutDashboard },
-  { label: "Studios", href: "/portal/active-work", icon: Layers },
-  { label: "Conversations", href: "/portal/updates", icon: MessageSquare },
-  { label: "In Motion", href: "/portal/requests", icon: ListChecks },
-  { label: "Automation", href: "/portal/automation", icon: Zap },
-  { label: "Pipeline", href: "/portal/pipeline", icon: GitBranch },
-  { label: "Insights", href: "/portal/reports", icon: BarChart3 },
-  { label: "Billing", href: "/portal/finance", icon: DollarSign },
-  { label: "Files", href: "/portal/documents", icon: FolderOpen },
-  { label: "Settings", href: "/portal/account", icon: Settings },
+  { label: "Studios", href: "/portal/studios", icon: Layers },
+  { label: "Requests", href: "/portal/requests", icon: MessageSquarePlus },
+  { label: "Progress", href: "/portal/progress", icon: Activity },
+  { label: "Reports", href: "/portal/reports", icon: BarChart3 },
+  { label: "Files", href: "/portal/files", icon: FolderOpen },
+  { label: "Billing", href: "/portal/billing", icon: DollarSign },
+  { label: "Settings", href: "/portal/settings", icon: Settings },
 ];
 
 const adminNav = [
@@ -118,7 +118,7 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
         )}
       </AnimatePresence>
 
-      {/* Sidebar — off-black */}
+      {/* Sidebar */}
       <aside
         className={`fixed lg:sticky top-0 left-0 z-50 h-screen ${sidebarWidth} flex flex-col transition-all duration-200 ease-out ${
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
@@ -129,7 +129,7 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
         <div className="h-14 flex items-center justify-between px-4 border-b border-white/10 shrink-0">
           {!collapsed && (
             <span className="font-display text-[11px] font-bold tracking-[0.2em] text-white/90 uppercase truncate">
-              THE BUSINESS SUPPORT STUDIO™
+              {isAdminPortal ? "STUDIO CONTROL" : "SUPPORT STUDIO™"}
             </span>
           )}
           <button
@@ -156,7 +156,7 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
         {/* Nav */}
         <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
           <p className="px-3 pb-2 text-[10px] font-medium tracking-[0.12em] text-white/30 uppercase truncate">
-            {collapsed ? "" : isAdminPortal ? "Operations" : "Platform"}
+            {collapsed ? "" : isAdminPortal ? "Operations" : "Workspace"}
           </p>
           {navItems.map((item) => {
             const active = isActive(item.href);
@@ -207,9 +207,21 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
             {!collapsed && <span>Sign Out</span>}
           </button>
         </div>
+
+        {/* Footer brand */}
+        {!collapsed && !isAdminPortal && (
+          <div className="px-4 py-3 border-t border-white/10 shrink-0">
+            <p className="text-[9px] text-white/20 tracking-[0.12em] uppercase text-center">
+              Powered by SUPPORT STUDIO™
+            </p>
+            <p className="text-[8px] text-white/15 text-center mt-0.5 italic">
+              Clarity builds momentum.
+            </p>
+          </div>
+        )}
       </aside>
 
-      {/* Main content — off-white */}
+      {/* Main content */}
       <div className="flex-1 flex flex-col min-h-screen min-w-0 bg-background">
         {/* Top bar */}
         <header className="h-14 bg-background border-b border-divider flex items-center justify-between px-6 sticky top-0 z-30 shrink-0">
