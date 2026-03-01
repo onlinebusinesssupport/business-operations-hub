@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Gauge, ListChecks, FolderOpen, MessageSquare, DollarSign,
   BarChart3, Settings, AlertTriangle, CheckCircle2, Clock, Plus, X,
-  Loader2, Upload, Send, Eye, EyeOff
+  Loader2, Upload, Send, Eye, EyeOff, Star, Users
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,8 @@ import { KanbanBoard, KanbanColumn } from "@/components/KanbanBoard";
 import InlineEdit from "@/components/InlineEdit";
 import { logActivity } from "@/lib/activity";
 import { ActivityFeed } from "@/components/ActivityFeed";
+import CrmModule from "@/components/CrmModule";
+import ReputationDashboard from "@/components/ReputationDashboard";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -46,6 +48,8 @@ const retainerColor = (used: number, limit: number) => {
 
 const tabs = [
   { id: "overview", label: "Overview", icon: Gauge },
+  { id: "crm", label: "CRM", icon: Users },
+  { id: "reputation", label: "Reviews", icon: Star },
   { id: "work", label: "Work Manager", icon: ListChecks },
   { id: "files", label: "Files", icon: FolderOpen },
   { id: "comms", label: "Updates", icon: MessageSquare },
@@ -314,6 +318,18 @@ const PartnerCockpit = ({ client, onBack, onUpdateField }: PartnerCockpitProps) 
 
             {/* Activity timeline */}
             <ActivityFeed clientId={client.id} title="Partner Activity" limit={10} />
+          </motion.div>
+        )}
+
+        {activeTab === "crm" && (
+          <motion.div key="crm" {...fade} transition={{ duration: 0.25 }}>
+            <CrmModule client={client} onUpdateField={onUpdateField} />
+          </motion.div>
+        )}
+
+        {activeTab === "reputation" && (
+          <motion.div key="reputation" {...fade} transition={{ duration: 0.25 }}>
+            <ReputationDashboard />
           </motion.div>
         )}
 

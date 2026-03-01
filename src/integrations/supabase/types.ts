@@ -117,49 +117,91 @@ export type Database = {
       }
       clients: {
         Row: {
+          account_owner: string | null
+          avg_review_score: number | null
           contact_profile_id: string | null
+          contract_renewal_date: string | null
           created_at: string
+          health_score: number | null
           id: string
+          last_activity_at: string | null
+          lead_score: number | null
+          lead_source: string | null
+          lead_tags: string[] | null
+          lifecycle_stage: string | null
+          lifetime_revenue: number | null
+          linkedin_url: string | null
           monthly_rate: number | null
           name: string
           notes: string | null
+          nps_score: number | null
           retainer_limit: number
           retainer_used: number
+          review_count: number | null
           services: string[] | null
           status: string
           subscription_status: string
           tier: string | null
           updated_at: string
+          website: string | null
         }
         Insert: {
+          account_owner?: string | null
+          avg_review_score?: number | null
           contact_profile_id?: string | null
+          contract_renewal_date?: string | null
           created_at?: string
+          health_score?: number | null
           id?: string
+          last_activity_at?: string | null
+          lead_score?: number | null
+          lead_source?: string | null
+          lead_tags?: string[] | null
+          lifecycle_stage?: string | null
+          lifetime_revenue?: number | null
+          linkedin_url?: string | null
           monthly_rate?: number | null
           name: string
           notes?: string | null
+          nps_score?: number | null
           retainer_limit?: number
           retainer_used?: number
+          review_count?: number | null
           services?: string[] | null
           status?: string
           subscription_status?: string
           tier?: string | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
+          account_owner?: string | null
+          avg_review_score?: number | null
           contact_profile_id?: string | null
+          contract_renewal_date?: string | null
           created_at?: string
+          health_score?: number | null
           id?: string
+          last_activity_at?: string | null
+          lead_score?: number | null
+          lead_source?: string | null
+          lead_tags?: string[] | null
+          lifecycle_stage?: string | null
+          lifetime_revenue?: number | null
+          linkedin_url?: string | null
           monthly_rate?: number | null
           name?: string
           notes?: string | null
+          nps_score?: number | null
           retainer_limit?: number
           retainer_used?: number
+          review_count?: number | null
           services?: string[] | null
           status?: string
           subscription_status?: string
           tier?: string | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: [
           {
@@ -389,6 +431,171 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      review_requests: {
+        Row: {
+          client_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          opened_at: string | null
+          reminder_count: number | null
+          review_id: string
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          client_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          opened_at?: string | null
+          reminder_count?: number | null
+          review_id: string
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          client_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          opened_at?: string | null
+          reminder_count?: number | null
+          review_id?: string
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_requests_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_requests_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          almost_stopped: string | null
+          biggest_transformation: string | null
+          client_id: string
+          created_at: string
+          engagement_type: string | null
+          id: string
+          impact_areas: string[] | null
+          improvement_suggestion: string | null
+          nps_recommendation: string | null
+          nps_score: number | null
+          one_sentence: string | null
+          reviewer_company: string | null
+          reviewer_name: string | null
+          reviewer_photo_url: string | null
+          reviewer_website: string | null
+          score_commercial_value: number | null
+          score_communication: number | null
+          score_overall: number | null
+          score_overall_impact: number | null
+          score_speed: number | null
+          score_strategic_clarity: number | null
+          services_reviewed: string[] | null
+          status: string
+          submitted_at: string | null
+          token: string
+          updated_at: string
+          value_rating: string | null
+          value_reason: string | null
+          visibility: string | null
+          work_item_id: string | null
+        }
+        Insert: {
+          almost_stopped?: string | null
+          biggest_transformation?: string | null
+          client_id: string
+          created_at?: string
+          engagement_type?: string | null
+          id?: string
+          impact_areas?: string[] | null
+          improvement_suggestion?: string | null
+          nps_recommendation?: string | null
+          nps_score?: number | null
+          one_sentence?: string | null
+          reviewer_company?: string | null
+          reviewer_name?: string | null
+          reviewer_photo_url?: string | null
+          reviewer_website?: string | null
+          score_commercial_value?: number | null
+          score_communication?: number | null
+          score_overall?: number | null
+          score_overall_impact?: number | null
+          score_speed?: number | null
+          score_strategic_clarity?: number | null
+          services_reviewed?: string[] | null
+          status?: string
+          submitted_at?: string | null
+          token?: string
+          updated_at?: string
+          value_rating?: string | null
+          value_reason?: string | null
+          visibility?: string | null
+          work_item_id?: string | null
+        }
+        Update: {
+          almost_stopped?: string | null
+          biggest_transformation?: string | null
+          client_id?: string
+          created_at?: string
+          engagement_type?: string | null
+          id?: string
+          impact_areas?: string[] | null
+          improvement_suggestion?: string | null
+          nps_recommendation?: string | null
+          nps_score?: number | null
+          one_sentence?: string | null
+          reviewer_company?: string | null
+          reviewer_name?: string | null
+          reviewer_photo_url?: string | null
+          reviewer_website?: string | null
+          score_commercial_value?: number | null
+          score_communication?: number | null
+          score_overall?: number | null
+          score_overall_impact?: number | null
+          score_speed?: number | null
+          score_strategic_clarity?: number | null
+          services_reviewed?: string[] | null
+          status?: string
+          submitted_at?: string | null
+          token?: string
+          updated_at?: string
+          value_rating?: string | null
+          value_reason?: string | null
+          visibility?: string | null
+          work_item_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_work_item_id_fkey"
+            columns: ["work_item_id"]
+            isOneToOne: false
+            referencedRelation: "work_items"
             referencedColumns: ["id"]
           },
         ]
