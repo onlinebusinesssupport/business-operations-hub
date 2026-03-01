@@ -1,25 +1,25 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Plus, Clock, CheckCircle2, X, Loader2 } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
+import { Plus, Clock, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { KanbanBoard, KanbanColumn } from "@/components/KanbanBoard";
+import InlineEdit from "@/components/InlineEdit";
 
-const stagger = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
+const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
 type Status = "to_do" | "in_progress" | "in_review" | "done";
-const statusLabels: Record<Status, string> = { to_do: "To Do", in_progress: "In Progress", in_review: "In Review", done: "Done" };
-const statusBadge: Record<Status, string> = {
-  to_do: "bg-accent text-foreground",
-  in_progress: "bg-foreground text-background",
-  in_review: "bg-accent text-foreground",
-  done: "bg-accent text-muted-foreground",
+const statusConfig: Record<Status, { label: string; dotColor: string }> = {
+  to_do: { label: "To Do", dotColor: "bg-muted-foreground/40" },
+  in_progress: { label: "In Progress", dotColor: "bg-primary" },
+  in_review: { label: "In Review", dotColor: "bg-purple-500" },
+  done: { label: "Done", dotColor: "bg-emerald-500" },
 };
+const statusOrder: Status[] = ["to_do", "in_progress", "in_review", "done"];
 
 const AdminWorkManager = () => {
-  const [filter, setFilter] = useState<Status | "all">("all");
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ title: "", description: "", client_id: "", priority: "medium", deadline: "" });
   const { toast } = useToast();
@@ -72,24 +72,40 @@ const AdminWorkManager = () => {
       const { error } = await supabase.from("work_items").update({ status }).eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-work-items"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-work-items"] });
+    },
   });
 
-  const filtered = filter === "all" ? workItems : workItems.filter((w: any) => w.status === filter);
-  const statusOrder: Status[] = ["in_progress", "to_do", "in_review", "done"];
-  const sorted = [...filtered].sort((a: any, b: any) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
+  const updateField = useCallback(async (id: string, field: string, value: string) => {
+    await supabase.from("work_items").update({ [field]: value }).eq("id", id);
+    queryClient.invalidateQueries({ queryKey: ["admin-work-items"] });
+  }, [queryClient]);
 
-  const progressValue = (s: Status) => {
-    const map: Record<Status, number> = { to_do: 0, in_progress: 50, in_review: 80, done: 100 };
-    return map[s] || 0;
+  const handleDragEnd = useCallback((itemId: string, _source: string, destColumn: string) => {
+    updateStatus.mutate({ id: itemId, status: destColumn as Status });
+    toast({ title: "Status updated" });
+  }, [updateStatus, toast]);
+
+  const columns: KanbanColumn<any>[] = statusOrder.map((status) => ({
+    id: status,
+    title: statusConfig[status].label,
+    color: statusConfig[status].dotColor,
+    items: workItems.filter((w: any) => w.status === status),
+  }));
+
+  const priorityColor = (p: string) => {
+    if (p === "high") return "text-destructive";
+    if (p === "low") return "text-muted-foreground/50";
+    return "text-muted-foreground";
   };
 
   return (
     <div className="space-y-6">
-      <motion.div {...stagger} transition={{ duration: 0.3 }} className="flex items-start justify-between gap-4 flex-wrap">
+      <motion.div {...fade} transition={{ duration: 0.3 }} className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h2 className="font-serif text-2xl text-foreground">Work Manager</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Track and manage all delivery work.</p>
+          <h2 className="font-display text-2xl font-bold text-foreground">Work Manager</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Drag tasks across columns to update status.</p>
         </div>
         <Button onClick={() => setShowCreate(true)} className="gap-2 text-xs">
           <Plus size={14} /> Add Work Item
@@ -97,7 +113,7 @@ const AdminWorkManager = () => {
       </motion.div>
 
       {showCreate && (
-        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-divider rounded-xl p-6 space-y-4">
+        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-divider p-6 space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium text-foreground">New Work Item</p>
             <button onClick={() => setShowCreate(false)} className="text-muted-foreground hover:text-foreground"><X size={16} /></button>
@@ -105,18 +121,18 @@ const AdminWorkManager = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-xs text-muted-foreground block mb-1.5">Title *</label>
-              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring" />
+              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground block mb-1.5">Client *</label>
-              <select value={form.client_id} onChange={(e) => setForm({ ...form, client_id: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring">
+              <select value={form.client_id} onChange={(e) => setForm({ ...form, client_id: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring">
                 <option value="">Select client</option>
                 {clients.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
             <div>
               <label className="text-xs text-muted-foreground block mb-1.5">Priority</label>
-              <select value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring">
+              <select value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring">
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
@@ -124,11 +140,11 @@ const AdminWorkManager = () => {
             </div>
             <div>
               <label className="text-xs text-muted-foreground block mb-1.5">Deadline</label>
-              <input type="date" value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring" />
+              <input type="date" value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
             <div className="md:col-span-2">
               <label className="text-xs text-muted-foreground block mb-1.5">Description</label>
-              <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring resize-none" />
+              <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring resize-none" />
             </div>
           </div>
           <Button onClick={() => createWork.mutate(form)} disabled={createWork.isPending || !form.title || !form.client_id} className="gap-2 text-xs">
@@ -138,55 +154,46 @@ const AdminWorkManager = () => {
         </motion.div>
       )}
 
-      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.05 }}>
-        <div className="flex gap-2 flex-wrap">
-          {(["all", ...statusOrder] as const).map((s) => (
-            <button key={s} onClick={() => setFilter(s as any)} className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-150 ${filter === s ? "bg-foreground text-background border-foreground" : "bg-card text-muted-foreground border-divider hover:border-foreground/30"}`}>
-              {s === "all" ? "All" : statusLabels[s as Status]}
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.1 }}>
+      {/* Kanban Board */}
+      <motion.div {...fade} transition={{ duration: 0.3, delay: 0.05 }}>
         {isLoading ? (
           <p className="text-sm text-muted-foreground py-8">Loading...</p>
-        ) : sorted.length === 0 ? (
-          <div className="border border-border p-8 text-center">
-            <p className="text-sm text-muted-foreground">No work items found.</p>
-          </div>
         ) : (
-          <div className="bg-card border border-divider rounded-xl divide-y divide-divider">
-            {sorted.map((item: any) => (
-              <div key={item.id} className="p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3 min-w-0">
-                    {item.status === "done" ? <CheckCircle2 size={14} strokeWidth={1.5} className="mt-0.5 text-muted-foreground" /> : <Clock size={14} strokeWidth={1.5} className="mt-0.5 text-muted-foreground" />}
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground">{item.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.clients?.name || "Unknown"} · {item.priority} priority</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <Progress value={progressValue(item.status)} className="w-20 h-1.5" />
-                    <select
-                      value={item.status}
-                      onChange={(e) => updateStatus.mutate({ id: item.id, status: e.target.value as Status })}
-                      className={`text-xs px-2 py-0.5 rounded-lg border-0 cursor-pointer ${statusBadge[item.status as Status] || ""}`}
-                    >
-                      {statusOrder.map((s) => <option key={s} value={s}>{statusLabels[s]}</option>)}
-                    </select>
-                    {item.deadline && (
-                      <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Clock size={12} /> {new Date(item.deadline).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
-                      </span>
-                    )}
-                  </div>
+          <KanbanBoard
+            columns={columns}
+            onDragEnd={handleDragEnd}
+            getItemId={(item) => item.id}
+            renderCard={(item: any, isDragging) => (
+              <div
+                className={`bg-card border border-divider p-3 cursor-grab active:cursor-grabbing transition-all duration-150 ${
+                  isDragging ? "rotate-1 scale-[1.02] shadow-lg" : "hover:border-primary/30"
+                }`}
+              >
+                <InlineEdit
+                  value={item.title}
+                  onSave={(v) => updateField(item.id, "title", v)}
+                  className="text-sm font-medium text-foreground"
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  {item.clients?.name || "—"}
+                </p>
+                <div className="flex items-center justify-between mt-2">
+                  <span className={`text-[10px] uppercase tracking-wider font-medium ${priorityColor(item.priority)}`}>
+                    {item.priority}
+                  </span>
+                  {item.deadline && (
+                    <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <Clock size={9} />
+                      {new Date(item.deadline).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
+                    </span>
+                  )}
                 </div>
-                {item.description && <p className="text-xs text-muted-foreground mt-2 ml-7">{item.description}</p>}
+                {item.description && (
+                  <p className="text-[10px] text-muted-foreground/70 mt-2 line-clamp-2">{item.description}</p>
+                )}
               </div>
-            ))}
-          </div>
+            )}
+          />
         )}
       </motion.div>
     </div>
