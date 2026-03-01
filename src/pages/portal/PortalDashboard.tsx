@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   Settings,
   Zap,
   Target,
   Globe,
   Sparkles,
-  Bell,
+  Compass,
+  ArrowRight,
   CheckCircle2,
   MessageSquare,
   Inbox,
+  Clock,
+  Activity,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,17 +21,18 @@ import { useQuery } from "@tanstack/react-query";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import GrowthScore from "@/components/GrowthScore";
 
-const stagger = {
+const fade = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
 };
 
 const studioModules = [
-  { name: "Operations", icon: Settings, active: false },
-  { name: "Automation", icon: Zap, active: false },
-  { name: "Lead Engine", icon: Target, active: false },
-  { name: "Socials", icon: Globe, active: false },
-  { name: "Experiences", icon: Sparkles, active: false },
+  { name: "Digital Presence", icon: Globe, href: "/portal/studios/socials" },
+  { name: "Lead Engine", icon: Target, href: "/portal/studios/lead-engine" },
+  { name: "Automation", icon: Zap, href: "/portal/studios/automation" },
+  { name: "Operations", icon: Settings, href: "/portal/studios/operations" },
+  { name: "Travel & Activities", icon: Sparkles, href: "/portal/studios/experiences", premium: true },
+  { name: "Grants & Awards", icon: Compass, href: "/portal/studios/experiences", premium: true },
 ];
 
 const activityIcon: Record<string, any> = {
@@ -50,7 +55,6 @@ const PortalDashboard = () => {
         .select("onboarding_completed, full_name")
         .eq("user_id", user.id)
         .maybeSingle();
-
       if (data) {
         setShowWelcome(!data.onboarding_completed);
         setUserName(data.full_name || "");
@@ -61,11 +65,10 @@ const PortalDashboard = () => {
     checkOnboarding();
   }, [user]);
 
-  // Fetch real data for dashboard
   const { data: workItems = [] } = useQuery({
     queryKey: ["portal-dash-work"],
     queryFn: async () => {
-      const { data } = await supabase.from("work_items").select("id, status, priority");
+      const { data } = await supabase.from("work_items").select("id, status, priority, title, deadline, updated_at");
       return data || [];
     },
   });
@@ -85,27 +88,37 @@ const PortalDashboard = () => {
         .from("updates")
         .select("id, content, update_type, created_at")
         .order("created_at", { ascending: false })
-        .limit(5);
+        .limit(6);
       return data || [];
     },
   });
 
-  // Calculate real metrics
+  const { data: clientServices } = useQuery({
+    queryKey: ["portal-client-services"],
+    queryFn: async () => {
+      const { data } = await supabase.rpc("get_my_client_id");
+      if (!data) return null;
+      const { data: client } = await supabase.from("clients").select("services, status").eq("id", data).maybeSingle();
+      return client;
+    },
+  });
+
   const inProgress = workItems.filter((w: any) => w.status === "in_progress").length;
   const completed = workItems.filter((w: any) => w.status === "done").length;
   const totalWork = workItems.length;
   const openRequests = requests.filter((r: any) => r.status === "new" || r.status === "in_progress").length;
 
-  // Growth score based on real data
   const taskCompletion = totalWork > 0 ? Math.round((completed / totalWork) * 25) : 0;
-  const growthScore = taskCompletion; // Other dimensions placeholder
+  const executionRate = totalWork > 0 ? Math.round((inProgress / totalWork) * 25) : 0;
+  const growthScore = Math.min(taskCompletion + executionRate, 100);
 
-  const metrics = [
-    { label: "Active Projects", value: String(inProgress || "—"), icon: Target },
-    { label: "Completed", value: String(completed || "—"), icon: CheckCircle2 },
-    { label: "Open Requests", value: String(openRequests || "—"), icon: MessageSquare },
-    { label: "Total Work Items", value: String(totalWork || "—"), icon: Globe },
-  ];
+  // Determine active studios from client services
+  const activeServices = clientServices?.services || [];
+
+  // Current priorities: in-progress work items
+  const priorities = workItems
+    .filter((w: any) => w.status === "in_progress" || w.status === "in_review")
+    .slice(0, 4);
 
   if (showWelcome === null) {
     return (
@@ -121,38 +134,83 @@ const PortalDashboard = () => {
 
   return (
     <div className="space-y-10">
-      {/* Header + Growth Score */}
-      <motion.div {...stagger} transition={{ duration: 0.3 }}>
+      {/* Header */}
+      <motion.div {...fade} transition={{ duration: 0.4 }}>
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
           <div>
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">
-              Dashboard
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+              {userName ? `Welcome back, ${userName}.` : "Welcome back."}
             </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {userName ? `Welcome back, ${userName}. Let's move.` : "Welcome back. Let's move."}
+            <p className="mt-1.5 text-sm text-muted-foreground">
+              Let's build momentum.
             </p>
-            <div className="flex items-center gap-3 mt-4">
-              <button className="relative p-2 border border-border hover:bg-secondary transition-colors">
-                <Bell size={16} className="text-muted-foreground" />
-                {openRequests > 0 && <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />}
-              </button>
-            </div>
           </div>
           <GrowthScore score={growthScore} />
         </div>
       </motion.div>
 
-      {/* Score Breakdown */}
-      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.03 }}>
+      {/* Active Studios */}
+      <motion.div {...fade} transition={{ duration: 0.4, delay: 0.05 }}>
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">
+            Active Studios
+          </p>
+          <Link to="/portal/studios" className="text-[11px] text-primary font-medium flex items-center gap-1 hover:underline">
+            View all <ArrowRight size={10} />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+          {studioModules.map((mod, i) => {
+            const isActive = activeServices.some((s: string) =>
+              mod.name.toLowerCase().includes(s.toLowerCase()) || s.toLowerCase().includes(mod.name.toLowerCase().split(" ")[0])
+            );
+            return (
+              <motion.div
+                key={mod.name}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.08 + i * 0.04 }}
+              >
+                <Link
+                  to={mod.href}
+                  className="block border border-border p-5 hover:border-primary/40 transition-all duration-200 group"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <mod.icon size={18} className="text-muted-foreground" strokeWidth={1.5} />
+                    <span
+                      className={`text-[10px] uppercase tracking-[0.1em] font-medium px-2 py-0.5 ${
+                        isActive
+                          ? "bg-primary/10 text-primary"
+                          : "bg-secondary text-muted-foreground"
+                      }`}
+                    >
+                      {isActive ? "Active" : mod.premium ? "Add-on" : "Inactive"}
+                    </span>
+                  </div>
+                  <p className="font-display text-xs font-bold tracking-[0.1em] text-foreground uppercase">
+                    {mod.name}
+                  </p>
+                  {isActive && (
+                    <p className="text-[10px] text-muted-foreground mt-1.5">In execution</p>
+                  )}
+                </Link>
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.div>
+
+      {/* Momentum Metrics */}
+      <motion.div {...fade} transition={{ duration: 0.4, delay: 0.1 }}>
         <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">
-          Growth Dimensions
+          Momentum Metrics
         </p>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             { label: "Automation Level", value: 0, max: 25 },
             { label: "Lead Flow Consistency", value: 0, max: 25 },
-            { label: "Task Completion Rate", value: taskCompletion, max: 25 },
-            { label: "Digital Responsiveness", value: 0, max: 25 },
+            { label: "Execution Rate", value: executionRate, max: 25 },
+            { label: "Digital Responsiveness", value: taskCompletion, max: 25 },
           ].map((dim) => (
             <div key={dim.label} className="border border-border p-4">
               <p className="text-[11px] text-muted-foreground">{dim.label}</p>
@@ -160,10 +218,12 @@ const PortalDashboard = () => {
                 <span className="font-display text-lg font-bold text-foreground">{dim.value}</span>
                 <span className="text-[10px] text-muted-foreground/60 mb-0.5">/ {dim.max}</span>
               </div>
-              <div className="mt-2 h-1 bg-border">
-                <div
-                  className="h-full bg-primary transition-all duration-500"
-                  style={{ width: `${(dim.value / dim.max) * 100}%` }}
+              <div className="mt-2 h-1 bg-border overflow-hidden">
+                <motion.div
+                  className="h-full bg-primary"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(dim.value / dim.max) * 100}%` }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
                 />
               </div>
             </div>
@@ -171,84 +231,75 @@ const PortalDashboard = () => {
         </div>
       </motion.div>
 
-      {/* Studio Overview */}
-      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.06 }}>
+      {/* Current Priorities */}
+      <motion.div {...fade} transition={{ duration: 0.4, delay: 0.15 }}>
         <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">
-          Studios
+          Current Priorities
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-          {studioModules.map((mod, i) => (
-            <motion.div
-              key={mod.name}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.08 + i * 0.04 }}
-              className="border border-border p-5 flex flex-col gap-3 hover:border-primary/40 transition-colors cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <mod.icon size={18} className="text-muted-foreground" strokeWidth={1.5} />
-                <span
-                  className={`text-[10px] uppercase tracking-[0.1em] font-medium px-2 py-0.5 ${
-                    mod.active
-                      ? "bg-primary/10 text-primary"
-                      : "bg-secondary text-muted-foreground"
-                  }`}
-                >
-                  {mod.active ? "Active" : "Inactive"}
-                </span>
+        {priorities.length === 0 ? (
+          <div className="border border-border p-8 text-center">
+            <Activity size={24} className="mx-auto text-muted-foreground/40 mb-2" strokeWidth={1} />
+            <p className="text-sm text-muted-foreground">All clear. No active priorities right now.</p>
+          </div>
+        ) : (
+          <div className="border border-border divide-y divide-border">
+            {priorities.map((item: any) => (
+              <div key={item.id} className="p-4 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-sm text-foreground truncate">{item.title}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">
+                      {item.priority || "medium"} priority
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="text-[10px] px-2 py-0.5 bg-primary/10 text-primary uppercase tracking-wider font-medium">
+                    {item.status === "in_review" ? "In Review" : "In Progress"}
+                  </span>
+                  {item.deadline && (
+                    <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                      <Clock size={10} strokeWidth={1.5} />
+                      {new Date(item.deadline).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}
+                    </span>
+                  )}
+                </div>
               </div>
-              <p className="font-display text-xs font-bold tracking-[0.1em] text-foreground uppercase">
-                {mod.name}
-              </p>
-            </motion.div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </motion.div>
 
-      {/* Metrics Snapshot */}
-      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.12 }}>
-        <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">
-          Insights
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {metrics.map((metric, i) => (
-            <motion.div
-              key={metric.label}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.15 + i * 0.04 }}
-              className="border border-border p-5"
-            >
-              <metric.icon size={16} className="text-muted-foreground mb-3" strokeWidth={1.5} />
-              <p className="font-display text-2xl font-bold text-foreground">{metric.value}</p>
-              <p className="text-[11px] text-muted-foreground mt-1">{metric.label}</p>
-            </motion.div>
-          ))}
+      {/* Recent Movement Feed */}
+      <motion.div {...fade} transition={{ duration: 0.4, delay: 0.2 }}>
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">
+            Recent Movement
+          </p>
+          <Link to="/portal/progress" className="text-[11px] text-primary font-medium flex items-center gap-1 hover:underline">
+            Full timeline <ArrowRight size={10} />
+          </Link>
         </div>
-      </motion.div>
-
-      {/* Recent Activity Feed */}
-      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.2 }}>
-        <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4">
-          Recent Activity
-        </p>
         <div className="border border-border divide-y divide-border">
           {recentUpdates.length === 0 ? (
             <div className="p-8 text-center">
-              <Inbox size={24} className="mx-auto text-muted-foreground mb-2" strokeWidth={1} />
+              <Inbox size={24} className="mx-auto text-muted-foreground/40 mb-2" strokeWidth={1} />
               <p className="text-sm text-muted-foreground">No recent activity yet.</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">Activity will appear as work progresses.</p>
             </div>
           ) : (
             recentUpdates.map((item: any) => {
               const Icon = activityIcon[item.update_type] || CheckCircle2;
-              const timeAgo = getTimeAgo(item.created_at);
               return (
                 <div key={item.id} className="p-4 flex items-center justify-between gap-4 hover:bg-secondary/50 transition-colors">
                   <div className="flex items-center gap-3 min-w-0">
-                    <Icon size={14} className="text-muted-foreground shrink-0" strokeWidth={1.5} />
+                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      <Icon size={12} className="text-primary" strokeWidth={1.5} />
+                    </div>
                     <p className="text-sm text-foreground truncate">{item.content}</p>
                   </div>
-                  <span className="text-[11px] text-muted-foreground shrink-0">{timeAgo}</span>
+                  <span className="text-[11px] text-muted-foreground shrink-0">{getTimeAgo(item.created_at)}</span>
                 </div>
               );
             })
