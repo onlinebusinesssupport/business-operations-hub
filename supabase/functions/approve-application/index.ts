@@ -16,6 +16,15 @@ const ONBOARDING_TASKS = [
   { title: "Upload key brand assets", description: "Share logos, brand guidelines, or any files your team will need.", priority: "low" },
 ];
 
+const STUDIO_MAP: Record<string, string> = {
+  "Digital Presence": "digital-presence",
+  "Lead Engine": "lead-engine",
+  "Automation": "automation",
+  "Operations": "operations",
+  "Travel & Activities": "travel-activities",
+  "Grants & Awards": "grants-awards",
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -59,7 +68,7 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json();
-    const { application_id } = body;
+    const { application_id, tier, monthly_rate } = body;
 
     if (!application_id || typeof application_id !== "string" || !UUID_REGEX.test(application_id)) {
       return new Response(JSON.stringify({ error: "A valid application_id (UUID) is required" }), {
@@ -111,8 +120,9 @@ Deno.serve(async (req) => {
     const userId = inviteData?.user?.id;
     let clientId: string | null = null;
     let tasksCreated = 0;
+    const enabledStudios: string[] = [];
 
-    // Step 2: Create client record and infrastructure
+    // Step 2: Create client record and full infrastructure
     if (userId) {
       // Wait for profile to be created by the trigger
       let profileId: string | null = null;
@@ -130,7 +140,19 @@ Deno.serve(async (req) => {
           .update({ onboarding_completed: false })
           .eq("id", profileId);
 
-        // Create client workspace
+        // Determine enabled studios from areas_of_support
+        const services = application.areas_of_support || [];
+        services.forEach((s: string) => {
+          if (!enabledStudios.includes(s)) enabledStudios.push(s);
+        });
+
+        // Create client workspace with tier and rate
+        const selectedTier = tier || "standard";
+        const selectedRate = monthly_rate || 0;
+        const retainerLimits: Record<string, number> = {
+          starter: 20, standard: 40, growth: 60, enterprise: 100,
+        };
+
         const { data: clientRecord, error: clientError } = await adminClient
           .from("clients")
           .insert({
@@ -138,8 +160,11 @@ Deno.serve(async (req) => {
             contact_profile_id: profileId,
             status: "active",
             subscription_status: "active",
-            tier: "standard",
-            services: application.areas_of_support || [],
+            tier: selectedTier,
+            monthly_rate: selectedRate,
+            retainer_limit: retainerLimits[selectedTier] || 40,
+            retainer_used: 0,
+            services: enabledStudios,
           })
           .select("id")
           .single();
@@ -175,7 +200,15 @@ Deno.serve(async (req) => {
             posted_by: callerUser.id,
           });
 
-          // Step 5: Activity log
+          // Step 5: Seed a welcome document
+          await adminClient.from("documents").insert({
+            client_id: clientId,
+            name: "Welcome to SUPPORT STUDIO™ — Getting Started Guide",
+            category: "shared",
+            uploaded_by: callerUser.id,
+          });
+
+          // Step 6: Activity log
           await adminClient.from("activity_log").insert({
             client_id: clientId,
             actor_id: callerUser.id,
@@ -183,16 +216,19 @@ Deno.serve(async (req) => {
             entity_type: "application",
             entity_id: application_id,
             details: {
+              summary: `Approved "${application.business_name}" — workspace created`,
               business_name: application.business_name,
               email: application.email,
               tasks_created: tasksCreated,
+              tier: selectedTier,
+              studios: enabledStudios,
             },
           });
         }
       }
     }
 
-    // Step 6: Update application status
+    // Step 7: Update application status
     await adminClient.from("applications")
       .update({ status: "approved" }).eq("id", application_id);
 
@@ -202,6 +238,8 @@ Deno.serve(async (req) => {
         message: `Application approved. Workspace created with ${tasksCreated} onboarding tasks.`,
         client_id: clientId,
         tasks_created: tasksCreated,
+        enabled_studios: enabledStudios,
+        tier: tier || "standard",
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
