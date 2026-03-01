@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { KanbanBoard, KanbanColumn } from "@/components/KanbanBoard";
+import InlineEdit from "@/components/InlineEdit";
+import { logActivity } from "@/lib/activity";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -45,6 +47,13 @@ const AdminRequestsInbox = () => {
       if (workError) throw workError;
       const { error: reqError } = await supabase.from("requests").update({ status: "resolved" }).eq("id", req.id);
       if (reqError) throw reqError;
+      await logActivity({
+        client_id: req.client_id,
+        action: "status_change",
+        entity_type: "request",
+        entity_id: req.id,
+        details: { summary: `Converted request "${req.title}" → Work Item` },
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-requests"] });
@@ -55,19 +64,40 @@ const AdminRequestsInbox = () => {
   });
 
   const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+    mutationFn: async ({ id, status, item }: { id: string; status: string; item: any }) => {
       const { error } = await supabase.from("requests").update({ status }).eq("id", id);
       if (error) throw error;
+      await logActivity({
+        client_id: item.client_id,
+        action: "drag",
+        entity_type: "request",
+        entity_id: id,
+        details: { summary: `Moved request "${item.title}" → ${statusConfig[status as ReqStatus]?.label || status}` },
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-requests"] });
     },
   });
 
+  const updateField = useCallback(async (item: any, field: string, value: string) => {
+    await supabase.from("requests").update({ [field]: value }).eq("id", item.id);
+    queryClient.invalidateQueries({ queryKey: ["admin-requests"] });
+    await logActivity({
+      client_id: item.client_id,
+      action: "field_edit",
+      entity_type: "request",
+      entity_id: item.id,
+      details: { summary: `Updated ${field} on request "${item.title}"`, field, new_value: value },
+    });
+  }, [queryClient]);
+
   const handleDragEnd = useCallback((itemId: string, _source: string, destColumn: string) => {
-    updateStatus.mutate({ id: itemId, status: destColumn });
+    const item = requests.find((r: any) => r.id === itemId);
+    if (!item) return;
+    updateStatus.mutate({ id: itemId, status: destColumn, item });
     toast({ title: "Request status updated" });
-  }, [updateStatus, toast]);
+  }, [updateStatus, toast, requests]);
 
   const columns: KanbanColumn<any>[] = statusOrder.map((status) => ({
     id: status,
@@ -97,13 +127,28 @@ const AdminRequestsInbox = () => {
                   isDragging ? "rotate-1 scale-[1.02] shadow-lg" : "hover:border-primary/30"
                 }`}
               >
-                <p className="text-sm font-medium text-foreground">{req.title}</p>
+                <InlineEdit
+                  value={req.title}
+                  onSave={(v) => updateField(req, "title", v)}
+                  className="text-sm font-medium text-foreground"
+                />
                 <p className="text-[11px] text-muted-foreground mt-1">
-                  {req.clients?.name || "—"} · {req.priority || "medium"}
+                  {req.clients?.name || "—"}
                 </p>
-                {req.description && (
-                  <p className="text-[10px] text-muted-foreground/70 mt-2 line-clamp-2">{req.description}</p>
-                )}
+                <div className="flex items-center gap-2 mt-2">
+                  <InlineEdit
+                    value={req.priority || "medium"}
+                    onSave={(v) => updateField(req, "priority", v)}
+                    className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground"
+                  />
+                </div>
+                <InlineEdit
+                  value={req.description || ""}
+                  onSave={(v) => updateField(req, "description", v)}
+                  className="text-[10px] text-muted-foreground/70 mt-2"
+                  placeholder="Add notes..."
+                  multiline
+                />
                 <div className="flex items-center justify-between mt-3">
                   <span className="text-[10px] text-muted-foreground">
                     {new Date(req.created_at).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}

@@ -1,13 +1,17 @@
+import { useCallback } from "react";
 import { motion } from "framer-motion";
-import { DollarSign, FileText, CheckCircle2, Clock, Inbox, Download } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { DollarSign, FileText, Clock, Inbox } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { logActivity } from "@/lib/activity";
+import { useToast } from "@/hooks/use-toast";
 
 const fade = {
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
 };
 
+const statusOptions = ["draft", "sent", "paid", "overdue"] as const;
 const statusConfig: Record<string, { label: string; color: string }> = {
   paid: { label: "Paid", color: "bg-primary/10 text-primary" },
   sent: { label: "Sent", color: "bg-amber-500/10 text-amber-600" },
@@ -16,6 +20,9 @@ const statusConfig: Record<string, { label: string; color: string }> = {
 };
 
 const Billing = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
   const { data: invoices = [], isLoading } = useQuery({
     queryKey: ["portal-billing"],
     queryFn: async () => {
@@ -27,9 +34,35 @@ const Billing = () => {
     },
   });
 
+  const handleStatusChange = useCallback(async (inv: any, newStatus: string) => {
+    const updates: any = { status: newStatus };
+    if (newStatus === "paid") updates.paid_date = new Date().toISOString().split("T")[0];
+    await supabase.from("invoices").update(updates).eq("id", inv.id);
+    queryClient.invalidateQueries({ queryKey: ["portal-billing"] });
+    await logActivity({
+      client_id: inv.client_id,
+      action: "payment_marked",
+      entity_type: "invoice",
+      entity_id: inv.id,
+      details: { summary: `Invoice ${inv.invoice_number || ""} marked as ${newStatus}` },
+    });
+    toast({ title: `Invoice ${newStatus}` });
+  }, [queryClient, toast]);
+
+  const handlePaidDateEdit = useCallback(async (inv: any, date: string) => {
+    await supabase.from("invoices").update({ paid_date: date || null }).eq("id", inv.id);
+    queryClient.invalidateQueries({ queryKey: ["portal-billing"] });
+    await logActivity({
+      client_id: inv.client_id,
+      action: "field_edit",
+      entity_type: "invoice",
+      entity_id: inv.id,
+      details: { summary: `Updated paid date on invoice ${inv.invoice_number || ""}`, field: "paid_date", new_value: date },
+    });
+  }, [queryClient]);
+
   const totalPaid = invoices.filter((i: any) => i.status === "paid").reduce((sum: number, i: any) => sum + Number(i.amount), 0);
   const totalOutstanding = invoices.filter((i: any) => i.status === "sent" || i.status === "overdue").reduce((sum: number, i: any) => sum + Number(i.amount), 0);
-  const currencySymbol = invoices[0]?.currency === "USD" ? "$" : invoices[0]?.currency === "EUR" ? "€" : "R";
 
   const formatAmount = (amount: number, currency?: string) => {
     const sym = currency === "USD" ? "$" : currency === "EUR" ? "€" : "R";
@@ -88,25 +121,48 @@ const Billing = () => {
           </div>
         ) : (
           <div className="border border-border divide-y divide-border">
-            {/* Header */}
-            <div className="grid grid-cols-5 p-3 text-[10px] uppercase tracking-[0.1em] text-muted-foreground font-medium">
+            <div className="grid grid-cols-6 p-3 text-[10px] uppercase tracking-[0.1em] text-muted-foreground font-medium">
               <span>Invoice</span>
               <span>Date</span>
               <span>Amount</span>
               <span>Status</span>
+              <span>Paid Date</span>
               <span className="text-right">Due</span>
             </div>
             {invoices.map((inv: any) => {
               const config = statusConfig[inv.status] || statusConfig.draft;
               return (
-                <div key={inv.id} className="grid grid-cols-5 p-4 items-center text-sm hover:bg-secondary/50 transition-colors">
+                <div key={inv.id} className="grid grid-cols-6 p-4 items-center text-sm hover:bg-secondary/50 transition-colors">
                   <span className="text-foreground font-medium">{inv.invoice_number || "—"}</span>
                   <span className="text-muted-foreground text-xs">
                     {new Date(inv.invoice_date).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" })}
                   </span>
                   <span className="text-foreground font-medium">{formatAmount(inv.amount, inv.currency)}</span>
-                  <span className={`text-[10px] uppercase tracking-wider font-medium px-2 py-0.5 w-fit ${config.color}`}>
-                    {config.label}
+                  <select
+                    value={inv.status}
+                    onChange={(e) => handleStatusChange(inv, e.target.value)}
+                    className={`text-[10px] uppercase tracking-wider font-medium px-2 py-1 w-fit border-none bg-transparent cursor-pointer focus:outline-none focus:ring-1 focus:ring-ring ${config.color}`}
+                  >
+                    {statusOptions.map((s) => (
+                      <option key={s} value={s}>{statusConfig[s].label}</option>
+                    ))}
+                  </select>
+                  <span className="text-muted-foreground text-xs">
+                    {inv.paid_date ? (
+                      <input
+                        type="date"
+                        value={inv.paid_date}
+                        onChange={(e) => handlePaidDateEdit(inv, e.target.value)}
+                        className="bg-transparent border-none text-xs text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
+                      />
+                    ) : inv.status === "paid" ? (
+                      <input
+                        type="date"
+                        onChange={(e) => handlePaidDateEdit(inv, e.target.value)}
+                        className="bg-transparent border-none text-xs text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
+                        placeholder="Set date"
+                      />
+                    ) : "—"}
                   </span>
                   <span className="text-muted-foreground text-xs text-right">
                     {inv.due_date
