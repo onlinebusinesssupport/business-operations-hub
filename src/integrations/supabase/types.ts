@@ -120,30 +120,45 @@ export type Database = {
           contact_profile_id: string | null
           created_at: string
           id: string
+          monthly_rate: number | null
           name: string
           notes: string | null
+          retainer_limit: number
+          retainer_used: number
           services: string[] | null
           status: string
+          subscription_status: string
+          tier: string | null
           updated_at: string
         }
         Insert: {
           contact_profile_id?: string | null
           created_at?: string
           id?: string
+          monthly_rate?: number | null
           name: string
           notes?: string | null
+          retainer_limit?: number
+          retainer_used?: number
           services?: string[] | null
           status?: string
+          subscription_status?: string
+          tier?: string | null
           updated_at?: string
         }
         Update: {
           contact_profile_id?: string | null
           created_at?: string
           id?: string
+          monthly_rate?: number | null
           name?: string
           notes?: string | null
+          retainer_limit?: number
+          retainer_used?: number
           services?: string[] | null
           status?: string
+          subscription_status?: string
+          tier?: string | null
           updated_at?: string
         }
         Relationships: [
