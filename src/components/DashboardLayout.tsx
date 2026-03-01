@@ -42,6 +42,7 @@ const clientNav = [
 
 const adminNav = [
   { label: "Studio Overview", href: "/admin", icon: LayoutDashboard },
+  { label: "Lead Pipeline", href: "/admin/pipeline", icon: GitBranch },
   { label: "Applications", href: "/admin/applications", icon: Inbox },
   { label: "Partner Workspaces", href: "/admin/clients", icon: Users },
   { label: "Work Manager", href: "/admin/work", icon: ListChecks },
