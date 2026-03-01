@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Search, Plus, ArrowLeft, Loader2, X, Gauge } from "lucide-react";
+import { ArrowRight, Search, Plus, Loader2, X, Gauge } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { KanbanBoard, KanbanColumn } from "@/components/KanbanBoard";
 import InlineEdit from "@/components/InlineEdit";
 import { logActivity } from "@/lib/activity";
+import PartnerCockpit from "@/components/PartnerCockpit";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -112,132 +113,14 @@ const AdminClients = () => {
 
   const selected = clients.find((c: any) => c.id === selectedId);
 
-  // Detail view
+  // ─── Partner Cockpit Detail View ───
   if (selected) {
-    const profile = (selected as any).profiles;
-    const usedPct = (selected as any).retainer_limit > 0
-      ? Math.round(((selected as any).retainer_used / (selected as any).retainer_limit) * 100)
-      : 0;
     return (
-      <div className="space-y-6">
-        <motion.div {...fade} transition={{ duration: 0.3 }}>
-          <button onClick={() => setSelectedId(null)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
-            <ArrowLeft size={14} /> Back to Clients
-          </button>
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div>
-              <h2 className="font-display text-2xl font-bold text-foreground">{selected.name}</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                {tierLabels[(selected as any).tier] || "Standard"} · {(subStatusConfig as any)[(selected as any).subscription_status]?.label || "Active"}
-              </p>
-            </div>
-            <select
-              value={(selected as any).subscription_status}
-              onChange={(e) => updateField(selected, "subscription_status", e.target.value)}
-              className="text-xs px-3 py-1.5 bg-card border border-border focus:outline-none focus:ring-1 focus:ring-ring"
-            >
-              {subStatusOrder.map(s => <option key={s} value={s}>{subStatusConfig[s].label}</option>)}
-            </select>
-          </div>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <motion.div {...fade} transition={{ duration: 0.3, delay: 0.05 }} className="bg-card border border-divider p-5 space-y-3">
-            <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Contact</p>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted-foreground">Name</span><span className="text-foreground">{profile?.full_name || "—"}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span className="text-foreground">{profile?.email || "—"}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span className="text-foreground">{profile?.phone || "—"}</span></div>
-            </div>
-          </motion.div>
-
-          <motion.div {...fade} transition={{ duration: 0.3, delay: 0.1 }} className="bg-card border border-divider p-5 space-y-3">
-            <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Subscription</p>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Tier</span>
-                <select
-                  value={(selected as any).tier || "standard"}
-                  onChange={(e) => updateField(selected, "tier", e.target.value)}
-                  className="text-xs px-2 py-1 bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring"
-                >
-                  <option value="starter">Starter</option>
-                  <option value="standard">Standard</option>
-                  <option value="growth">Growth</option>
-                  <option value="enterprise">Enterprise</option>
-                </select>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Monthly Rate</span>
-                <InlineEdit
-                  value={String((selected as any).monthly_rate || 0)}
-                  onSave={(v) => updateField(selected, "monthly_rate", parseFloat(v) || 0)}
-                  className="text-sm text-foreground font-medium"
-                  placeholder="0"
-                />
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Retainer bar */}
-        <motion.div {...fade} transition={{ duration: 0.3, delay: 0.15 }} className="bg-card border border-divider p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Retainer Usage</p>
-            <span className="text-xs text-muted-foreground">{(selected as any).retainer_used} / {(selected as any).retainer_limit} hours</span>
-          </div>
-          <div className="h-3 bg-accent rounded-full overflow-hidden">
-            <motion.div
-              className={`h-full rounded-full ${retainerColor((selected as any).retainer_used, (selected as any).retainer_limit)}`}
-              initial={{ width: 0 }}
-              animate={{ width: `${Math.min(usedPct, 100)}%` }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            />
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Used:</span>
-              <InlineEdit
-                value={String((selected as any).retainer_used)}
-                onSave={(v) => updateField(selected, "retainer_used", parseInt(v) || 0)}
-                className="text-xs text-foreground font-medium w-12"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Limit:</span>
-              <InlineEdit
-                value={String((selected as any).retainer_limit)}
-                onSave={(v) => updateField(selected, "retainer_limit", parseInt(v) || 0)}
-                className="text-xs text-foreground font-medium w-12"
-              />
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Services */}
-        <motion.div {...fade} transition={{ duration: 0.3, delay: 0.2 }} className="bg-card border border-divider p-5 space-y-3">
-          <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Services</p>
-          <div className="flex flex-wrap gap-2">
-            {(selected.services || []).map((s: string) => (
-              <span key={s} className="text-xs bg-accent text-foreground px-3 py-1.5">{s}</span>
-            ))}
-            {(!selected.services || selected.services.length === 0) && (
-              <span className="text-xs text-muted-foreground">No services assigned</span>
-            )}
-          </div>
-        </motion.div>
-
-        <motion.div {...fade} transition={{ duration: 0.3, delay: 0.25 }} className="bg-card border border-divider p-5 space-y-3">
-          <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Notes</p>
-          <InlineEdit
-            value={selected.notes || ""}
-            onSave={(v) => updateField(selected, "notes", v)}
-            className="text-sm text-foreground"
-            placeholder="Add notes..."
-            multiline
-          />
-        </motion.div>
-      </div>
+      <PartnerCockpit
+        client={selected}
+        onBack={() => setSelectedId(null)}
+        onUpdateField={updateField}
+      />
     );
   }
 
@@ -246,7 +129,7 @@ const AdminClients = () => {
       <motion.div {...fade} transition={{ duration: 0.3 }} className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h2 className="font-display text-2xl font-bold text-foreground">Partner Workspaces</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Drag clients between subscription states. Click to manage.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Drag clients between subscription states. Click to open cockpit.</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex border border-border">
@@ -331,15 +214,10 @@ const AdminClients = () => {
                       {tierLabels[client.tier] || "Standard"}
                     </span>
                   </div>
-                  <InlineEdit
-                    value={client.name}
-                    onSave={(v) => updateField(client, "name", v)}
-                    className="text-sm font-medium text-foreground"
-                  />
+                  <p className="text-sm font-medium text-foreground">{client.name}</p>
                   <p className="text-[11px] text-muted-foreground mt-1 truncate">
                     {client.profiles?.email || "—"}
                   </p>
-                  {/* Retainer bar */}
                   <div className="mt-3">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-[9px] text-muted-foreground uppercase tracking-wider">Retainer</span>
@@ -400,7 +278,6 @@ const AdminClients = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-4 shrink-0">
-                      {/* Mini retainer bar */}
                       <div className="w-20">
                         <div className="h-1.5 bg-accent rounded-full overflow-hidden">
                           <div

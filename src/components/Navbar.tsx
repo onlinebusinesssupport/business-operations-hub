@@ -8,7 +8,6 @@ const navItems = [
   { label: "Services", href: "/services" },
   { label: "Media", href: "/media" },
   { label: "Contact", href: "/contact" },
-  { label: "Apply", href: "/apply" },
 ];
 
 const Navbar = () => {

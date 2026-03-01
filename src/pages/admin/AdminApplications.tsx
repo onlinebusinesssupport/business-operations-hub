@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle, Eye, ArrowLeft, Loader2, ExternalLink } from "lucide-react";
+import { CheckCircle2, XCircle, Eye, ArrowLeft, Loader2, ExternalLink, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 type AppStatus = "pending" | "approved" | "declined";
@@ -15,12 +15,26 @@ const statusColors: Record<AppStatus, string> = {
   declined: "bg-destructive/10 text-destructive",
 };
 
+const tierOptions = [
+  { value: "starter", label: "Starter", hours: 20 },
+  { value: "standard", label: "Standard", hours: 40 },
+  { value: "growth", label: "Growth", hours: 60 },
+  { value: "enterprise", label: "Enterprise", hours: 100 },
+];
+
 const AdminApplications = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<AppStatus | "all">("all");
-  const [approvalResult, setApprovalResult] = useState<{ tasks: number; clientId: string | null } | null>(null);
+  const [approvalResult, setApprovalResult] = useState<{
+    tasks: number;
+    clientId: string | null;
+    studios: string[];
+    tier: string;
+  } | null>(null);
+  const [selectedTier, setSelectedTier] = useState("standard");
+  const [monthlyRate, setMonthlyRate] = useState("");
 
   const { data: applications = [], isLoading } = useQuery({
     queryKey: ["applications"],
@@ -32,26 +46,29 @@ const AdminApplications = () => {
   });
 
   const approveApp = useMutation({
-    mutationFn: async (applicationId: string) => {
+    mutationFn: async ({ applicationId, tier, rate }: { applicationId: string; tier: string; rate: number }) => {
       const { data, error } = await supabase.functions.invoke("approve-application", {
-        body: { application_id: applicationId },
+        body: { application_id: applicationId, tier, monthly_rate: rate },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       return data;
     },
     onSuccess: (data) => {
-      // Invalidate ALL relevant queries so the entire admin dashboard refreshes
       queryClient.invalidateQueries({ queryKey: ["applications"] });
       queryClient.invalidateQueries({ queryKey: ["overview-clients"] });
       queryClient.invalidateQueries({ queryKey: ["overview-work"] });
       queryClient.invalidateQueries({ queryKey: ["overview-applications"] });
       queryClient.invalidateQueries({ queryKey: ["admin-clients"] });
       queryClient.invalidateQueries({ queryKey: ["pipeline"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-invoices"] });
+      queryClient.invalidateQueries({ queryKey: ["activity-log-global"] });
 
       setApprovalResult({
         tasks: data?.tasks_created || 0,
         clientId: data?.client_id || null,
+        studios: data?.enabled_studios || [],
+        tier: data?.tier || "standard",
       });
 
       toast({
@@ -135,17 +152,68 @@ const AdminApplications = () => {
           <p className="text-sm text-foreground leading-relaxed">{selected.intent || "No response"}</p>
         </div>
 
-        {/* Approval actions */}
+        {/* Approval config — tier selection + rate */}
         {selected.status === "pending" && !approvalResult && (
-          <div className="flex items-center gap-3 pt-4">
-            <Button onClick={() => approveApp.mutate(selected.id)} className="text-sm tracking-wide gap-2" disabled={isProcessing}>
-              {approveApp.isPending ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
-              {approveApp.isPending ? "Creating workspace..." : "Approve & Invite"}
-            </Button>
-            <Button variant="outline" onClick={() => declineApp.mutate(selected.id)} className="text-sm tracking-wide gap-2" disabled={isProcessing}>
-              <XCircle size={14} /> Decline
-            </Button>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="border border-border p-6 space-y-5"
+          >
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-primary" />
+              <p className="text-sm font-medium text-foreground">Configure Workspace</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs text-muted-foreground block mb-2">Subscription Tier</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {tierOptions.map((t) => (
+                    <button
+                      key={t.value}
+                      onClick={() => setSelectedTier(t.value)}
+                      className={`text-xs px-3 py-2.5 border transition-all text-left ${
+                        selectedTier === t.value
+                          ? "border-primary bg-primary/5 text-foreground"
+                          : "border-border text-muted-foreground hover:border-primary/40"
+                      }`}
+                    >
+                      <span className="font-medium">{t.label}</span>
+                      <span className="block text-[10px] text-muted-foreground mt-0.5">{t.hours}h retainer</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground block mb-2">Monthly Rate (ZAR)</label>
+                <input
+                  type="number"
+                  value={monthlyRate}
+                  onChange={(e) => setMonthlyRate(e.target.value)}
+                  placeholder="e.g. 15000"
+                  className="w-full px-3 py-2.5 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring"
+                />
+                <p className="text-[10px] text-muted-foreground mt-1">Leave empty to set later</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 pt-2">
+              <Button
+                onClick={() => approveApp.mutate({
+                  applicationId: selected.id,
+                  tier: selectedTier,
+                  rate: parseFloat(monthlyRate) || 0,
+                })}
+                className="text-sm tracking-wide gap-2"
+                disabled={isProcessing}
+              >
+                {approveApp.isPending ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+                {approveApp.isPending ? "Creating workspace..." : "Approve & Activate"}
+              </Button>
+              <Button variant="outline" onClick={() => declineApp.mutate(selected.id)} className="text-sm tracking-wide gap-2" disabled={isProcessing}>
+                <XCircle size={14} /> Decline
+              </Button>
+            </div>
+          </motion.div>
         )}
 
         {/* Success confirmation banner */}
@@ -153,25 +221,32 @@ const AdminApplications = () => {
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="border border-primary/30 bg-primary/5 p-5 space-y-3"
+            className="border border-primary/30 bg-primary/5 p-6 space-y-4"
           >
             <div className="flex items-center gap-2">
               <CheckCircle2 size={18} className="text-primary shrink-0" />
               <p className="text-sm font-medium text-foreground">Workspace activated successfully</p>
             </div>
-            <div className="text-xs text-muted-foreground space-y-1 pl-7">
+            <div className="text-xs text-muted-foreground space-y-1.5 pl-7">
               <p>✓ Invite email sent to {selected.email}</p>
-              <p>✓ Client workspace created</p>
-              <p>✓ {approvalResult.tasks} onboarding tasks generated</p>
-              <p>✓ Welcome update posted</p>
-              <p>✓ Activity logged</p>
+              <p>✓ Client workspace created ({tierOptions.find(t => t.value === approvalResult.tier)?.label || "Standard"} tier)</p>
+              <p>✓ {approvalResult.tasks} onboarding tasks seeded</p>
+              <p>✓ Welcome update and getting-started guide created</p>
+              <p>✓ {approvalResult.studios.length > 0 ? `Studios enabled: ${approvalResult.studios.join(", ")}` : "No studios pre-assigned"}</p>
+              <p>✓ Activity logged across dashboards</p>
             </div>
-            <div className="pl-7 pt-2">
+            <div className="pl-7 pt-2 flex gap-3">
               <Link
                 to="/admin/clients"
                 className="inline-flex items-center gap-1.5 text-xs text-primary font-medium hover:underline"
               >
                 View Partner Workspaces <ExternalLink size={10} />
+              </Link>
+              <Link
+                to="/admin/work"
+                className="inline-flex items-center gap-1.5 text-xs text-muted-foreground font-medium hover:underline"
+              >
+                View Work Manager <ExternalLink size={10} />
               </Link>
             </div>
           </motion.div>
@@ -219,7 +294,7 @@ const AdminApplications = () => {
       ) : (
         <div className="border border-border divide-y divide-border">
           {filtered.map((app) => (
-            <button key={app.id} onClick={() => { setSelectedId(app.id); setApprovalResult(null); }}
+            <button key={app.id} onClick={() => { setSelectedId(app.id); setApprovalResult(null); setSelectedTier("standard"); setMonthlyRate(""); }}
               className="w-full p-4 flex items-center justify-between gap-4 hover:bg-secondary/50 transition-colors text-left"
             >
               <div className="min-w-0 flex-1">
