@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 const navItems = [
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
+  { label: "Reviews", href: "/reviews" },
   { label: "Media", href: "/media" },
   { label: "Contact", href: "/contact" },
 ];

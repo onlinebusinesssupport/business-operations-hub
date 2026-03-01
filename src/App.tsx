@@ -58,6 +58,8 @@ import AutomationService from "./pages/services/AutomationService";
 import OperationsService from "./pages/services/Operations";
 import TravelActivities from "./pages/services/TravelActivities";
 import GrantsAwards from "./pages/services/GrantsAwards";
+import Reviews from "./pages/Reviews";
+import ReviewSubmit from "./pages/ReviewSubmit";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +84,8 @@ const App = () => (
             <Route path="/results" element={<Media />} />
             <Route path="/media" element={<Media />} />
             <Route path="/insights" element={<Media />} />
+            <Route path="/reviews" element={<Reviews />} />
+            <Route path="/review" element={<ReviewSubmit />} />
             <Route path="/how-it-works" element={<HowWeWork />} />
             <Route path="/clients" element={<Clients />} />
             
