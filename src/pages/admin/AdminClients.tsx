@@ -1,25 +1,41 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Search, Plus, ArrowLeft, Loader2, X } from "lucide-react";
+import { ArrowRight, Search, Plus, ArrowLeft, Loader2, X, Gauge } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { KanbanBoard, KanbanColumn } from "@/components/KanbanBoard";
+import InlineEdit from "@/components/InlineEdit";
+import { logActivity } from "@/lib/activity";
 
-const stagger = {
-  initial: { opacity: 0, y: 12 },
-  animate: { opacity: 1, y: 0 },
+const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
+
+type SubStatus = "active" | "at_risk" | "paused" | "cancelled";
+const subStatusConfig: Record<SubStatus, { label: string; dotColor: string }> = {
+  active: { label: "Active", dotColor: "bg-emerald-500" },
+  at_risk: { label: "At Risk", dotColor: "bg-amber-500" },
+  paused: { label: "Paused", dotColor: "bg-muted-foreground/50" },
+  cancelled: { label: "Cancelled", dotColor: "bg-destructive" },
+};
+const subStatusOrder: SubStatus[] = ["active", "at_risk", "paused", "cancelled"];
+
+const tierLabels: Record<string, string> = {
+  starter: "Starter", standard: "Standard", growth: "Growth", enterprise: "Enterprise",
 };
 
-const statusStyles: Record<string, string> = {
-  active: "bg-foreground text-background",
-  onboarding: "bg-accent text-foreground",
-  paused: "bg-accent text-muted-foreground",
+const retainerColor = (used: number, limit: number) => {
+  if (limit === 0) return "bg-muted-foreground/30";
+  const pct = used / limit;
+  if (pct >= 1) return "bg-destructive";
+  if (pct >= 0.75) return "bg-amber-500";
+  return "bg-emerald-500";
 };
 
 const AdminClients = () => {
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [view, setView] = useState<"list" | "board">("board");
   const [showInvite, setShowInvite] = useState(false);
   const [inviteForm, setInviteForm] = useState({ email: "", full_name: "", company_name: "", services: "" });
   const { toast } = useToast();
@@ -41,11 +57,8 @@ const AdminClients = () => {
     mutationFn: async (form: typeof inviteForm) => {
       const { data, error } = await supabase.functions.invoke("invite-user", {
         body: {
-          email: form.email,
-          full_name: form.full_name,
-          company_name: form.company_name,
-          role: "client",
-          services: form.services ? form.services.split(",").map((s) => s.trim()) : [],
+          email: form.email, full_name: form.full_name, company_name: form.company_name,
+          role: "client", services: form.services ? form.services.split(",").map((s) => s.trim()) : [],
         },
       });
       if (error) throw error;
@@ -58,21 +71,39 @@ const AdminClients = () => {
       setShowInvite(false);
       setInviteForm({ email: "", full_name: "", company_name: "", services: "" });
     },
-    onError: (err: Error) => {
-      toast({ title: "Invite failed", description: err.message, variant: "destructive" });
-    },
+    onError: (err: Error) => toast({ title: "Invite failed", description: err.message, variant: "destructive" }),
   });
 
-  const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase.from("clients").update({ status }).eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-clients"] });
-      toast({ title: "Status updated" });
-    },
-  });
+  const updateField = useCallback(async (client: any, field: string, value: any) => {
+    await supabase.from("clients").update({ [field]: value }).eq("id", client.id);
+    queryClient.invalidateQueries({ queryKey: ["admin-clients"] });
+    await logActivity({
+      client_id: client.id,
+      action: field === "subscription_status" ? "drag" : "field_edit",
+      entity_type: "client",
+      entity_id: client.id,
+      details: {
+        summary: field === "subscription_status"
+          ? `Moved "${client.name}" → ${(subStatusConfig as any)[value]?.label || value}`
+          : `Updated ${field} on "${client.name}"`,
+        field, new_value: String(value),
+      },
+    });
+  }, [queryClient]);
+
+  const handleDragEnd = useCallback((itemId: string, _source: string, destColumn: string) => {
+    const client = clients.find((c: any) => c.id === itemId);
+    if (!client) return;
+    updateField(client, "subscription_status", destColumn);
+    toast({ title: "Subscription updated", description: `${client.name} → ${(subStatusConfig as any)[destColumn]?.label}` });
+  }, [clients, updateField, toast]);
+
+  const columns: KanbanColumn<any>[] = subStatusOrder.map((status) => ({
+    id: status,
+    title: subStatusConfig[status].label,
+    color: subStatusConfig[status].dotColor,
+    items: clients.filter((c: any) => (c as any).subscription_status === status),
+  }));
 
   const filtered = clients.filter((c: any) =>
     c.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -81,23 +112,38 @@ const AdminClients = () => {
 
   const selected = clients.find((c: any) => c.id === selectedId);
 
+  // Detail view
   if (selected) {
     const profile = (selected as any).profiles;
+    const usedPct = (selected as any).retainer_limit > 0
+      ? Math.round(((selected as any).retainer_used / (selected as any).retainer_limit) * 100)
+      : 0;
     return (
       <div className="space-y-6">
-        <motion.div {...stagger} transition={{ duration: 0.3 }}>
+        <motion.div {...fade} transition={{ duration: 0.3 }}>
           <button onClick={() => setSelectedId(null)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
             <ArrowLeft size={14} /> Back to Clients
           </button>
-          <h2 className="font-serif text-2xl text-foreground">{selected.name}</h2>
-          <span className={`inline-block text-xs px-2.5 py-1 rounded-lg mt-2 capitalize ${statusStyles[selected.status] || statusStyles.onboarding}`}>
-            {selected.status}
-          </span>
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h2 className="font-display text-2xl font-bold text-foreground">{selected.name}</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                {tierLabels[(selected as any).tier] || "Standard"} · {(subStatusConfig as any)[(selected as any).subscription_status]?.label || "Active"}
+              </p>
+            </div>
+            <select
+              value={(selected as any).subscription_status}
+              onChange={(e) => updateField(selected, "subscription_status", e.target.value)}
+              className="text-xs px-3 py-1.5 bg-card border border-border focus:outline-none focus:ring-1 focus:ring-ring"
+            >
+              {subStatusOrder.map(s => <option key={s} value={s}>{subStatusConfig[s].label}</option>)}
+            </select>
+          </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.05 }} className="bg-card border border-divider rounded-xl p-6">
-            <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-4">Contact</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <motion.div {...fade} transition={{ duration: 0.3, delay: 0.05 }} className="bg-card border border-divider p-5 space-y-3">
+            <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Contact</p>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Name</span><span className="text-foreground">{profile?.full_name || "—"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span className="text-foreground">{profile?.email || "—"}</span></div>
@@ -105,43 +151,91 @@ const AdminClients = () => {
             </div>
           </motion.div>
 
-          <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.1 }} className="bg-card border border-divider rounded-xl p-6">
-            <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-4">Services</p>
-            <div className="flex flex-wrap gap-2">
-              {(selected.services || []).map((s: string) => (
-                <span key={s} className="text-xs bg-accent text-foreground px-3 py-1.5 rounded-lg">{s}</span>
-              ))}
-              {(!selected.services || selected.services.length === 0) && (
-                <span className="text-xs text-muted-foreground">No services assigned</span>
-              )}
+          <motion.div {...fade} transition={{ duration: 0.3, delay: 0.1 }} className="bg-card border border-divider p-5 space-y-3">
+            <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Subscription</p>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Tier</span>
+                <select
+                  value={(selected as any).tier || "standard"}
+                  onChange={(e) => updateField(selected, "tier", e.target.value)}
+                  className="text-xs px-2 py-1 bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring"
+                >
+                  <option value="starter">Starter</option>
+                  <option value="standard">Standard</option>
+                  <option value="growth">Growth</option>
+                  <option value="enterprise">Enterprise</option>
+                </select>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Monthly Rate</span>
+                <InlineEdit
+                  value={String((selected as any).monthly_rate || 0)}
+                  onSave={(v) => updateField(selected, "monthly_rate", parseFloat(v) || 0)}
+                  className="text-sm text-foreground font-medium"
+                  placeholder="0"
+                />
+              </div>
             </div>
           </motion.div>
         </div>
 
-        <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.15 }} className="bg-card border border-divider rounded-xl p-6">
-          <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-4">Notes</p>
-          <p className="text-sm text-foreground leading-relaxed">{selected.notes || "No notes yet."}</p>
+        {/* Retainer bar */}
+        <motion.div {...fade} transition={{ duration: 0.3, delay: 0.15 }} className="bg-card border border-divider p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Retainer Usage</p>
+            <span className="text-xs text-muted-foreground">{(selected as any).retainer_used} / {(selected as any).retainer_limit} hours</span>
+          </div>
+          <div className="h-3 bg-accent rounded-full overflow-hidden">
+            <motion.div
+              className={`h-full rounded-full ${retainerColor((selected as any).retainer_used, (selected as any).retainer_limit)}`}
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.min(usedPct, 100)}%` }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Used:</span>
+              <InlineEdit
+                value={String((selected as any).retainer_used)}
+                onSave={(v) => updateField(selected, "retainer_used", parseInt(v) || 0)}
+                className="text-xs text-foreground font-medium w-12"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Limit:</span>
+              <InlineEdit
+                value={String((selected as any).retainer_limit)}
+                onSave={(v) => updateField(selected, "retainer_limit", parseInt(v) || 0)}
+                className="text-xs text-foreground font-medium w-12"
+              />
+            </div>
+          </div>
         </motion.div>
 
-        <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.2 }} className="bg-card border border-divider rounded-xl p-6">
-          <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-4">Actions</p>
-          <div className="flex gap-3 flex-wrap">
-            {selected.status !== "active" && (
-              <Button size="sm" onClick={() => updateStatus.mutate({ id: selected.id, status: "active" })}>
-                Set Active
-              </Button>
-            )}
-            {selected.status !== "paused" && (
-              <Button size="sm" variant="outline" onClick={() => updateStatus.mutate({ id: selected.id, status: "paused" })}>
-                Pause
-              </Button>
-            )}
-            {selected.status !== "onboarding" && (
-              <Button size="sm" variant="outline" onClick={() => updateStatus.mutate({ id: selected.id, status: "onboarding" })}>
-                Set Onboarding
-              </Button>
+        {/* Services */}
+        <motion.div {...fade} transition={{ duration: 0.3, delay: 0.2 }} className="bg-card border border-divider p-5 space-y-3">
+          <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Services</p>
+          <div className="flex flex-wrap gap-2">
+            {(selected.services || []).map((s: string) => (
+              <span key={s} className="text-xs bg-accent text-foreground px-3 py-1.5">{s}</span>
+            ))}
+            {(!selected.services || selected.services.length === 0) && (
+              <span className="text-xs text-muted-foreground">No services assigned</span>
             )}
           </div>
+        </motion.div>
+
+        <motion.div {...fade} transition={{ duration: 0.3, delay: 0.25 }} className="bg-card border border-divider p-5 space-y-3">
+          <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Notes</p>
+          <InlineEdit
+            value={selected.notes || ""}
+            onSave={(v) => updateField(selected, "notes", v)}
+            className="text-sm text-foreground"
+            placeholder="Add notes..."
+            multiline
+          />
         </motion.div>
       </div>
     );
@@ -149,19 +243,31 @@ const AdminClients = () => {
 
   return (
     <div className="space-y-6">
-      <motion.div {...stagger} transition={{ duration: 0.3 }} className="flex items-start justify-between gap-4 flex-wrap">
+      <motion.div {...fade} transition={{ duration: 0.3 }} className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h2 className="font-serif text-2xl text-foreground">Clients</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Manage your client database.</p>
+          <h2 className="font-display text-2xl font-bold text-foreground">Partner Workspaces</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Drag clients between subscription states. Click to manage.</p>
         </div>
-        <Button onClick={() => setShowInvite(true)} className="gap-2 text-xs">
-          <Plus size={14} /> Invite Client
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className="flex border border-border">
+            <button
+              onClick={() => setView("board")}
+              className={`text-xs px-3 py-1.5 transition-colors ${view === "board" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >Board</button>
+            <button
+              onClick={() => setView("list")}
+              className={`text-xs px-3 py-1.5 transition-colors ${view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >List</button>
+          </div>
+          <Button onClick={() => setShowInvite(true)} className="gap-2 text-xs">
+            <Plus size={14} /> Invite Client
+          </Button>
+        </div>
       </motion.div>
 
-      {/* Invite dialog */}
+      {/* Invite form */}
       {showInvite && (
-        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-divider rounded-xl p-6 space-y-4">
+        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-divider p-6 space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium text-foreground">Invite New Client</p>
             <button onClick={() => setShowInvite(false)} className="text-muted-foreground hover:text-foreground"><X size={16} /></button>
@@ -169,19 +275,19 @@ const AdminClients = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-xs text-muted-foreground block mb-1.5">Full Name *</label>
-              <input value={inviteForm.full_name} onChange={(e) => setInviteForm({ ...inviteForm, full_name: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring" />
+              <input value={inviteForm.full_name} onChange={(e) => setInviteForm({ ...inviteForm, full_name: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground block mb-1.5">Email *</label>
-              <input type="email" value={inviteForm.email} onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring" />
+              <input type="email" value={inviteForm.email} onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground block mb-1.5">Company Name</label>
-              <input value={inviteForm.company_name} onChange={(e) => setInviteForm({ ...inviteForm, company_name: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring" />
+              <input value={inviteForm.company_name} onChange={(e) => setInviteForm({ ...inviteForm, company_name: e.target.value })} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground block mb-1.5">Services (comma-separated)</label>
-              <input value={inviteForm.services} onChange={(e) => setInviteForm({ ...inviteForm, services: e.target.value })} placeholder="Operations, Automation" className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring" />
+              <input value={inviteForm.services} onChange={(e) => setInviteForm({ ...inviteForm, services: e.target.value })} placeholder="Operations, Automation" className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
           </div>
           <Button onClick={() => inviteMutation.mutate(inviteForm)} disabled={inviteMutation.isPending || !inviteForm.email || !inviteForm.full_name} className="gap-2 text-xs">
@@ -191,41 +297,128 @@ const AdminClients = () => {
         </motion.div>
       )}
 
-      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.05 }}>
+      {/* Search */}
+      <motion.div {...fade} transition={{ duration: 0.3, delay: 0.05 }}>
         <div className="relative">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search clients..." className="w-full bg-card border border-divider rounded-lg pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring" />
+          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search clients..." className="w-full bg-card border border-divider pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring" />
         </div>
       </motion.div>
 
-      <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.1 }}>
-        {isLoading ? (
-          <p className="text-sm text-muted-foreground py-8">Loading clients...</p>
-        ) : filtered.length === 0 ? (
-          <div className="border border-border p-8 text-center">
-            <p className="text-sm text-muted-foreground">No clients found. Invite your first client above.</p>
-          </div>
-        ) : (
-          <div className="bg-card border border-divider rounded-xl divide-y divide-divider">
-            {filtered.map((client: any) => (
-              <button key={client.id} onClick={() => setSelectedId(client.id)} className="w-full p-4 flex items-center justify-between gap-4 hover:bg-accent/40 transition-colors text-left">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3">
-                    <p className="text-sm font-medium text-foreground">{client.name}</p>
-                    <span className={`text-xs px-2 py-0.5 rounded-lg capitalize ${statusStyles[client.status] || statusStyles.onboarding}`}>
-                      {client.status}
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground py-8">Loading clients...</p>
+      ) : view === "board" ? (
+        <motion.div {...fade} transition={{ duration: 0.3, delay: 0.1 }}>
+          <KanbanBoard
+            columns={columns}
+            onDragEnd={handleDragEnd}
+            getItemId={(item) => item.id}
+            renderCard={(client: any, isDragging) => {
+              const usedPct = client.retainer_limit > 0
+                ? Math.round((client.retainer_used / client.retainer_limit) * 100) : 0;
+              return (
+                <div
+                  className={`bg-card border border-divider p-4 cursor-grab active:cursor-grabbing transition-all duration-150 ${
+                    isDragging ? "rotate-1 scale-[1.02] shadow-lg" : "hover:border-primary/30"
+                  }`}
+                  onClick={() => !isDragging && setSelectedId(client.id)}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                      <span className="text-[11px] font-bold text-primary">{client.name[0]}</span>
+                    </div>
+                    <span className="text-[9px] uppercase tracking-widest text-muted-foreground">
+                      {tierLabels[client.tier] || "Standard"}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1 truncate">
-                    {client.profiles?.email || "No contact"} · {(client.services || []).join(" · ") || "No services"}
+                  <InlineEdit
+                    value={client.name}
+                    onSave={(v) => updateField(client, "name", v)}
+                    className="text-sm font-medium text-foreground"
+                  />
+                  <p className="text-[11px] text-muted-foreground mt-1 truncate">
+                    {client.profiles?.email || "—"}
+                  </p>
+                  {/* Retainer bar */}
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[9px] text-muted-foreground uppercase tracking-wider">Retainer</span>
+                      <span className="text-[10px] text-muted-foreground">{client.retainer_used}/{client.retainer_limit}h</span>
+                    </div>
+                    <div className="h-1.5 bg-accent rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${retainerColor(client.retainer_used, client.retainer_limit)}`}
+                        style={{ width: `${Math.min(usedPct, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                  {client.monthly_rate > 0 && (
+                    <p className="text-[10px] text-muted-foreground mt-2">
+                      R{Number(client.monthly_rate).toLocaleString("en-ZA")}/mo
+                    </p>
+                  )}
+                  <p className="text-[10px] text-muted-foreground/60 mt-1">
+                    {(client.services || []).slice(0, 2).join(" · ") || "No services"}
                   </p>
                 </div>
-                <ArrowRight size={14} className="text-muted-foreground shrink-0" />
-              </button>
-            ))}
-          </div>
-        )}
-      </motion.div>
+              );
+            }}
+          />
+        </motion.div>
+      ) : (
+        <motion.div {...fade} transition={{ duration: 0.3, delay: 0.1 }}>
+          {filtered.length === 0 ? (
+            <div className="border border-border p-8 text-center">
+              <p className="text-sm text-muted-foreground">No clients found.</p>
+            </div>
+          ) : (
+            <div className="bg-card border border-divider divide-y divide-divider">
+              {filtered.map((client: any) => {
+                const usedPct = client.retainer_limit > 0
+                  ? Math.round((client.retainer_used / client.retainer_limit) * 100) : 0;
+                return (
+                  <button key={client.id} onClick={() => setSelectedId(client.id)} className="w-full p-4 flex items-center justify-between gap-4 hover:bg-accent/40 transition-colors text-left">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                        <span className="text-xs font-bold text-primary">{client.name[0]}</span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium text-foreground">{client.name}</p>
+                          <span className={`text-[10px] px-2 py-0.5 uppercase tracking-wider font-medium ${
+                            (subStatusConfig as any)[client.subscription_status]?.dotColor === "bg-emerald-500" ? "bg-emerald-500/10 text-emerald-600" :
+                            (subStatusConfig as any)[client.subscription_status]?.dotColor === "bg-amber-500" ? "bg-amber-500/10 text-amber-600" :
+                            (subStatusConfig as any)[client.subscription_status]?.dotColor === "bg-destructive" ? "bg-destructive/10 text-destructive" :
+                            "bg-secondary text-muted-foreground"
+                          }`}>
+                            {(subStatusConfig as any)[client.subscription_status]?.label || "Active"}
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                          {client.profiles?.email || "No contact"} · {(client.services || []).join(" · ") || "No services"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 shrink-0">
+                      {/* Mini retainer bar */}
+                      <div className="w-20">
+                        <div className="h-1.5 bg-accent rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${retainerColor(client.retainer_used, client.retainer_limit)}`}
+                            style={{ width: `${Math.min(usedPct, 100)}%` }}
+                          />
+                        </div>
+                        <p className="text-[9px] text-muted-foreground mt-0.5 text-center">{client.retainer_used}/{client.retainer_limit}h</p>
+                      </div>
+                      <ArrowRight size={14} className="text-muted-foreground" />
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </motion.div>
+      )}
     </div>
   );
 };
