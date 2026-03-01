@@ -1,31 +1,82 @@
 
+# Make the System Live and Interactive
 
-## Problem
+## Problem Summary
 
-The admin user `agenticos.za@gmail.com` has the correct admin role in the database -- the data is fine. The issue is that after signing in with Google OAuth, the app redirects back to the homepage (`/`) with no logic to detect the completed login and route the user to the correct dashboard (`/admin` or `/portal`).
+Two core issues need fixing:
 
-The email/password login flow has explicit navigation after sign-in, but the Google/Apple OAuth flow simply triggers a redirect and has no post-redirect handler.
+1. **Onboarding Wizard shows "Step 1 of 4" but feels empty** -- The wizard exists and has all 4 steps, but clients arriving via the approval flow don't see it because the `approve-application` Edge Function creates a profile with `onboarding_completed` potentially already set, or the profile/client linkage is incomplete. The welcome step (Step 0) also lacks visual warmth -- no branded imagery or clear value proposition.
 
-## Solution
+2. **Admin approval feels disconnected** -- When you approve an application, the Edge Function sends an invite email and creates a client record, but there's no visible feedback loop back into the Admin dashboard. The pipeline, applications page, and overview don't refresh or show the activation result. The whole system feels like a shell because actions don't cascade visibly.
 
-Add a post-OAuth redirect handler that detects when a user returns from an OAuth sign-in and navigates them to the appropriate dashboard.
+---
 
-## Changes
+## Plan
 
-### 1. Update `src/pages/Login.tsx`
-- Change the OAuth `redirect_uri` to point back to the login page itself (`/login`) instead of the root (`/`).
-- Add a `useEffect` hook that runs on mount to check if the user already has an active session (meaning they just returned from an OAuth redirect).
-- If a session exists, check their role and navigate to `/admin` or `/portal` accordingly, including the MFA check.
+### 1. Fix the Approval-to-Onboarding Pipeline
 
-### 2. Update `src/App.tsx`
-- No routing changes needed since `/login` is already a registered route.
+**Edge Function (`approve-application`):**
+- After creating the client record, also generate 4 default onboarding `work_items` (same as the pipeline activation does) and a welcome `update` entry
+- Log an `activity_log` entry so the activity feeds light up immediately
+- Ensure the profile is created with `onboarding_completed = false` so the wizard triggers on first login
+
+**Admin Applications page:**
+- After successful approval, invalidate all relevant queries (`overview-clients`, `overview-work`, `pipeline-*`) so the dashboard metrics update instantly
+- Show a success state with a summary: "Workspace created, invite sent, 4 onboarding tasks generated"
+- Add a "View Workspace" link that navigates to the Partner Workspaces page
+
+### 2. Upgrade the Onboarding Wizard
+
+Make the 4-step wizard feel premium and alive:
+
+- **Step 0 (Welcome):** Add the brand logo/mark, a calming welcome message with the client's name (pulled from the invite metadata), and a preview of what the 4 steps cover
+- **Step 1 (Personal):** Pre-fill name and email from the auth metadata so it feels seamless
+- **Step 2 (Business):** Pre-fill company name and industry from the invite metadata
+- **Step 3 (Final):** Add a completion animation and the brand sign-off line: "Welcome to SUPPORT STUDIO(TM) -- Clarity builds momentum. Systems build freedom."
+
+### 3. Connect Admin Actions to Visible Results
+
+**AdminOverview:** 
+- Add a "Recent Activations" mini-section that shows the last 3 approved clients with timestamps
+- Ensure all KPI cards pull fresh data after any approval action
+
+**AdminApplications:**
+- After approval, show a confirmation banner with next steps visible
+- Add activity logging so the approval shows in the Global Activity feed
+
+**AdminLeadPipeline:**
+- When a lead is dragged to "Won", also check if there's a matching application and update its status to "approved" for consistency
+- Ensure the `activateClient` mutation creates the same infrastructure as the Edge Function (work items, updates, activity log)
+
+### 4. Client Portal Post-Onboarding Experience
+
+**PortalDashboard:**
+- After completing the onboarding wizard, show a "First Week" welcome banner (Day 1 message) that persists for 7 days
+- The dashboard should immediately show the onboarding work items as "Current Priorities"
+- The activity feed should show the welcome entry
+
+**Requests page:**
+- If `clientId` is null (profile exists but no client linkage), show a clearer message: "Your workspace is being prepared. You'll have full access shortly."
+
+### 5. Database Migration
+
+Add a `client_id` column relationship improvement -- currently `clients.contact_profile_id` links to profiles, but the `get_my_client_id()` function already handles this. No schema changes needed.
+
+Ensure the Edge Function creates an `activity_log` entry by adding an insert after client creation (using the service role client).
+
+---
 
 ## Technical Details
 
-The `useEffect` in `Login.tsx` will:
-1. Call `supabase.auth.getSession()` on mount.
-2. If a session exists, query `user_roles` for admin status.
-3. Check for MFA factors and redirect to `/mfa-verify` if enrolled.
-4. Otherwise, navigate to `/admin` (if admin) or `/portal` (if client).
+### Files to modify:
+- `supabase/functions/approve-application/index.ts` -- Add work_items, updates, and activity_log creation after client setup
+- `src/components/OnboardingWizard.tsx` -- Enhance visual design, pre-fill fields from auth metadata, add completion animation
+- `src/pages/admin/AdminApplications.tsx` -- Invalidate broader queries on approval, show richer success state
+- `src/pages/admin/AdminOverview.tsx` -- Add recent activations section
+- `src/pages/portal/PortalDashboard.tsx` -- Add first-week welcome banner
+- `src/pages/portal/Requests.tsx` -- Better empty state when client workspace is pending
 
-This ensures that regardless of whether the user signs in with email/password, Google, or Apple, they always land in the right place.
+### Files to create:
+- None -- all changes fit within existing files
+
+### No new dependencies needed.
