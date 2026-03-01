@@ -9,13 +9,19 @@ const corsHeaders = {
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const ONBOARDING_TASKS = [
+  { title: "Complete your profile setup", description: "Fill in your personal and business details so your team can get started.", priority: "high" },
+  { title: "Review your active studios", description: "Explore the studios assigned to your workspace and understand what's included.", priority: "medium" },
+  { title: "Submit your first request", description: "Use the Requests module to tell your team what you need first.", priority: "medium" },
+  { title: "Upload key brand assets", description: "Share logos, brand guidelines, or any files your team will need.", priority: "low" },
+];
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Verify the caller is an admin
     const authHeader = req.headers.get("authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -28,92 +34,62 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    // Verify caller is admin using their JWT
+    // Verify caller is admin
     const callerClient = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const {
-      data: { user: callerUser },
-    } = await callerClient.auth.getUser();
-
+    const { data: { user: callerUser } } = await callerClient.auth.getUser();
     if (!callerUser) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Check admin role using service role client
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
 
     const { data: roleData } = await adminClient
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", callerUser.id)
-      .eq("role", "admin")
-      .maybeSingle();
+      .from("user_roles").select("role")
+      .eq("user_id", callerUser.id).eq("role", "admin").maybeSingle();
 
     if (!roleData) {
       return new Response(JSON.stringify({ error: "Admin access required" }), {
-        status: 403,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Get and validate the application ID from request body
     const body = await req.json();
     const { application_id } = body;
 
     if (!application_id || typeof application_id !== "string" || !UUID_REGEX.test(application_id)) {
-      return new Response(
-        JSON.stringify({ error: "A valid application_id (UUID) is required" }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "A valid application_id (UUID) is required" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Fetch the application
     const { data: application, error: appError } = await adminClient
-      .from("applications")
-      .select("*")
-      .eq("id", application_id)
-      .single();
+      .from("applications").select("*").eq("id", application_id).single();
 
     if (appError || !application) {
-      return new Response(
-        JSON.stringify({ error: "Application not found" }),
-        {
-          status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Application not found" }), {
+        status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     if (application.status === "approved") {
-      return new Response(
-        JSON.stringify({ error: "Application already approved" }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Application already approved" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    // Validate email from application before using it
     if (!application.email || !EMAIL_REGEX.test(application.email)) {
-      return new Response(
-        JSON.stringify({ error: "Application has an invalid email address" }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Application has an invalid email address" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    // Step 1: Create the auth user with invite (sends magic link email)
+    // Step 1: Invite user
     const { data: inviteData, error: inviteError } =
       await adminClient.auth.admin.inviteUserByEmail(application.email, {
         data: {
@@ -125,88 +101,114 @@ Deno.serve(async (req) => {
       });
 
     if (inviteError) {
-      // If user already exists, that's OK - just continue
       if (!inviteError.message?.includes("already been registered")) {
-        return new Response(
-          JSON.stringify({ error: inviteError.message }),
-          {
-            status: 400,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
-        );
+        return new Response(JSON.stringify({ error: inviteError.message }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
     }
 
     const userId = inviteData?.user?.id;
+    let clientId: string | null = null;
+    let tasksCreated = 0;
 
-    // Step 2: If we got a user ID, create the client record
+    // Step 2: Create client record and infrastructure
     if (userId) {
+      // Wait for profile to be created by the trigger
       let profileId: string | null = null;
       for (let i = 0; i < 5; i++) {
         const { data: profile } = await adminClient
-          .from("profiles")
-          .select("id")
-          .eq("user_id", userId)
-          .maybeSingle();
-
-        if (profile) {
-          profileId = profile.id;
-          break;
-        }
+          .from("profiles").select("id")
+          .eq("user_id", userId).maybeSingle();
+        if (profile) { profileId = profile.id; break; }
         await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
       if (profileId) {
-        const { error: clientError } = await adminClient
+        // Ensure onboarding_completed is false
+        await adminClient.from("profiles")
+          .update({ onboarding_completed: false })
+          .eq("id", profileId);
+
+        // Create client workspace
+        const { data: clientRecord, error: clientError } = await adminClient
           .from("clients")
           .insert({
             name: `${application.business_name} Workspace`,
             contact_profile_id: profileId,
             status: "active",
+            subscription_status: "active",
+            tier: "standard",
             services: application.areas_of_support || [],
-          });
+          })
+          .select("id")
+          .single();
 
         if (clientError) {
           console.error("Client creation error:", clientError);
         }
 
-        const { error: roleError } = await adminClient
-          .from("user_roles")
-          .insert({
-            user_id: userId,
-            role: "client",
+        clientId = clientRecord?.id || null;
+
+        // Assign client role
+        await adminClient.from("user_roles").insert({ user_id: userId, role: "client" });
+
+        // Step 3: Create onboarding work items
+        if (clientId) {
+          const workItemInserts = ONBOARDING_TASKS.map((task) => ({
+            client_id: clientId!,
+            title: task.title,
+            description: task.description,
+            priority: task.priority,
+            status: "to_do",
+          }));
+
+          const { data: createdItems } = await adminClient
+            .from("work_items").insert(workItemInserts).select("id");
+          tasksCreated = createdItems?.length || 0;
+
+          // Step 4: Welcome update
+          await adminClient.from("updates").insert({
+            client_id: clientId,
+            content: `Welcome to THE BUSINESS SUPPORT STUDIO™! Your workspace is live and your team is ready. Start by completing your profile and exploring your studios.`,
+            update_type: "milestone",
+            posted_by: callerUser.id,
           });
 
-        if (roleError) {
-          console.error("Role assignment error:", roleError);
+          // Step 5: Activity log
+          await adminClient.from("activity_log").insert({
+            client_id: clientId,
+            actor_id: callerUser.id,
+            action: "approved_application",
+            entity_type: "application",
+            entity_id: application_id,
+            details: {
+              business_name: application.business_name,
+              email: application.email,
+              tasks_created: tasksCreated,
+            },
+          });
         }
       }
     }
 
-    // Step 3: Update application status to approved
-    await adminClient
-      .from("applications")
-      .update({ status: "approved" })
-      .eq("id", application_id);
+    // Step 6: Update application status
+    await adminClient.from("applications")
+      .update({ status: "approved" }).eq("id", application_id);
 
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Application approved successfully.",
+        message: `Application approved. Workspace created with ${tasksCreated} onboarding tasks.`,
+        client_id: clientId,
+        tasks_created: tasksCreated,
       }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
     console.error("Error:", err);
-    return new Response(
-      JSON.stringify({ error: "Internal server error" }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });

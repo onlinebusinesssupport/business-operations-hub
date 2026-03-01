@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import GrowthScore from "@/components/GrowthScore";
 import { ActivityFeed } from "@/components/ActivityFeed";
@@ -34,6 +34,7 @@ const retainerColor = (pct: number) => {
 
 const PortalDashboard = () => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [showWelcome, setShowWelcome] = useState<boolean | null>(null);
   const [userName, setUserName] = useState("");
 
@@ -112,7 +113,13 @@ const PortalDashboard = () => {
   }
 
   if (showWelcome) {
-    return <OnboardingWizard initialName={userName} onComplete={() => setShowWelcome(false)} />;
+    return <OnboardingWizard initialName={userName} onComplete={() => {
+      setShowWelcome(false);
+      // Refresh all portal data after onboarding completes
+      queryClient.invalidateQueries({ queryKey: ["portal-dash-work"] });
+      queryClient.invalidateQueries({ queryKey: ["portal-dash-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["portal-client-full"] });
+    }} />;
   }
 
   const subStatusLabel: Record<string, { label: string; color: string }> = {
