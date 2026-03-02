@@ -106,7 +106,7 @@ const Reviews = () => {
       score_overall: form.score_overall || avgScore,
       status: "completed",
       submitted_at: new Date().toISOString(),
-      client_id: "00000000-0000-0000-0000-000000000000", // placeholder for walk-in
+      client_id: "70f82cf4-b1e3-43fa-8fe5-c8e477e6c5df", // default client for walk-in reviews
     });
     if (error) {
       setSubmitting(false);
