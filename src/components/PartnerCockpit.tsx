@@ -329,7 +329,7 @@ const PartnerCockpit = ({ client, onBack, onUpdateField }: PartnerCockpitProps) 
 
         {activeTab === "reputation" && (
           <motion.div key="reputation" {...fade} transition={{ duration: 0.25 }}>
-            <ReputationDashboard />
+            <ReputationDashboard clientId={client.id} />
           </motion.div>
         )}
 
