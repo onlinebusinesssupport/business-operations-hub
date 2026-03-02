@@ -488,6 +488,8 @@ export type Database = {
       }
       reviews: {
         Row: {
+          admin_reply: string | null
+          admin_reply_at: string | null
           almost_stopped: string | null
           biggest_transformation: string | null
           client_id: string
@@ -520,6 +522,8 @@ export type Database = {
           work_item_id: string | null
         }
         Insert: {
+          admin_reply?: string | null
+          admin_reply_at?: string | null
           almost_stopped?: string | null
           biggest_transformation?: string | null
           client_id: string
@@ -552,6 +556,8 @@ export type Database = {
           work_item_id?: string | null
         }
         Update: {
+          admin_reply?: string | null
+          admin_reply_at?: string | null
           almost_stopped?: string | null
           biggest_transformation?: string | null
           client_id?: string
