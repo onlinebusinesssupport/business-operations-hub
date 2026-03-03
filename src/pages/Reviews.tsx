@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Filter, TrendingUp, PenLine, X, ChevronRight, ChevronLeft, CheckCircle2, Loader2 } from "lucide-react";
+import { Star, Filter, TrendingUp, PenLine, X, ChevronRight, ChevronLeft, CheckCircle2, Loader2, LogIn } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -56,6 +58,8 @@ const StarRating = ({ value, onChange, size = 24 }: { value: number; onChange: (
 );
 
 const Reviews = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState("All");
   const [sortBy, setSortBy] = useState<"highest" | "latest">("latest");
   const [showWriteReview, setShowWriteReview] = useState(false);
@@ -69,19 +73,23 @@ const Reviews = () => {
     score_commercial_value: 0, score_overall_impact: 0,
     services_reviewed: [] as string[], value_rating: "", value_reason: "",
     impact_areas: [] as string[], biggest_transformation: "",
-    nps_score: 8, nps_recommendation: "", almost_stopped: "",
+    nps_score: null as number | null, nps_recommendation: "", almost_stopped: "",
     improvement_suggestion: "", one_sentence: "",
     visibility: "private", reviewer_name: "", reviewer_company: "", reviewer_website: "",
+    service_date: "",
   });
 
+  // Public reviews: only show those submitted 24+ hours ago
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["public-reviews"],
     queryFn: async () => {
+      const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
       const { data } = await supabase
         .from("reviews")
         .select("*")
         .eq("status", "completed")
         .neq("visibility", "private")
+        .lte("submitted_at", cutoff)
         .order("submitted_at", { ascending: false });
       return data || [];
     },
@@ -93,20 +101,29 @@ const Reviews = () => {
     set(field, arr.includes(val) ? arr.filter((v) => v !== val) : [...arr, val]);
   };
 
+  const handleWriteReviewClick = () => {
+    if (!user) {
+      navigate("/signup?redirect=/reviews&action=write-review");
+      return;
+    }
+    setShowWriteReview(true);
+    setSubmitted(false);
+    setStep(0);
+  };
+
   const handlePublicSubmit = async () => {
     setSubmitting(true);
     const avgScore = Math.round(
       (form.score_strategic_clarity + form.score_communication + form.score_speed +
         form.score_commercial_value + form.score_overall_impact) / 5
     );
-    // Insert directly as a completed public review (no client_id required for walk-ins)
-    // We use a placeholder client_id — admin can reassign later
     const { error } = await supabase.from("reviews").insert({
       ...form,
       score_overall: form.score_overall || avgScore,
+      nps_score: form.nps_score,
       status: "completed",
       submitted_at: new Date().toISOString(),
-      client_id: "70f82cf4-b1e3-43fa-8fe5-c8e477e6c5df", // default client for walk-in reviews
+      client_id: "70f82cf4-b1e3-43fa-8fe5-c8e477e6c5df",
     });
     if (error) {
       setSubmitting(false);
@@ -120,6 +137,7 @@ const Reviews = () => {
   const canNext = () => {
     if (step === 0) return form.score_overall > 0;
     if (step === 1) return SCORE_LABELS.every((s) => (form as any)[s.key] > 0);
+    if (step === 3) return form.nps_score !== null;
     return true;
   };
 
@@ -148,14 +166,15 @@ const Reviews = () => {
             <div className="max-w-2xl">
               <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium">CLIENT REVIEWS</span>
               <h1 className="mt-4 font-display text-3xl md:text-4xl font-bold text-foreground">
-                What our partners say
+                What clients say about working with Dylan
               </h1>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                Real feedback from real businesses. Every review is verified and tied to completed work.
+                Real feedback from real businesses. Every review is verified and tied to completed work with SUPPORT STUDIO™.
               </p>
             </div>
-            <Button onClick={() => { setShowWriteReview(true); setSubmitted(false); setStep(0); }} className="gap-2 text-xs mt-4">
-              <PenLine size={14} /> Write a Review
+            <Button onClick={handleWriteReviewClick} className="gap-2 text-xs mt-4">
+              {user ? <PenLine size={14} /> : <LogIn size={14} />}
+              {user ? "Write a Review" : "Sign Up to Review"}
             </Button>
           </motion.div>
 
@@ -177,7 +196,8 @@ const Reviews = () => {
                     <div className="text-center space-y-4 py-8">
                       <CheckCircle2 size={40} className="mx-auto text-primary" />
                       <h2 className="font-display text-xl font-bold text-foreground">Thank you.</h2>
-                      <p className="text-sm text-muted-foreground">Your honesty helps us improve and grow. We never take your trust lightly.</p>
+                      <p className="text-sm text-muted-foreground">Your honesty helps Dylan improve and grow. Your trust is never taken lightly.</p>
+                      <p className="text-xs text-muted-foreground">Your review will appear publicly within 24 hours after being acknowledged.</p>
                       <Button onClick={() => setShowWriteReview(false)} variant="outline" size="sm" className="text-xs">Close</Button>
                     </div>
                   ) : (
@@ -191,7 +211,7 @@ const Reviews = () => {
 
                       {step === 0 && (
                         <p className="text-sm text-muted-foreground text-center">
-                          We care deeply about doing meaningful work. This takes 60 seconds — your honesty helps us improve and grow.
+                          Dylan cares deeply about doing meaningful work. This takes 60 seconds — your honesty helps him improve and grow.
                         </p>
                       )}
 
@@ -199,11 +219,11 @@ const Reviews = () => {
                         {step === 0 && (
                           <motion.div key="s0" {...fade} className="space-y-6">
                             <div className="space-y-3">
-                              <label className="text-sm font-medium text-foreground">Overall, how would you rate your experience with us?</label>
+                              <label className="text-sm font-medium text-foreground">Overall, how would you rate your experience working with Dylan?</label>
                               <div className="flex justify-center"><StarRating value={form.score_overall} onChange={(v) => set("score_overall", v)} size={28} /></div>
                             </div>
                             <div className="space-y-3">
-                              <label className="text-sm font-medium text-foreground">Which service did we support you with?</label>
+                              <label className="text-sm font-medium text-foreground">Which service did Dylan support you with?</label>
                               <div className="flex flex-wrap gap-2">
                                 {SERVICE_OPTIONS.map((s) => (
                                   <button key={s} type="button" onClick={() => toggleArray("services_reviewed", s)}
@@ -212,6 +232,11 @@ const Reviews = () => {
                                   </button>
                                 ))}
                               </div>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-foreground">When did you use this service?</label>
+                              <input type="date" value={form.service_date} onChange={(e) => set("service_date", e.target.value)}
+                                className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring" />
                             </div>
                           </motion.div>
                         )}
@@ -229,7 +254,7 @@ const Reviews = () => {
                         {step === 2 && (
                           <motion.div key="s2" {...fade} className="space-y-5">
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">Did the service deliver strong value?</label>
+                              <label className="text-sm font-medium text-foreground">Did Dylan's service deliver strong value?</label>
                               <div className="space-y-2">
                                 {VALUE_OPTIONS.map((v) => (
                                   <button key={v.value} type="button" onClick={() => set("value_rating", v.value)}
@@ -240,7 +265,7 @@ const Reviews = () => {
                               </div>
                             </div>
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">What impact did our work have?</label>
+                              <label className="text-sm font-medium text-foreground">What impact did Dylan's work have?</label>
                               <div className="flex flex-wrap gap-2">
                                 {IMPACT_OPTIONS.map((i) => (
                                   <button key={i} type="button" onClick={() => toggleArray("impact_areas", i)}
@@ -251,7 +276,7 @@ const Reviews = () => {
                               </div>
                             </div>
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">Biggest change after working with us?</label>
+                              <label className="text-sm font-medium text-foreground">Biggest change after working with Dylan?</label>
                               <textarea value={form.biggest_transformation} onChange={(e) => set("biggest_transformation", e.target.value)}
                                 rows={2} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring resize-none" />
                             </div>
@@ -260,7 +285,7 @@ const Reviews = () => {
                         {step === 3 && (
                           <motion.div key="s3" {...fade} className="space-y-5">
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">Would you recommend us? (0–10)</label>
+                              <label className="text-sm font-medium text-foreground">How likely are you to recommend Dylan? (0–10)</label>
                               <div className="flex gap-1 justify-center flex-wrap">
                                 {Array.from({ length: 11 }).map((_, i) => (
                                   <button key={i} type="button" onClick={() => set("nps_score", i)}
@@ -269,14 +294,17 @@ const Reviews = () => {
                                   </button>
                                 ))}
                               </div>
+                              {form.nps_score === null && (
+                                <p className="text-xs text-muted-foreground text-center">Please select a score to continue</p>
+                              )}
                             </div>
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">What almost stopped you from working with us?</label>
+                              <label className="text-sm font-medium text-foreground">What almost stopped you from working with Dylan?</label>
                               <textarea value={form.almost_stopped} onChange={(e) => set("almost_stopped", e.target.value)}
                                 rows={2} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring resize-none" />
                             </div>
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">Anything you wish we did better?</label>
+                              <label className="text-sm font-medium text-foreground">Anything you wish Dylan did better?</label>
                               <textarea value={form.improvement_suggestion} onChange={(e) => set("improvement_suggestion", e.target.value)}
                                 rows={2} placeholder="Optional" className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring resize-none" />
                             </div>
@@ -285,7 +313,7 @@ const Reviews = () => {
                         {step === 4 && (
                           <motion.div key="s4" {...fade} className="space-y-5">
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">Can we share your feedback publicly?</label>
+                              <label className="text-sm font-medium text-foreground">Can Dylan share your feedback publicly?</label>
                               <div className="space-y-2">
                                 {VISIBILITY_OPTIONS.map((v) => (
                                   <button key={v.value} type="button" onClick={() => set("visibility", v.value)}
@@ -306,7 +334,7 @@ const Reviews = () => {
                               </motion.div>
                             )}
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">Describe working with us in one sentence</label>
+                              <label className="text-sm font-medium text-foreground">Describe working with Dylan in one sentence</label>
                               <textarea value={form.one_sentence} onChange={(e) => set("one_sentence", e.target.value)}
                                 rows={2} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring resize-none" />
                             </div>
@@ -388,7 +416,7 @@ const Reviews = () => {
             ) : filtered.length === 0 ? (
               <div className="col-span-2 py-16 text-center">
                 <p className="text-sm text-muted-foreground">No public reviews yet. Be the first.</p>
-                <Button onClick={() => { setShowWriteReview(true); setSubmitted(false); setStep(0); }} variant="outline" size="sm" className="mt-4 gap-2 text-xs">
+                <Button onClick={handleWriteReviewClick} variant="outline" size="sm" className="mt-4 gap-2 text-xs">
                   <PenLine size={13} /> Write a Review
                 </Button>
               </div>
@@ -433,7 +461,7 @@ const Reviews = () => {
                 {/* Admin reply shown publicly */}
                 {r.admin_reply && (
                   <div className="bg-secondary/50 border border-border p-3 space-y-1">
-                    <p className="text-[10px] font-medium text-primary uppercase tracking-wider">Response from SUPPORT STUDIO™</p>
+                    <p className="text-[10px] font-medium text-primary uppercase tracking-wider">Response from Dylan · SUPPORT STUDIO™</p>
                     <p className="text-sm text-foreground">{r.admin_reply}</p>
                   </div>
                 )}
