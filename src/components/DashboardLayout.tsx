@@ -24,6 +24,7 @@ import {
   ListChecks,
   GitBranch,
   Zap,
+  Star,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import PageTransition from "./PageTransition";
@@ -47,6 +48,7 @@ const adminNav = [
   { label: "Partner Workspaces", href: "/admin/clients", icon: Users },
   { label: "Work Manager", href: "/admin/work", icon: ListChecks },
   { label: "Requests", href: "/admin/requests", icon: MessageSquare },
+  { label: "Reviews", href: "/admin/reviews", icon: Star },
   { label: "Documents", href: "/admin/documents", icon: FileText },
   { label: "Templates", href: "/admin/templates", icon: LayoutTemplate },
   { label: "Reports", href: "/admin/reports", icon: BarChart3 },

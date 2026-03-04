@@ -210,7 +210,7 @@ const Privacy = () => {
 
             <h2>19. Information Officer</h2>
             <p>In compliance with POPIA and PAIA, the Studio has appointed an Information Officer.</p>
-            <p><strong>Information Officer:</strong><br />Dylan Memory<br />📧 <a href="mailto:thequitehelpinghand@gmail.com" className="text-primary hover:underline">thequitehelpinghand@gmail.com</a><br />📍 Johannesburg, South Africa</p>
+            <p><strong>Information Officer:</strong><br />Nkululeko Mgobhozi<br />📧 <a href="mailto:thequitehelpinghand@gmail.com" className="text-primary hover:underline">thequitehelpinghand@gmail.com</a><br />📍 Johannesburg, South Africa</p>
             <p>All data-related queries, objections, and access requests should be directed to the Information Officer.</p>
 
             <h2>20. Access and Correction Requests</h2>
