@@ -60,6 +60,8 @@ import TravelActivities from "./pages/services/TravelActivities";
 import GrantsAwards from "./pages/services/GrantsAwards";
 import Reviews from "./pages/Reviews";
 import ReviewSubmit from "./pages/ReviewSubmit";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
@@ -86,6 +88,8 @@ const App = () => (
             <Route path="/insights" element={<Media />} />
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/review" element={<ReviewSubmit />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="/how-it-works" element={<HowWeWork />} />
             <Route path="/clients" element={<Clients />} />
             
