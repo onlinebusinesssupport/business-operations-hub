@@ -23,7 +23,7 @@ const AdminSettings = () => {
         <div className="flex items-center gap-4">
           <img src={portraitImg} alt="Manager" className="w-16 h-16 rounded-full object-cover" />
           <div>
-            <p className="text-sm font-medium text-foreground">Nkululeko</p>
+            <p className="text-sm font-medium text-foreground">Dylan</p>
             <p className="text-xs text-muted-foreground">thequitehelpinghand@gmail.com</p>
             <p className="text-xs text-muted-foreground">Operations Manager</p>
           </div>

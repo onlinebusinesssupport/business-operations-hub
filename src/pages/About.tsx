@@ -180,11 +180,11 @@ const About = () => {
                 >
                   <img
                     src={portrait}
-                    alt="Nkululeko Mgobhozi — Founder, SUPPORT STUDIO™"
+                    alt="Dylan Mgobhozi — Founder, SUPPORT STUDIO™"
                     className="w-full max-w-[320px] aspect-[3/4] object-cover grayscale hover:grayscale-0 transition-all duration-500"
                   />
                   <p className="mt-3 text-xs text-muted-foreground">
-                    Nkululeko Mgobhozi · Founder
+                    Dylan Mgobhozi · Founder
                   </p>
                 </motion.div>
               </motion.div>
@@ -192,7 +192,7 @@ const About = () => {
             <div className="md:col-span-7">
               <motion.div {...fadeUp} transition={{ duration: 0.6, delay: 0.1 }} className="space-y-6">
                 <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-                  SUPPORT STUDIO™ was founded by Nkululeko Mgobhozi, an operations strategist with over a decade of experience building and stabilising high-performance environments across hospitality, corporate services, and executive operations.
+                  SUPPORT STUDIO™ was founded by Dylan Mgobhozi, an operations strategist with over a decade of experience building and stabilising high-performance environments across hospitality, corporate services, and executive operations.
                 </p>
                 <p className="text-base leading-relaxed text-muted-foreground">
                   His career spans roles from front-line service to senior operational leadership — including General Manager, Head of Corporate Travel Management, and Executive Support Manager across corporate and nonprofit sectors.

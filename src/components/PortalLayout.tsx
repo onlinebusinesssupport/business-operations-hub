@@ -69,7 +69,7 @@ const PortalLayout = ({ children }: PortalLayoutProps) => {
             />
             <div>
               <p className="text-xs font-medium text-foreground">Your Manager</p>
-              <p className="text-xs text-muted-foreground">Nkululeko</p>
+              <p className="text-xs text-muted-foreground">Dylan</p>
             </div>
           </div>
         </div>
