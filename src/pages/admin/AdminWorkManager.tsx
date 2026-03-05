@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Plus, Clock, X, Loader2 } from "lucide-react";
+import { Plus, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,14 +11,22 @@ import { logActivity } from "@/lib/activity";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
-type Status = "to_do" | "in_progress" | "in_review" | "done";
+type Status = "queued" | "in_progress" | "awaiting_client" | "in_review" | "done";
 const statusConfig: Record<Status, { label: string; dotColor: string }> = {
-  to_do: { label: "To Do", dotColor: "bg-muted-foreground/40" },
+  queued: { label: "Queued", dotColor: "bg-muted-foreground/40" },
   in_progress: { label: "In Progress", dotColor: "bg-primary" },
-  in_review: { label: "In Review", dotColor: "bg-purple-500" },
+  awaiting_client: { label: "Awaiting Client", dotColor: "bg-amber-500" },
+  in_review: { label: "Review", dotColor: "bg-purple-500" },
   done: { label: "Done", dotColor: "bg-emerald-500" },
 };
-const statusOrder: Status[] = ["to_do", "in_progress", "in_review", "done"];
+const statusOrder: Status[] = ["queued", "in_progress", "awaiting_client", "in_review", "done"];
+
+// Map old statuses to new ones for backward compatibility
+const normalizeStatus = (s: string): Status => {
+  if (s === "to_do") return "queued";
+  if (statusOrder.includes(s as Status)) return s as Status;
+  return "queued";
+};
 
 const AdminWorkManager = () => {
   const [showCreate, setShowCreate] = useState(false);
@@ -32,7 +40,7 @@ const AdminWorkManager = () => {
       const { data, error } = await supabase
         .from("work_items")
         .select("*, clients(name)")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: true }); // FCFS: oldest first
       if (error) throw error;
       return data;
     },
@@ -55,7 +63,7 @@ const AdminWorkManager = () => {
         client_id: f.client_id,
         priority: f.priority,
         deadline: f.deadline || null,
-        status: "to_do",
+        status: "queued",
       });
       if (error) throw error;
       await logActivity({
@@ -114,7 +122,7 @@ const AdminWorkManager = () => {
     id: status,
     title: statusConfig[status].label,
     color: statusConfig[status].dotColor,
-    items: workItems.filter((w: any) => w.status === status),
+    items: workItems.filter((w: any) => normalizeStatus(w.status) === status),
   }));
 
   const priorityColor = (p: string) => {
@@ -128,7 +136,7 @@ const AdminWorkManager = () => {
       <motion.div {...fade} transition={{ duration: 0.3 }} className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h2 className="font-display text-2xl font-bold text-foreground">Work Manager</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Drag tasks across columns to update status.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Drag tasks across columns. Listed first come, first served.</p>
         </div>
         <Button onClick={() => setShowCreate(true)} className="gap-2 text-xs">
           <Plus size={14} /> Add Work Item
