@@ -51,8 +51,9 @@ const AdminOverview = () => {
   const resolvedRequests = requests.filter((r: any) => r.status === "resolved").length;
 
   // Work status counts
-  const todoCount = workItems.filter((w: any) => w.status === "to_do").length;
+  const todoCount = workItems.filter((w: any) => w.status === "to_do" || w.status === "queued").length;
   const inProgressCount = workItems.filter((w: any) => w.status === "in_progress").length;
+  const awaitingClientCount = workItems.filter((w: any) => w.status === "awaiting_client").length;
   const inReviewCount = workItems.filter((w: any) => w.status === "in_review").length;
   const doneCount = workItems.filter((w: any) => w.status === "done").length;
   const totalWork = workItems.length;
@@ -81,7 +82,7 @@ const AdminOverview = () => {
     })
     .slice(0, 5);
 
-  const progressValue = (s: string) => ({ to_do: 10, in_progress: 50, in_review: 80, done: 100 }[s] || 0);
+  const progressValue = (s: string) => ({ to_do: 10, queued: 10, in_progress: 35, awaiting_client: 55, in_review: 80, done: 100 }[s] || 0);
 
   // Greeting
   const hour = new Date().getHours();
@@ -202,9 +203,10 @@ const AdminOverview = () => {
             {/* Visual status bars */}
             <div className="space-y-3">
               {[
-                { label: "To Do", count: todoCount, color: "bg-muted-foreground/30" },
+                { label: "Queued", count: todoCount, color: "bg-muted-foreground/30" },
                 { label: "In Progress", count: inProgressCount, color: "bg-primary" },
-                { label: "In Review", count: inReviewCount, color: "bg-primary/60" },
+                { label: "Awaiting Client", count: awaitingClientCount, color: "bg-amber-500" },
+                { label: "Review", count: inReviewCount, color: "bg-purple-500" },
                 { label: "Complete", count: doneCount, color: "bg-foreground" },
               ].map((s) => (
                 <div key={s.label} className="flex items-center gap-3">
