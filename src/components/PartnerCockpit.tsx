@@ -18,14 +18,15 @@ import ReputationDashboard from "@/components/ReputationDashboard";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
-type WorkStatus = "to_do" | "in_progress" | "in_review" | "done";
+type WorkStatus = "queued" | "in_progress" | "awaiting_client" | "in_review" | "complete";
 const workStatusConfig: Record<WorkStatus, { label: string; dotColor: string }> = {
-  to_do: { label: "To Do", dotColor: "bg-muted-foreground/40" },
+  queued: { label: "Queued", dotColor: "bg-muted-foreground/40" },
   in_progress: { label: "In Progress", dotColor: "bg-primary" },
-  in_review: { label: "In Review", dotColor: "bg-purple-500" },
-  done: { label: "Done", dotColor: "bg-emerald-500" },
+  awaiting_client: { label: "Awaiting Client", dotColor: "bg-amber-500" },
+  in_review: { label: "Review", dotColor: "bg-purple-500" },
+  complete: { label: "Complete", dotColor: "bg-emerald-500" },
 };
-const workStatusOrder: WorkStatus[] = ["to_do", "in_progress", "in_review", "done"];
+const workStatusOrder: WorkStatus[] = ["queued", "in_progress", "awaiting_client", "in_review", "complete"];
 
 const tierLabels: Record<string, string> = {
   starter: "Starter", standard: "Standard", growth: "Growth", enterprise: "Enterprise",
@@ -137,7 +138,7 @@ const PartnerCockpit = ({ client, onBack, onUpdateField }: PartnerCockpitProps) 
     mutationFn: async () => {
       const { error } = await supabase.from("work_items").insert({
         client_id: client.id, title: newWork.title, description: newWork.description || null,
-        priority: newWork.priority, deadline: newWork.deadline || null, status: "to_do",
+        priority: newWork.priority, deadline: newWork.deadline || null, status: "queued",
       });
       if (error) throw error;
       await logActivity({ client_id: client.id, action: "created", entity_type: "work_item", details: { summary: `Created "${newWork.title}"` } });
@@ -179,7 +180,7 @@ const PartnerCockpit = ({ client, onBack, onUpdateField }: PartnerCockpitProps) 
   }, [client.id, queryClient]);
 
   // ─── Computed ───
-  const workDone = workItems.filter((w: any) => w.status === "done").length;
+  const workDone = workItems.filter((w: any) => w.status === "complete").length;
   const workTotal = workItems.length;
   const completionRate = workTotal > 0 ? Math.round((workDone / workTotal) * 100) : 0;
   const openRequests = requests.filter((r: any) => r.status === "new").length;
@@ -190,7 +191,7 @@ const PartnerCockpit = ({ client, onBack, onUpdateField }: PartnerCockpitProps) 
   const riskFlags: string[] = [];
   if (usedPct >= 90) riskFlags.push("Retainer near/exceeded limit");
   if (openRequests > 5) riskFlags.push(`${openRequests} open requests pending`);
-  if (workItems.some((w: any) => w.deadline && new Date(w.deadline) < new Date() && w.status !== "done"))
+  if (workItems.some((w: any) => w.deadline && new Date(w.deadline) < new Date() && w.status !== "complete"))
     riskFlags.push("Overdue tasks detected");
 
   const workColumns: KanbanColumn<any>[] = workStatusOrder.map((s) => ({

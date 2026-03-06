@@ -123,10 +123,10 @@ const AdminLeadPipeline = () => {
       if (clientErr) throw clientErr;
 
       const onboardingTasks = [
-        { title: "Welcome & Orientation", description: "Initial welcome call and workspace setup", priority: "high", status: "to_do" },
-        { title: "Discovery Audit", description: "Conduct initial audit of current operations", priority: "high", status: "to_do" },
-        { title: "Strategy Development", description: "Develop initial strategy and roadmap", priority: "medium", status: "to_do" },
-        { title: "First Deliverable", description: "Prepare and deliver first milestone", priority: "medium", status: "to_do" },
+        { title: "Welcome & Orientation", description: "Initial welcome call and workspace setup", priority: "high", status: "queued" },
+        { title: "Discovery Audit", description: "Conduct initial audit of current operations", priority: "high", status: "queued" },
+        { title: "Strategy Development", description: "Develop initial strategy and roadmap", priority: "medium", status: "queued" },
+        { title: "First Deliverable", description: "Prepare and deliver first milestone", priority: "medium", status: "queued" },
       ];
       for (const task of onboardingTasks) {
         await supabase.from("work_items").insert({ ...task, client_id: newClient.id });

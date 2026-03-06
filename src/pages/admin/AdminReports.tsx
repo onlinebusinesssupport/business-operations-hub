@@ -49,7 +49,7 @@ const AdminReports = () => {
   });
 
   // Summary metrics
-  const completedWork = workItems.filter((w: any) => w.status === "done").length;
+  const completedWork = workItems.filter((w: any) => w.status === "complete").length;
   const resolvedRequests = requests.filter((r: any) => r.status === "resolved").length;
   const totalDocs = documents.length;
   const onTimeRate = workItems.length > 0 ? Math.round((completedWork / Math.max(workItems.length, 1)) * 100) : 0;

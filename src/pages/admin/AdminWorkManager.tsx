@@ -11,19 +11,20 @@ import { logActivity } from "@/lib/activity";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
-type Status = "queued" | "in_progress" | "awaiting_client" | "in_review" | "done";
+type Status = "queued" | "in_progress" | "awaiting_client" | "in_review" | "complete";
 const statusConfig: Record<Status, { label: string; dotColor: string }> = {
   queued: { label: "Queued", dotColor: "bg-muted-foreground/40" },
   in_progress: { label: "In Progress", dotColor: "bg-primary" },
   awaiting_client: { label: "Awaiting Client", dotColor: "bg-amber-500" },
   in_review: { label: "Review", dotColor: "bg-purple-500" },
-  done: { label: "Done", dotColor: "bg-emerald-500" },
+  complete: { label: "Complete", dotColor: "bg-emerald-500" },
 };
-const statusOrder: Status[] = ["queued", "in_progress", "awaiting_client", "in_review", "done"];
+const statusOrder: Status[] = ["queued", "in_progress", "awaiting_client", "in_review", "complete"];
 
 // Map old statuses to new ones for backward compatibility
 const normalizeStatus = (s: string): Status => {
   if (s === "to_do") return "queued";
+  if (s === "done") return "complete";
   if (statusOrder.includes(s as Status)) return s as Status;
   return "queued";
 };

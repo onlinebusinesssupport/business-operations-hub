@@ -23,10 +23,11 @@ const typeLabel: Record<string, string> = {
 };
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  done: { label: "Completed", color: "bg-primary/10 text-primary" },
+  complete: { label: "Complete", color: "bg-primary/10 text-primary" },
   in_progress: { label: "In Motion", color: "bg-amber-500/10 text-amber-600" },
+  awaiting_client: { label: "Awaiting Client", color: "bg-amber-500/10 text-amber-600" },
   in_review: { label: "In Review", color: "bg-blue-500/10 text-blue-600" },
-  to_do: { label: "Upcoming", color: "bg-secondary text-muted-foreground" },
+  queued: { label: "Queued", color: "bg-secondary text-muted-foreground" },
 };
 
 const Progress = () => {
@@ -54,9 +55,9 @@ const Progress = () => {
 
   const isLoading = loadingUpdates || loadingWork;
 
-  const completed = workItems.filter((w: any) => w.status === "done");
-  const inMotion = workItems.filter((w: any) => w.status === "in_progress" || w.status === "in_review");
-  const upcoming = workItems.filter((w: any) => w.status === "to_do");
+  const completed = workItems.filter((w: any) => w.status === "complete");
+  const inMotion = workItems.filter((w: any) => ["in_progress", "awaiting_client", "in_review"].includes(w.status));
+  const upcoming = workItems.filter((w: any) => w.status === "queued");
 
   // Group updates by date
   const grouped = updates.reduce((acc: Record<string, any[]>, update: any) => {

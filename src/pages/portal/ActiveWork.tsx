@@ -10,14 +10,15 @@ const stagger = {
 };
 
 const statusLabel: Record<string, string> = {
-  to_do: "To Do",
+  queued: "Queued",
   in_progress: "In Progress",
+  awaiting_client: "Awaiting Client",
   in_review: "In Review",
-  done: "Completed",
+  complete: "Complete",
 };
 
 const progressValue = (s: string) =>
-  ({ to_do: 10, in_progress: 50, in_review: 80, done: 100 }[s] || 0);
+  ({ queued: 10, in_progress: 35, awaiting_client: 55, in_review: 80, complete: 100 }[s] || 0);
 
 const ActiveWork = () => {
   const { data: workItems = [], isLoading } = useQuery({
@@ -32,8 +33,8 @@ const ActiveWork = () => {
     },
   });
 
-  const active = workItems.filter((w: any) => w.status !== "done");
-  const completed = workItems.filter((w: any) => w.status === "done");
+  const active = workItems.filter((w: any) => w.status !== "complete");
+  const completed = workItems.filter((w: any) => w.status === "complete");
 
   return (
     <div className="space-y-8">
@@ -65,7 +66,7 @@ const ActiveWork = () => {
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="font-serif text-lg text-foreground">{item.title}</h3>
                     <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <span className={`w-1.5 h-1.5 rounded-full ${item.status !== "done" ? "bg-foreground" : "bg-muted-foreground/50"}`} />
+                      <span className={`w-1.5 h-1.5 rounded-full ${item.status !== "complete" ? "bg-foreground" : "bg-muted-foreground/50"}`} />
                       {statusLabel[item.status] || item.status}
                     </span>
                   </div>
@@ -89,7 +90,7 @@ const ActiveWork = () => {
                 <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
                   {item.priority || "medium"} priority
                 </span>
-                {item.status === "done" ? (
+                {item.status === "complete" ? (
                   <CheckCircle2 size={12} strokeWidth={1.5} className="text-muted-foreground" />
                 ) : (
                   <ArrowRight size={12} strokeWidth={1.5} className="text-muted-foreground" />

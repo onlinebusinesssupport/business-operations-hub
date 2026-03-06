@@ -85,7 +85,7 @@ const PortalDashboard = () => {
   });
 
   const inProgress = workItems.filter((w: any) => w.status === "in_progress").length;
-  const completed = workItems.filter((w: any) => w.status === "done").length;
+  const completed = workItems.filter((w: any) => w.status === "complete").length;
   const totalWork = workItems.length;
   const openRequests = requests.filter((r: any) => r.status === "new" || r.status === "in_progress").length;
 
@@ -101,7 +101,7 @@ const PortalDashboard = () => {
   const tier = (clientData as any)?.tier || "standard";
 
   const priorities = workItems
-    .filter((w: any) => w.status === "in_progress" || w.status === "in_review")
+    .filter((w: any) => w.status === "in_progress" || w.status === "awaiting_client" || w.status === "in_review")
     .slice(0, 4);
 
   if (showWelcome === null) {
