@@ -185,7 +185,7 @@ Deno.serve(async (req) => {
             title: task.title,
             description: task.description,
             priority: task.priority,
-            status: "to_do",
+            status: "queued",
           }));
 
           const { data: createdItems } = await adminClient

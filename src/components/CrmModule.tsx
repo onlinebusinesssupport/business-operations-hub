@@ -129,7 +129,7 @@ const CrmModule = ({ client, onUpdateField }: CrmModuleProps) => {
   const mrr = Number(client.monthly_rate || 0);
   const fmt = (n: number) => `R${n.toLocaleString("en-ZA")}`;
 
-  const doneWork = workItems.filter((w: any) => w.status === "done").length;
+  const doneWork = workItems.filter((w: any) => w.status === "complete").length;
   const totalWork = workItems.length;
 
   const profile = client.profiles;

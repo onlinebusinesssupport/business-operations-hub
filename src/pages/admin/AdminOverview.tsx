@@ -51,13 +51,13 @@ const AdminOverview = () => {
   const resolvedRequests = requests.filter((r: any) => r.status === "resolved").length;
 
   // Work status counts
-  const todoCount = workItems.filter((w: any) => w.status === "to_do" || w.status === "queued").length;
+  const todoCount = workItems.filter((w: any) => w.status === "queued").length;
   const inProgressCount = workItems.filter((w: any) => w.status === "in_progress").length;
   const awaitingClientCount = workItems.filter((w: any) => w.status === "awaiting_client").length;
   const inReviewCount = workItems.filter((w: any) => w.status === "in_review").length;
-  const doneCount = workItems.filter((w: any) => w.status === "done").length;
+  const completeCount = workItems.filter((w: any) => w.status === "complete").length;
   const totalWork = workItems.length;
-  const taskCompletion = totalWork > 0 ? Math.round((doneCount / totalWork) * 100) : 0;
+  const taskCompletion = totalWork > 0 ? Math.round((completeCount / totalWork) * 100) : 0;
 
   // Lead pipeline
   const totalLeads = applications.length + contacts.length;
@@ -71,7 +71,7 @@ const AdminOverview = () => {
 
   // Today's priorities: overdue + high priority work items
   const priorities = workItems
-    .filter((w: any) => w.status !== "done")
+    .filter((w: any) => w.status !== "complete")
     .sort((a: any, b: any) => {
       const aOverdue = a.deadline && new Date(a.deadline) < new Date();
       const bOverdue = b.deadline && new Date(b.deadline) < new Date();
@@ -82,7 +82,7 @@ const AdminOverview = () => {
     })
     .slice(0, 5);
 
-  const progressValue = (s: string) => ({ to_do: 10, queued: 10, in_progress: 35, awaiting_client: 55, in_review: 80, done: 100 }[s] || 0);
+  const progressValue = (s: string) => ({ queued: 10, in_progress: 35, awaiting_client: 55, in_review: 80, complete: 100 }[s] || 0);
 
   // Greeting
   const hour = new Date().getHours();
@@ -207,7 +207,7 @@ const AdminOverview = () => {
                 { label: "In Progress", count: inProgressCount, color: "bg-primary" },
                 { label: "Awaiting Client", count: awaitingClientCount, color: "bg-amber-500" },
                 { label: "Review", count: inReviewCount, color: "bg-purple-500" },
-                { label: "Complete", count: doneCount, color: "bg-foreground" },
+                { label: "Complete", count: completeCount, color: "bg-foreground" },
               ].map((s) => (
                 <div key={s.label} className="flex items-center gap-3">
                   <div className={`w-2 h-2 rounded-full ${s.color} shrink-0`} />
@@ -305,7 +305,7 @@ const AdminOverview = () => {
             <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Task Completion</p>
             <div className="mt-2 flex items-baseline gap-2">
               <span className="font-display text-3xl font-bold text-foreground">{taskCompletion}%</span>
-              <span className="text-xs text-primary flex items-center gap-0.5"><TrendingUp size={10} />{doneCount}/{totalWork}</span>
+              <span className="text-xs text-primary flex items-center gap-0.5"><TrendingUp size={10} />{completeCount}/{totalWork}</span>
             </div>
           </div>
 
