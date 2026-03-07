@@ -343,12 +343,43 @@ export type Database = {
           },
         ]
       }
+      onboarding_templates: {
+        Row: {
+          brand_name: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          tasks: Json
+          updated_at: string
+          va_mode: boolean
+        }
+        Insert: {
+          brand_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          tasks?: Json
+          updated_at?: string
+          va_mode?: boolean
+        }
+        Update: {
+          brand_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          tasks?: Json
+          updated_at?: string
+          va_mode?: boolean
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           company_name: string | null
           created_at: string
           email: string | null
+          first_login: boolean
           full_name: string | null
           id: string
           industry: string | null
@@ -363,6 +394,7 @@ export type Database = {
           company_name?: string | null
           created_at?: string
           email?: string | null
+          first_login?: boolean
           full_name?: string | null
           id?: string
           industry?: string | null
@@ -377,6 +409,7 @@ export type Database = {
           company_name?: string | null
           created_at?: string
           email?: string | null
+          first_login?: boolean
           full_name?: string | null
           id?: string
           industry?: string | null

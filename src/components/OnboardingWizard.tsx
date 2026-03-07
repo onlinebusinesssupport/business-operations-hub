@@ -51,6 +51,7 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
   // Client context
   const [clientServices, setClientServices] = useState<string[]>([]);
   const [clientTier, setClientTier] = useState("standard");
+  const [brandName, setBrandName] = useState("THE BUSINESS SUPPORT STUDIO™");
 
   // Determine which essentials are already filled
   const essentialsFilled = useMemo(() => ({
@@ -104,6 +105,17 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
           setClientServices(client.services || []);
           setClientTier(client.tier || "standard");
         }
+      }
+
+      // Load brand name from onboarding template (VA mode)
+      const { data: tmpl } = await supabase
+        .from("onboarding_templates")
+        .select("brand_name, va_mode")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (tmpl && (tmpl as any).va_mode && (tmpl as any).brand_name) {
+        setBrandName((tmpl as any).brand_name);
       }
 
       setLoading(false);
@@ -219,7 +231,7 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
             You're all set.
           </h1>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Welcome to SUPPORT STUDIO™ — Clarity builds momentum. Systems build freedom.
+            Welcome to {brandName} — Clarity builds momentum. Systems build freedom.
           </p>
           <p className="text-xs text-muted-foreground/70 italic">— Dylan, Founder</p>
           <motion.div
@@ -248,7 +260,7 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
       {/* Header */}
       <div className="flex items-center justify-between px-6 md:px-12 py-4 border-b border-border">
         <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
-          The Business Support Studio™ — Setup
+          {brandName} — Setup
         </p>
         <div className="flex items-center gap-3">
           {allEssentialsFilled && currentStepKey === "welcome" && (
