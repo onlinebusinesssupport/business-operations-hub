@@ -16,15 +16,6 @@ const ONBOARDING_TASKS = [
   { title: "Upload key brand assets", description: "Share logos, brand guidelines, or any files your team will need.", priority: "low" },
 ];
 
-const STUDIO_MAP: Record<string, string> = {
-  "Digital Presence": "digital-presence",
-  "Lead Engine": "lead-engine",
-  "Automation": "automation",
-  "Operations": "operations",
-  "Travel & Activities": "travel-activities",
-  "Grants & Awards": "grants-awards",
-};
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -34,8 +25,7 @@ Deno.serve(async (req) => {
     const authHeader = req.headers.get("authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -43,7 +33,6 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    // Verify caller is admin
     const callerClient = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -76,7 +65,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Fetch the application
     const { data: application, error: appError } = await adminClient
       .from("applications").select("*").eq("id", application_id).single();
 
@@ -98,7 +86,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Step 1: Invite user
+    // Step 1: Invite user with rich metadata from application
     const { data: inviteData, error: inviteError } =
       await adminClient.auth.admin.inviteUserByEmail(application.email, {
         data: {
@@ -106,6 +94,7 @@ Deno.serve(async (req) => {
           company_name: application.business_name || "",
           industry: application.industry || "",
           referral_source: "",
+          phone: "",
         },
       });
 
@@ -122,9 +111,12 @@ Deno.serve(async (req) => {
     let tasksCreated = 0;
     const enabledStudios: string[] = [];
 
-    // Step 2: Create client record and full infrastructure
+    // Track pre-fill stats
+    const preFilledFields: string[] = [];
+    const missingFields: string[] = [];
+
     if (userId) {
-      // Wait for profile to be created by the trigger
+      // Wait for profile trigger
       let profileId: string | null = null;
       for (let i = 0; i < 5; i++) {
         const { data: profile } = await adminClient
@@ -135,18 +127,44 @@ Deno.serve(async (req) => {
       }
 
       if (profileId) {
-        // Ensure onboarding_completed is false
+        // Pre-populate profile from application data
+        const profileUpdate: Record<string, any> = {};
+
+        if (application.full_name) {
+          profileUpdate.full_name = application.full_name;
+          preFilledFields.push("full_name");
+        } else { missingFields.push("full_name"); }
+
+        if (application.email) {
+          profileUpdate.email = application.email;
+          preFilledFields.push("email");
+        } else { missingFields.push("email"); }
+
+        if (application.business_name) {
+          profileUpdate.company_name = application.business_name;
+          preFilledFields.push("company_name");
+        } else { missingFields.push("company_name"); }
+
+        if (application.industry) {
+          profileUpdate.industry = application.industry;
+          preFilledFields.push("industry");
+        } else { missingFields.push("industry"); }
+
+        // Determine if essentials are complete — if so, mark onboarding done
+        const essentialsComplete = !!application.full_name && !!application.business_name && !!application.industry;
+        profileUpdate.onboarding_completed = essentialsComplete;
+
         await adminClient.from("profiles")
-          .update({ onboarding_completed: false })
+          .update(profileUpdate)
           .eq("id", profileId);
 
-        // Determine enabled studios from areas_of_support
+        // Determine enabled studios
         const services = application.areas_of_support || [];
         services.forEach((s: string) => {
           if (!enabledStudios.includes(s)) enabledStudios.push(s);
         });
 
-        // Create client workspace with tier and rate
+        // Create client workspace
         const selectedTier = tier || "standard";
         const selectedRate = monthly_rate || 0;
         const retainerLimits: Record<string, number> = {
@@ -169,16 +187,14 @@ Deno.serve(async (req) => {
           .select("id")
           .single();
 
-        if (clientError) {
-          console.error("Client creation error:", clientError);
-        }
+        if (clientError) console.error("Client creation error:", clientError);
 
         clientId = clientRecord?.id || null;
 
         // Assign client role
         await adminClient.from("user_roles").insert({ user_id: userId, role: "client" });
 
-        // Step 3: Create onboarding work items
+        // Create onboarding work items
         if (clientId) {
           const workItemInserts = ONBOARDING_TASKS.map((task) => ({
             client_id: clientId!,
@@ -192,7 +208,7 @@ Deno.serve(async (req) => {
             .from("work_items").insert(workItemInserts).select("id");
           tasksCreated = createdItems?.length || 0;
 
-          // Step 4: Welcome update
+          // Welcome update
           await adminClient.from("updates").insert({
             client_id: clientId,
             content: `Welcome to THE BUSINESS SUPPORT STUDIO™! Your workspace is live and your team is ready. Start by completing your profile and exploring your studios.`,
@@ -200,7 +216,7 @@ Deno.serve(async (req) => {
             posted_by: callerUser.id,
           });
 
-          // Step 5: Seed a welcome document
+          // Welcome document
           await adminClient.from("documents").insert({
             client_id: clientId,
             name: "Welcome to SUPPORT STUDIO™ — Getting Started Guide",
@@ -208,7 +224,7 @@ Deno.serve(async (req) => {
             uploaded_by: callerUser.id,
           });
 
-          // Step 6: Activity log
+          // Activity log
           await adminClient.from("activity_log").insert({
             client_id: clientId,
             actor_id: callerUser.id,
@@ -222,15 +238,20 @@ Deno.serve(async (req) => {
               tasks_created: tasksCreated,
               tier: selectedTier,
               studios: enabledStudios,
+              pre_filled_fields: preFilledFields,
+              missing_fields: missingFields,
+              onboarding_skippable: essentialsComplete,
             },
           });
         }
       }
     }
 
-    // Step 7: Update application status
+    // Update application status
     await adminClient.from("applications")
       .update({ status: "approved" }).eq("id", application_id);
+
+    const prefillPct = Math.round((preFilledFields.length / (preFilledFields.length + missingFields.length)) * 100) || 0;
 
     return new Response(
       JSON.stringify({
@@ -240,6 +261,10 @@ Deno.serve(async (req) => {
         tasks_created: tasksCreated,
         enabled_studios: enabledStudios,
         tier: tier || "standard",
+        prefill_percentage: prefillPct,
+        pre_filled_fields: preFilledFields,
+        missing_fields: missingFields,
+        onboarding_skippable: preFilledFields.length >= 3,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
