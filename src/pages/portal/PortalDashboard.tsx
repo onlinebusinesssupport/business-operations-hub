@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import OnboardingWizard from "@/components/OnboardingWizard";
+import WelcomeTour from "@/components/WelcomeTour";
 import GrowthScore from "@/components/GrowthScore";
 import { ActivityFeed } from "@/components/ActivityFeed";
 
@@ -36,6 +37,7 @@ const PortalDashboard = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [showWelcome, setShowWelcome] = useState<boolean | null>(null);
+  const [showTour, setShowTour] = useState(false);
   const [userName, setUserName] = useState("");
 
   useEffect(() => {
@@ -43,12 +45,16 @@ const PortalDashboard = () => {
       if (!user) return;
       const { data } = await supabase
         .from("profiles")
-        .select("onboarding_completed, full_name")
+        .select("onboarding_completed, full_name, first_login")
         .eq("user_id", user.id)
         .maybeSingle();
       if (data) {
         setShowWelcome(!data.onboarding_completed);
         setUserName(data.full_name || "");
+        // Show tour if onboarding is done but it's first login
+        if (data.onboarding_completed && (data as any).first_login) {
+          setShowTour(true);
+        }
       } else {
         setShowWelcome(false);
       }
@@ -115,7 +121,7 @@ const PortalDashboard = () => {
   if (showWelcome) {
     return <OnboardingWizard initialName={userName} onComplete={() => {
       setShowWelcome(false);
-      // Refresh all portal data after onboarding completes
+      setShowTour(true); // Show tour after onboarding completes
       queryClient.invalidateQueries({ queryKey: ["portal-dash-work"] });
       queryClient.invalidateQueries({ queryKey: ["portal-dash-requests"] });
       queryClient.invalidateQueries({ queryKey: ["portal-client-full"] });
@@ -135,6 +141,14 @@ const PortalDashboard = () => {
 
   return (
     <div className="space-y-10">
+      {/* Welcome Tour Modal */}
+      {showTour && (
+        <WelcomeTour
+          userName={userName}
+          onClose={() => setShowTour(false)}
+        />
+      )}
+
       {/* Header */}
       <motion.div {...fade} transition={{ duration: 0.4 }}>
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
@@ -261,7 +275,7 @@ const PortalDashboard = () => {
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   <span className="text-[10px] px-2 py-0.5 bg-primary/10 text-primary uppercase tracking-wider font-medium">
-                    {item.status === "in_review" ? "In Review" : "In Progress"}
+                    {item.status === "in_review" ? "In Review" : item.status === "awaiting_client" ? "Awaiting You" : "In Progress"}
                   </span>
                   {item.deadline && (
                     <span className="flex items-center gap-1 text-[11px] text-muted-foreground">

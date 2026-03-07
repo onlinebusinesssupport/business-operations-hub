@@ -9,7 +9,7 @@ const corsHeaders = {
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const ONBOARDING_TASKS = [
+const DEFAULT_ONBOARDING_TASKS = [
   { title: "Complete your profile setup", description: "Fill in your personal and business details so your team can get started.", priority: "high" },
   { title: "Review your active studios", description: "Explore the studios assigned to your workspace and understand what's included.", priority: "medium" },
   { title: "Submit your first request", description: "Use the Requests module to tell your team what you need first.", priority: "medium" },
@@ -86,7 +86,20 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Step 1: Invite user with rich metadata from application
+    // Load onboarding tasks from template (if customized) or use defaults
+    let onboardingTasks = DEFAULT_ONBOARDING_TASKS;
+    const { data: templateRow } = await adminClient
+      .from("onboarding_templates")
+      .select("tasks, brand_name, va_mode")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (templateRow && Array.isArray(templateRow.tasks) && templateRow.tasks.length > 0) {
+      onboardingTasks = templateRow.tasks as typeof DEFAULT_ONBOARDING_TASKS;
+    }
+
+    // Step 1: Invite user with rich metadata
     const { data: inviteData, error: inviteError } =
       await adminClient.auth.admin.inviteUserByEmail(application.email, {
         data: {
@@ -110,13 +123,10 @@ Deno.serve(async (req) => {
     let clientId: string | null = null;
     let tasksCreated = 0;
     const enabledStudios: string[] = [];
-
-    // Track pre-fill stats
     const preFilledFields: string[] = [];
     const missingFields: string[] = [];
 
     if (userId) {
-      // Wait for profile trigger
       let profileId: string | null = null;
       for (let i = 0; i < 5; i++) {
         const { data: profile } = await adminClient
@@ -128,7 +138,7 @@ Deno.serve(async (req) => {
 
       if (profileId) {
         // Pre-populate profile from application data
-        const profileUpdate: Record<string, any> = {};
+        const profileUpdate: Record<string, any> = { first_login: true };
 
         if (application.full_name) {
           profileUpdate.full_name = application.full_name;
@@ -150,7 +160,6 @@ Deno.serve(async (req) => {
           preFilledFields.push("industry");
         } else { missingFields.push("industry"); }
 
-        // Determine if essentials are complete — if so, mark onboarding done
         const essentialsComplete = !!application.full_name && !!application.business_name && !!application.industry;
         profileUpdate.onboarding_completed = essentialsComplete;
 
@@ -158,13 +167,11 @@ Deno.serve(async (req) => {
           .update(profileUpdate)
           .eq("id", profileId);
 
-        // Determine enabled studios
         const services = application.areas_of_support || [];
         services.forEach((s: string) => {
           if (!enabledStudios.includes(s)) enabledStudios.push(s);
         });
 
-        // Create client workspace
         const selectedTier = tier || "standard";
         const selectedRate = monthly_rate || 0;
         const retainerLimits: Record<string, number> = {
@@ -190,13 +197,11 @@ Deno.serve(async (req) => {
         if (clientError) console.error("Client creation error:", clientError);
 
         clientId = clientRecord?.id || null;
-
-        // Assign client role
         await adminClient.from("user_roles").insert({ user_id: userId, role: "client" });
 
-        // Create onboarding work items
         if (clientId) {
-          const workItemInserts = ONBOARDING_TASKS.map((task) => ({
+          // Use template tasks
+          const workItemInserts = onboardingTasks.map((task) => ({
             client_id: clientId!,
             title: task.title,
             description: task.description,
@@ -208,23 +213,22 @@ Deno.serve(async (req) => {
             .from("work_items").insert(workItemInserts).select("id");
           tasksCreated = createdItems?.length || 0;
 
-          // Welcome update
+          const brandName = templateRow?.brand_name || "THE BUSINESS SUPPORT STUDIO™";
+
           await adminClient.from("updates").insert({
             client_id: clientId,
-            content: `Welcome to THE BUSINESS SUPPORT STUDIO™! Your workspace is live and your team is ready. Start by completing your profile and exploring your studios.`,
+            content: `Welcome to ${brandName}! Your workspace is live and your team is ready. Start by completing your profile and exploring your studios.`,
             update_type: "milestone",
             posted_by: callerUser.id,
           });
 
-          // Welcome document
           await adminClient.from("documents").insert({
             client_id: clientId,
-            name: "Welcome to SUPPORT STUDIO™ — Getting Started Guide",
+            name: `Welcome to ${brandName} — Getting Started Guide`,
             category: "shared",
             uploaded_by: callerUser.id,
           });
 
-          // Activity log
           await adminClient.from("activity_log").insert({
             client_id: clientId,
             actor_id: callerUser.id,
@@ -241,13 +245,13 @@ Deno.serve(async (req) => {
               pre_filled_fields: preFilledFields,
               missing_fields: missingFields,
               onboarding_skippable: essentialsComplete,
+              template_used: !!templateRow,
             },
           });
         }
       }
     }
 
-    // Update application status
     await adminClient.from("applications")
       .update({ status: "approved" }).eq("id", application_id);
 
@@ -265,6 +269,7 @@ Deno.serve(async (req) => {
         pre_filled_fields: preFilledFields,
         missing_fields: missingFields,
         onboarding_skippable: preFilledFields.length >= 3,
+        template_used: !!templateRow,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
