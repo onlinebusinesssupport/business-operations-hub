@@ -231,7 +231,7 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
             You're all set.
           </h1>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Welcome to SUPPORT STUDIO™ — Clarity builds momentum. Systems build freedom.
+            Welcome to {brandName} — Clarity builds momentum. Systems build freedom.
           </p>
           <p className="text-xs text-muted-foreground/70 italic">— Dylan, Founder</p>
           <motion.div
@@ -260,7 +260,7 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
       {/* Header */}
       <div className="flex items-center justify-between px-6 md:px-12 py-4 border-b border-border">
         <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
-          The Business Support Studio™ — Setup
+          {brandName} — Setup
         </p>
         <div className="flex items-center gap-3">
           {allEssentialsFilled && currentStepKey === "welcome" && (
