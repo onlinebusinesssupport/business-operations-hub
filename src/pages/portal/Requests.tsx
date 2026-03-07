@@ -96,12 +96,19 @@ const Requests = () => {
             New Request
           </p>
           {!clientId && !isLoading ? (
-            <div className="text-center py-6 space-y-3">
-              <div className="w-12 h-12 mx-auto border border-primary/30 bg-primary/5 flex items-center justify-center">
-                <Inbox size={20} className="text-primary" strokeWidth={1.5} />
+            <div className="text-center py-8 space-y-4">
+              <div className="w-14 h-14 mx-auto border-2 border-primary/30 bg-primary/5 flex items-center justify-center animate-pulse">
+                <Inbox size={22} className="text-primary" strokeWidth={1.5} />
               </div>
-              <p className="text-sm text-foreground font-medium">Your workspace is being prepared</p>
-              <p className="text-xs text-muted-foreground max-w-sm mx-auto">Your team is setting things up. You'll have full access to submit requests shortly.</p>
+              <p className="text-sm text-foreground font-medium">Setting up your custom workspace</p>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
+                We're configuring your workspace based on your application — this takes just a moment. You'll be able to submit requests shortly.
+              </p>
+              <div className="flex justify-center">
+                <div className="h-0.5 w-24 bg-border overflow-hidden rounded-full">
+                  <div className="h-full w-1/2 bg-primary rounded-full animate-[shimmer_1.5s_ease-in-out_infinite]" style={{ animation: "pulse 1.5s ease-in-out infinite" }} />
+                </div>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">

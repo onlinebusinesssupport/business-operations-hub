@@ -32,6 +32,10 @@ const AdminApplications = () => {
     clientId: string | null;
     studios: string[];
     tier: string;
+    prefillPct: number;
+    preFilledFields: string[];
+    missingFields: string[];
+    onboardingSkippable: boolean;
   } | null>(null);
   const [selectedTier, setSelectedTier] = useState("standard");
   const [monthlyRate, setMonthlyRate] = useState("");
@@ -69,6 +73,10 @@ const AdminApplications = () => {
         clientId: data?.client_id || null,
         studios: data?.enabled_studios || [],
         tier: data?.tier || "standard",
+        prefillPct: data?.prefill_percentage || 0,
+        preFilledFields: data?.pre_filled_fields || [],
+        missingFields: data?.missing_fields || [],
+        onboardingSkippable: data?.onboarding_skippable || false,
       });
 
       toast({
@@ -234,6 +242,16 @@ const AdminApplications = () => {
               <p>✓ Welcome update and getting-started guide created</p>
               <p>✓ {approvalResult.studios.length > 0 ? `Studios enabled: ${approvalResult.studios.join(", ")}` : "No studios pre-assigned"}</p>
               <p>✓ Activity logged across dashboards</p>
+            </div>
+            <div className="pl-7 mt-3 flex items-center gap-3">
+              <span className={`text-[10px] uppercase tracking-wider font-medium px-2 py-0.5 ${approvalResult.prefillPct >= 75 ? "bg-primary/10 text-primary" : "bg-yellow-500/10 text-yellow-600"}`}>
+                {approvalResult.prefillPct}% Pre-filled
+              </span>
+              <span className="text-[10px] text-muted-foreground">
+                {approvalResult.onboardingSkippable
+                  ? "Client will skip to confirmation on first login"
+                  : `${approvalResult.missingFields.length} field${approvalResult.missingFields.length !== 1 ? "s" : ""} still needed at onboarding`}
+              </span>
             </div>
             <div className="pl-7 pt-2 flex gap-3">
               <Link

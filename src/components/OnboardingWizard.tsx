@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, Building2, Briefcase, Users, MapPin, Check, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, Building2, Briefcase, Users, MapPin, Check, Sparkles, Settings, Zap, Target, Globe, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { logActivity } from "@/lib/activity";
 
 const industries = [
   "Technology", "Creative & Media", "Professional Services", "E-commerce & Retail",
@@ -17,20 +18,28 @@ const industries = [
 const teamSizes = ["Just me", "2–5 people", "6–15 people", "16–50 people", "50+"];
 const referralSources = ["Google Search", "Social Media", "Referral", "Event or Conference", "Other"];
 
+const studioIcons: Record<string, any> = {
+  "Operations": Settings,
+  "Automation": Zap,
+  "Lead Engine": Target,
+  "Digital Presence": Globe,
+  "Grants & Awards": Compass,
+  "Travel & Activities": Sparkles,
+};
+
 interface OnboardingWizardProps {
   onComplete: () => void;
   initialName?: string;
 }
 
-const TOTAL_STEPS = 4;
-
 const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) => {
   const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [showComplete, setShowComplete] = useState(false);
 
-  // Pre-fill from auth metadata
+  // Profile data
   const meta = user?.user_metadata || {};
   const [fullName, setFullName] = useState(initialName || meta.full_name || "");
   const [phone, setPhone] = useState("");
@@ -39,20 +48,75 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
   const [teamSize, setTeamSize] = useState("");
   const [referralSource, setReferralSource] = useState("");
 
-  // Update pre-fills if user data loads later
+  // Client context
+  const [clientServices, setClientServices] = useState<string[]>([]);
+  const [clientTier, setClientTier] = useState("standard");
+
+  // Determine which essentials are already filled
+  const essentialsFilled = useMemo(() => ({
+    fullName: !!fullName.trim(),
+    companyName: !!companyName.trim(),
+    industry: !!industry,
+  }), [fullName, companyName, industry]);
+
+  const allEssentialsFilled = essentialsFilled.fullName && essentialsFilled.companyName && essentialsFilled.industry;
+  const hasAnyUnfilled = !essentialsFilled.fullName || !essentialsFilled.companyName || !essentialsFilled.industry;
+
+  // Steps: Welcome → Essentials (conditional) → Complete
+  // If all essentials pre-filled, skip Essentials step
+  const steps = useMemo(() => {
+    const s = ["welcome"];
+    if (hasAnyUnfilled) s.push("essentials");
+    s.push("complete");
+    return s;
+  }, [hasAnyUnfilled]);
+
+  const totalSteps = steps.length;
+  const currentStepKey = steps[step] || "welcome";
+
+  // Load existing profile + client data
   useEffect(() => {
-    if (meta.full_name && !fullName) setFullName(meta.full_name);
-    if (meta.company_name && !companyName) setCompanyName(meta.company_name);
-    if (meta.industry && !industry) setIndustry(meta.industry);
+    const loadProfile = async () => {
+      if (!user) return;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, phone, company_name, industry, referral_source")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (profile) {
+        if (profile.full_name) setFullName(profile.full_name);
+        if (profile.phone) setPhone(profile.phone);
+        if (profile.company_name) setCompanyName(profile.company_name);
+        if (profile.industry) setIndustry(profile.industry);
+        if (profile.referral_source) setReferralSource(profile.referral_source);
+      }
+
+      // Get client services/tier for personalized welcome
+      const { data: clientId } = await supabase.rpc("get_my_client_id");
+      if (clientId) {
+        const { data: client } = await supabase
+          .from("clients")
+          .select("services, tier")
+          .eq("id", clientId)
+          .maybeSingle();
+        if (client) {
+          setClientServices(client.services || []);
+          setClientTier(client.tier || "standard");
+        }
+      }
+
+      setLoading(false);
+    };
+    loadProfile();
   }, [user]);
 
   const firstName = fullName.split(" ")[0] || "there";
 
   const canAdvance = () => {
-    if (step === 0) return true;
-    if (step === 1) return fullName.trim().length > 0;
-    if (step === 2) return companyName.trim().length > 0 && industry.length > 0;
-    if (step === 3) return true;
+    if (currentStepKey === "welcome") return true;
+    if (currentStepKey === "essentials") return fullName.trim().length > 0 && companyName.trim().length > 0 && industry.length > 0;
+    if (currentStepKey === "complete") return true;
     return true;
   };
 
@@ -71,20 +135,34 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
       })
       .eq("user_id", user.id);
 
+    if (!error) {
+      // Log completion to activity feed
+      const { data: clientId } = await supabase.rpc("get_my_client_id");
+      await logActivity({
+        client_id: clientId,
+        action: allEssentialsFilled ? "onboarding_auto_completed" : "onboarding_completed",
+        entity_type: "profile",
+        details: {
+          skipped_essentials: allEssentialsFilled,
+          steps_shown: steps.length,
+        },
+      });
+    }
+
     setSaving(false);
     if (error) {
       toast.error("Something went wrong. Please try again.");
       return;
     }
     setShowComplete(true);
-    setTimeout(() => onComplete(), 2500);
+    setTimeout(() => onComplete(), 3000);
   };
 
   const next = () => {
-    if (step === TOTAL_STEPS - 1) {
+    if (currentStepKey === "complete") {
       handleFinish();
     } else {
-      setStep((s) => s + 1);
+      setStep((s) => Math.min(s + 1, totalSteps - 1));
     }
   };
 
@@ -96,7 +174,31 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
     exit: { opacity: 0, x: -40 },
   };
 
-  // Completion screen
+  const tierLabels: Record<string, string> = {
+    starter: "Starter", standard: "Standard", growth: "Growth", enterprise: "Enterprise",
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="fixed inset-0 z-50 bg-background flex items-center justify-center">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center space-y-4">
+          <div className="w-16 h-16 mx-auto border-2 border-primary flex items-center justify-center">
+            <span className="font-display text-lg font-bold text-primary">SS</span>
+          </div>
+          <p className="text-sm text-muted-foreground">Preparing your workspace…</p>
+          <motion.div
+            className="h-0.5 bg-primary mx-auto"
+            initial={{ width: 0 }}
+            animate={{ width: 120 }}
+            transition={{ duration: 1.5, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
+          />
+        </motion.div>
+      </div>
+    );
+  }
+
+  // Completion screen with premium animation
   if (showComplete) {
     return (
       <div className="fixed inset-0 z-50 bg-background flex items-center justify-center">
@@ -119,6 +221,7 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Welcome to SUPPORT STUDIO™ — Clarity builds momentum. Systems build freedom.
           </p>
+          <p className="text-xs text-muted-foreground/70 italic">— Dylan, Founder</p>
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: "100%" }}
@@ -130,12 +233,6 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
     );
   }
 
-  const stepOverview = [
-    { num: "01", label: "Your Details" },
-    { num: "02", label: "Your Business" },
-    { num: "03", label: "Final Touches" },
-  ];
-
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
       {/* Progress */}
@@ -143,7 +240,7 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
         <motion.div
           className="h-full bg-primary"
           initial={{ width: 0 }}
-          animate={{ width: `${((step + 1) / TOTAL_STEPS) * 100}%` }}
+          animate={{ width: `${((step + 1) / totalSteps) * 100}%` }}
           transition={{ duration: 0.4, ease: "easeOut" }}
         />
       </div>
@@ -153,16 +250,23 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
         <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
           The Business Support Studio™ — Setup
         </p>
-        <p className="text-[10px] text-muted-foreground">
-          Step {step + 1} of {TOTAL_STEPS}
-        </p>
+        <div className="flex items-center gap-3">
+          {allEssentialsFilled && currentStepKey === "welcome" && (
+            <span className="text-[10px] px-2 py-0.5 bg-primary/10 text-primary font-medium tracking-wider uppercase">
+              100% Pre-filled
+            </span>
+          )}
+          <p className="text-[10px] text-muted-foreground">
+            Step {step + 1} of {totalSteps}
+          </p>
+        </div>
       </div>
 
       {/* Content */}
       <div className="flex-1 flex items-center justify-center px-6 overflow-y-auto">
         <div className="w-full max-w-lg">
           <AnimatePresence mode="wait">
-            {step === 0 && (
+            {currentStepKey === "welcome" && (
               <motion.div
                 key="welcome"
                 variants={slideVariants}
@@ -184,78 +288,84 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
                     Welcome{firstName !== "there" ? `, ${firstName}` : ""}
                   </p>
                   <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground uppercase tracking-tight">
-                    Let's set up your workspace
+                    Your {tierLabels[clientTier] || "Standard"} Workspace Is Ready
                   </h1>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
-                  We'll walk you through a few quick steps to personalise your Support Studio™ experience. This takes less than a minute.
+                  {allEssentialsFilled
+                    ? "We've pre-filled your profile from your application. Just confirm and you're in."
+                    : "Let's finish setting up your profile — it'll take less than a minute."}
                 </p>
 
-                {/* Step preview */}
-                <div className="flex flex-col gap-3 max-w-xs mx-auto text-left">
-                  {stepOverview.map((s, i) => (
-                    <motion.div
-                      key={s.num}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + i * 0.1, duration: 0.3 }}
-                      className="flex items-center gap-3 text-sm"
-                    >
-                      <span className="text-[10px] font-medium tracking-wider text-primary w-6">{s.num}</span>
-                      <span className="text-muted-foreground">{s.label}</span>
-                    </motion.div>
-                  ))}
-                </div>
+                {/* Service preview based on tier */}
+                {clientServices.length > 0 && (
+                  <div className="space-y-3">
+                    <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Your Enabled Studios</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {clientServices.map((s, i) => {
+                        const Icon = studioIcons[s] || Sparkles;
+                        return (
+                          <motion.div
+                            key={s}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 + i * 0.08 }}
+                            className="flex items-center gap-2 border border-border px-3 py-2"
+                          >
+                            <Icon size={12} className="text-primary" strokeWidth={1.5} />
+                            <span className="text-xs text-foreground">{s}</span>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Pre-fill summary if essentials complete */}
+                {allEssentialsFilled && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="border border-border p-4 text-left max-w-sm mx-auto space-y-2"
+                  >
+                    <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Profile Preview</p>
+                    <div className="space-y-1.5 text-xs">
+                      <div className="flex items-center gap-2"><Users size={11} className="text-muted-foreground" /><span className="text-foreground">{fullName}</span></div>
+                      <div className="flex items-center gap-2"><Building2 size={11} className="text-muted-foreground" /><span className="text-foreground">{companyName}</span></div>
+                      <div className="flex items-center gap-2"><Briefcase size={11} className="text-muted-foreground" /><span className="text-foreground">{industry}</span></div>
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
             )}
 
-            {step === 1 && (
+            {currentStepKey === "essentials" && (
               <motion.div
-                key="personal"
+                key="essentials"
                 variants={slideVariants}
                 initial="enter" animate="center" exit="exit"
                 transition={{ duration: 0.3 }}
                 className="space-y-8"
               >
                 <div>
-                  <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">About You</p>
-                  <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Your Details</h2>
-                  <p className="mt-2 text-sm text-muted-foreground">So your team knows who they're working with.</p>
+                  <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">Your Essentials</p>
+                  <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Complete Your Profile</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">We only need what's missing — the rest is pre-filled.</p>
                 </div>
                 <div className="space-y-5">
+                  {/* Only show unfilled fields prominently, filled ones as read-only */}
                   <div className="space-y-2">
                     <Label htmlFor="fullName" className="text-xs uppercase tracking-wider text-muted-foreground">Full Name *</Label>
-                    <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your full name" className="bg-card border-border" />
+                    <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your full name" className={essentialsFilled.fullName ? "bg-muted border-border" : "bg-card border-border"} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email-display" className="text-xs uppercase tracking-wider text-muted-foreground">Email</Label>
                     <Input id="email-display" value={user?.email || ""} disabled className="bg-muted border-border text-muted-foreground" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-xs uppercase tracking-wider text-muted-foreground">Phone (optional)</Label>
-                    <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+27 000 000 0000" className="bg-card border-border" />
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {step === 2 && (
-              <motion.div
-                key="business"
-                variants={slideVariants}
-                initial="enter" animate="center" exit="exit"
-                transition={{ duration: 0.3 }}
-                className="space-y-8"
-              >
-                <div>
-                  <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">Your Business</p>
-                  <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Tell Us About Your Business</h2>
-                  <p className="mt-2 text-sm text-muted-foreground">This helps us tailor your studio experience.</p>
-                </div>
-                <div className="space-y-5">
-                  <div className="space-y-2">
                     <Label htmlFor="companyName" className="text-xs uppercase tracking-wider text-muted-foreground">Company / Brand Name *</Label>
-                    <Input id="companyName" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Your company name" className="bg-card border-border" />
+                    <Input id="companyName" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Your company name" className={essentialsFilled.companyName ? "bg-muted border-border" : "bg-card border-border"} />
                   </div>
                   <div className="space-y-2">
                     <Label className="text-xs uppercase tracking-wider text-muted-foreground">Industry *</Label>
@@ -270,37 +380,35 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase tracking-wider text-muted-foreground">Team Size</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {teamSizes.map((size) => (
-                        <button key={size} onClick={() => setTeamSize(size)}
-                          className={`text-xs px-3 py-2 border transition-all duration-200 ${
-                            teamSize === size ? "border-primary bg-primary/5 text-foreground" : "border-border text-muted-foreground hover:border-primary/40"
-                          }`}
-                        >{size}</button>
-                      ))}
-                    </div>
+                    <Label htmlFor="phone" className="text-xs uppercase tracking-wider text-muted-foreground">Phone (optional)</Label>
+                    <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+27 000 000 0000" className="bg-card border-border" />
                   </div>
                 </div>
               </motion.div>
             )}
 
-            {step === 3 && (
+            {currentStepKey === "complete" && (
               <motion.div
-                key="final"
+                key="complete"
                 variants={slideVariants}
                 initial="enter" animate="center" exit="exit"
                 transition={{ duration: 0.3 }}
                 className="space-y-8"
               >
                 <div>
-                  <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">Almost Done</p>
-                  <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">One Last Thing</h2>
-                  <p className="mt-2 text-sm text-muted-foreground">How did you hear about us? This is optional.</p>
+                  <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">Ready To Go</p>
+                  <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">
+                    {allEssentialsFilled ? "Confirm & Enter" : "Final Touches"}
+                  </h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {allEssentialsFilled ? "Everything looks great. Hit confirm to enter your workspace." : "Review your profile and optionally tell us how you found us."}
+                  </p>
                 </div>
-                <div className="space-y-5">
+
+                {/* Optional referral (only if not already set) */}
+                {!referralSource && (
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase tracking-wider text-muted-foreground">How did you find us?</Label>
+                    <Label className="text-xs uppercase tracking-wider text-muted-foreground">How did you find us? (optional)</Label>
                     <div className="grid grid-cols-2 gap-2">
                       {referralSources.map((src) => (
                         <button key={src} onClick={() => setReferralSource(src)}
@@ -311,29 +419,27 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
                       ))}
                     </div>
                   </div>
-                </div>
+                )}
 
-                {/* Summary */}
+                {/* Profile summary */}
                 <div className="border border-border p-5 space-y-3">
                   <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Profile Summary</p>
                   <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div className="flex items-center gap-2">
-                      <Users size={12} className="text-muted-foreground" />
-                      <span className="text-foreground">{fullName || "—"}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Building2 size={12} className="text-muted-foreground" />
-                      <span className="text-foreground">{companyName || "—"}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Briefcase size={12} className="text-muted-foreground" />
-                      <span className="text-foreground">{industry || "—"}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin size={12} className="text-muted-foreground" />
-                      <span className="text-foreground">{teamSize || "—"}</span>
-                    </div>
+                    <div className="flex items-center gap-2"><Users size={12} className="text-muted-foreground" /><span className="text-foreground">{fullName || "—"}</span></div>
+                    <div className="flex items-center gap-2"><Building2 size={12} className="text-muted-foreground" /><span className="text-foreground">{companyName || "—"}</span></div>
+                    <div className="flex items-center gap-2"><Briefcase size={12} className="text-muted-foreground" /><span className="text-foreground">{industry || "—"}</span></div>
+                    <div className="flex items-center gap-2"><MapPin size={12} className="text-muted-foreground" /><span className="text-foreground">{teamSize || "—"}</span></div>
                   </div>
+                </div>
+
+                {/* Quick-start tips */}
+                <div className="border border-primary/20 bg-primary/5 p-4 space-y-2">
+                  <p className="text-xs font-medium text-foreground">Quick Start Tips</p>
+                  <ul className="text-xs text-muted-foreground space-y-1">
+                    <li>→ Submit your first request to get the team moving</li>
+                    <li>→ Upload brand assets so we have everything we need</li>
+                    <li>→ Check your active studios to see what's enabled</li>
+                  </ul>
                 </div>
               </motion.div>
             )}
@@ -349,8 +455,8 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
           </Button>
         ) : <div />}
         <Button onClick={next} disabled={!canAdvance() || saving} size="sm" className="text-xs tracking-wide gap-1">
-          {saving ? "Saving…" : step === TOTAL_STEPS - 1 ? (
-            <>Complete Setup <Check size={12} /></>
+          {saving ? "Saving…" : currentStepKey === "complete" ? (
+            <>{allEssentialsFilled ? "Confirm & Enter" : "Complete Setup"} <Check size={12} /></>
           ) : (
             <>Continue <ArrowRight size={12} /></>
           )}
