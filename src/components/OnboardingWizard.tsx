@@ -51,6 +51,7 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
   // Client context
   const [clientServices, setClientServices] = useState<string[]>([]);
   const [clientTier, setClientTier] = useState("standard");
+  const [brandName, setBrandName] = useState("THE BUSINESS SUPPORT STUDIO™");
 
   // Determine which essentials are already filled
   const essentialsFilled = useMemo(() => ({
@@ -104,6 +105,17 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
           setClientServices(client.services || []);
           setClientTier(client.tier || "standard");
         }
+      }
+
+      // Load brand name from onboarding template (VA mode)
+      const { data: tmpl } = await supabase
+        .from("onboarding_templates")
+        .select("brand_name, va_mode")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (tmpl && (tmpl as any).va_mode && (tmpl as any).brand_name) {
+        setBrandName((tmpl as any).brand_name);
       }
 
       setLoading(false);
