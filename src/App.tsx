@@ -83,6 +83,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <LekoProvider>
+          <Routes>
             {/* Public */}
             <Route path="/" element={<Index />} />
             <Route path="/services" element={<Services />} />
