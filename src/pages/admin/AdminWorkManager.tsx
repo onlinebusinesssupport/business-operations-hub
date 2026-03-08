@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react";
-import { motion } from "framer-motion";
-import { Plus, X, Loader2 } from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Plus, X, Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { KanbanBoard, KanbanColumn } from "@/components/KanbanBoard";
 import InlineEdit from "@/components/InlineEdit";
 import { logActivity } from "@/lib/activity";
+import WorkflowEngine from "@/components/WorkflowEngine";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -21,7 +22,6 @@ const statusConfig: Record<Status, { label: string; dotColor: string }> = {
 };
 const statusOrder: Status[] = ["queued", "in_progress", "awaiting_client", "in_review", "complete"];
 
-// Map old statuses to new ones for backward compatibility
 const normalizeStatus = (s: string): Status => {
   if (s === "to_do") return "queued";
   if (s === "done") return "complete";
@@ -32,6 +32,7 @@ const normalizeStatus = (s: string): Status => {
 const AdminWorkManager = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ title: "", description: "", client_id: "", priority: "medium", deadline: "" });
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -41,7 +42,7 @@ const AdminWorkManager = () => {
       const { data, error } = await supabase
         .from("work_items")
         .select("*, clients(name)")
-        .order("created_at", { ascending: true }); // FCFS: oldest first
+        .order("created_at", { ascending: true });
       if (error) throw error;
       return data;
     },
@@ -55,6 +56,20 @@ const AdminWorkManager = () => {
       return data;
     },
   });
+
+  // Realtime for work items + workflow stages
+  useEffect(() => {
+    const ch = supabase
+      .channel("admin-work-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "work_items" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["admin-work-items"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "workflow_stages" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["admin-work-items"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [queryClient]);
 
   const createWork = useMutation({
     mutationFn: async (f: typeof form) => {
@@ -137,7 +152,7 @@ const AdminWorkManager = () => {
       <motion.div {...fade} transition={{ duration: 0.3 }} className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h2 className="font-display text-2xl font-bold text-foreground">Work Manager</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Drag tasks across columns. Listed first come, first served.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Drag tasks across columns. Click cards to view production pipeline stages.</p>
         </div>
         <Button onClick={() => setShowCreate(true)} className="gap-2 text-xs">
           <Plus size={14} /> Add Work Item
@@ -196,46 +211,69 @@ const AdminWorkManager = () => {
             getItemId={(item) => item.id}
             renderCard={(item: any, isDragging) => (
               <div
-                className={`bg-card border border-divider p-3 cursor-grab active:cursor-grabbing transition-all duration-150 ${
+                className={`bg-card border border-divider transition-all duration-150 ${
                   isDragging ? "rotate-1 scale-[1.02] shadow-lg" : "hover:border-primary/30"
                 }`}
               >
-                <InlineEdit
-                  value={item.title}
-                  onSave={(v) => updateField(item, "title", v)}
-                  className="text-sm font-medium text-foreground"
-                />
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  {item.clients?.name || "—"}
-                </p>
-                <div className="flex items-center justify-between mt-2">
+                <div className="p-3 cursor-grab active:cursor-grabbing">
                   <InlineEdit
-                    value={item.priority || "medium"}
-                    onSave={(v) => updateField(item, "priority", v)}
-                    className={`text-[10px] uppercase tracking-wider font-medium ${priorityColor(item.priority)}`}
+                    value={item.title}
+                    onSave={(v) => updateField(item, "title", v)}
+                    className="text-sm font-medium text-foreground"
                   />
-                  {item.deadline ? (
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    {item.clients?.name || "—"}
+                  </p>
+                  <div className="flex items-center justify-between mt-2">
                     <InlineEdit
-                      value={item.deadline}
-                      onSave={(v) => updateField(item, "deadline", v)}
-                      className="text-[10px] text-muted-foreground"
+                      value={item.priority || "medium"}
+                      onSave={(v) => updateField(item, "priority", v)}
+                      className={`text-[10px] uppercase tracking-wider font-medium ${priorityColor(item.priority)}`}
                     />
-                  ) : (
-                    <span
-                      className="text-[10px] text-muted-foreground/40 italic cursor-pointer hover:text-muted-foreground"
-                      onClick={(e) => { e.stopPropagation(); }}
-                    >
-                      + deadline
-                    </span>
-                  )}
+                    {item.deadline ? (
+                      <InlineEdit
+                        value={item.deadline}
+                        onSave={(v) => updateField(item, "deadline", v)}
+                        className="text-[10px] text-muted-foreground"
+                      />
+                    ) : (
+                      <span className="text-[10px] text-muted-foreground/40 italic">+ deadline</span>
+                    )}
+                  </div>
+
+                  {/* Toggle workflow stages */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setExpandedCard(expandedCard === item.id ? null : item.id);
+                    }}
+                    className="mt-2 text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+                  >
+                    {expandedCard === item.id ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+                    Production Pipeline
+                  </button>
                 </div>
-                <InlineEdit
-                  value={item.description || ""}
-                  onSave={(v) => updateField(item, "description", v)}
-                  className="text-[10px] text-muted-foreground/70 mt-2"
-                  placeholder="Add notes..."
-                  multiline
-                />
+
+                {/* Expanded workflow engine */}
+                <AnimatePresence>
+                  {expandedCard === item.id && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="border-t border-divider overflow-hidden"
+                    >
+                      <div className="p-3">
+                        <WorkflowEngine
+                          workItemId={item.id}
+                          workItemTitle={item.title}
+                          clientId={item.client_id}
+                          isAdmin={true}
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
           />
