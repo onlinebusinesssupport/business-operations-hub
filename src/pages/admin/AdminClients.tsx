@@ -40,6 +40,8 @@ const AdminClients = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [view, setView] = useState<"list" | "board">("board");
   const [showInvite, setShowInvite] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [inviteForm, setInviteForm] = useState({ email: "", full_name: "", company_name: "", services: "" });
   const { toast } = useToast();
   const queryClient = useQueryClient();
