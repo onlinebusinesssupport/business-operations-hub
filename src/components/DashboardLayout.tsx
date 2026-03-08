@@ -25,6 +25,7 @@ import {
   GitBranch,
   Zap,
   Star,
+  Mail,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import PageTransition from "./PageTransition";
@@ -55,6 +56,7 @@ const adminNav = [
   { label: "Reports", href: "/admin/reports", icon: BarChart3 },
   { label: "Revenue", href: "/admin/revenue", icon: DollarSign },
   { label: "Accountant", href: "/admin/accountant", icon: BarChart3 },
+  { label: "Subscribers", href: "/admin/subscribers", icon: Mail },
   { label: "System Health", href: "/admin/settings", icon: Settings },
 ];
 
