@@ -274,9 +274,15 @@ const AdminClients = () => {
                     </p>
                   )}
                   <div className="mt-2 flex items-center justify-between">
-                    <p className="text-[10px] text-muted-foreground/60">
-                      {(client.services || []).slice(0, 2).join(" · ") || "No services"}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-[10px] text-muted-foreground/60">
+                        {(client.services || []).slice(0, 2).join(" · ") || "No services"}
+                      </p>
+                      {(() => {
+                        const c = getComplianceDisplay(client.compliance_status);
+                        return <span className="text-[9px]" title={c.label}>{c.emoji}</span>;
+                      })()}
+                    </div>
                     <button
                       onClick={(e) => { e.stopPropagation(); setDeleteTarget(client); }}
                       className="text-muted-foreground/40 hover:text-destructive transition-colors p-1"
