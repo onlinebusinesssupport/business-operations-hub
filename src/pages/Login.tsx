@@ -177,6 +177,13 @@ const Login = () => {
               Apply for access
             </Link>
           </p>
+          <p className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors pt-1">
+            <button type="button" onClick={() => {
+              document.querySelector<HTMLInputElement>('input[type="email"]')?.focus();
+            }} className="hover:underline cursor-pointer">
+              Studio Control →
+            </button>
+          </p>
         </div>
       </motion.div>
     </div>
