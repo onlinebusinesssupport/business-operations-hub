@@ -69,6 +69,7 @@ interface PartnerCockpitProps {
 
 const PartnerCockpit = ({ client, onBack, onUpdateField }: PartnerCockpitProps) => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [showSensitive, setShowSensitive] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
