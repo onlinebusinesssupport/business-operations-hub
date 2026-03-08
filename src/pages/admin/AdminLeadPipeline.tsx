@@ -112,6 +112,9 @@ const AdminLeadPipeline = () => {
         };
         const { error } = await supabase.from("applications").update({ status: statusMap[newStage] }).eq("id", lead.db_id);
         if (error) throw error;
+      } else {
+        const { error } = await supabase.from("contact_submissions").update({ lifecycle_stage: newStage } as any).eq("id", lead.db_id);
+        if (error) throw error;
       }
       await logActivity({
         action: "drag",
