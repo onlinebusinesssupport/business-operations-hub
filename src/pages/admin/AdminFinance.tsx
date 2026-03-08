@@ -89,13 +89,24 @@ const AdminFinance = () => {
     },
   });
 
-  const { data: transactions = [] } = useQuery({
+  const { data: allTransactions = [] } = useQuery({
     queryKey: ["finance-transactions"],
     queryFn: async () => {
-      const { data } = await supabase.from("transactions").select("*, chart_of_accounts(name, type, category)").eq("confirmed", true);
+      const { data } = await supabase.from("transactions").select("*, chart_of_accounts(name, type, category)");
       return data || [];
     },
   });
+
+  // Filter confirmed/unconfirmed based on toggle
+  const transactions = useMemo(
+    () => showUnconfirmed ? allTransactions : allTransactions.filter((t: any) => t.confirmed),
+    [allTransactions, showUnconfirmed]
+  );
+
+  const unconfirmedCount = useMemo(
+    () => allTransactions.filter((t: any) => !t.confirmed).length,
+    [allTransactions]
+  );
 
   const { data: compliance = [] } = useQuery({
     queryKey: ["finance-compliance"],
