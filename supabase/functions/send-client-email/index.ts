@@ -129,7 +129,8 @@ Deno.serve(async (req) => {
     if (!res.ok) {
       console.error('Resend API error:', res.status, resBody)
 
-      await serviceClient.from('client_emails').insert({
+      // Best-effort log of failure
+      serviceClient.from('client_emails').insert({
         client_id: body.client_id || null,
         sent_by: userId,
         to_email: body.to_email,
@@ -137,7 +138,7 @@ Deno.serve(async (req) => {
         body_html: body.body_html,
         body_text: text,
         status: 'failed',
-      })
+      }).then(() => {}, (e) => console.error('DB log error:', e))
 
       return new Response(JSON.stringify({ error: 'Failed to send email', details: resBody }), {
         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -148,7 +149,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('Email send failed:', error)
 
-    await serviceClient.from('client_emails').insert({
+    serviceClient.from('client_emails').insert({
       client_id: body.client_id || null,
       sent_by: userId,
       to_email: body.to_email,
@@ -156,15 +157,15 @@ Deno.serve(async (req) => {
       body_html: body.body_html,
       body_text: text,
       status: 'failed',
-    })
+    }).then(() => {}, (e) => console.error('DB log error:', e))
 
     return new Response(JSON.stringify({ error: 'Failed to send email' }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
 
-  // Log sent email
-  await serviceClient.from('client_emails').insert({
+  // Email sent successfully — log to DB in background (non-blocking)
+  serviceClient.from('client_emails').insert({
     client_id: body.client_id || null,
     sent_by: userId,
     to_email: body.to_email,
@@ -172,8 +173,11 @@ Deno.serve(async (req) => {
     body_html: body.body_html,
     body_text: text,
     status: 'sent',
+  }).then(({ error: dbErr }) => {
+    if (dbErr) console.error('Failed to log sent email:', dbErr)
   })
 
+  // Return 200 immediately — don't wait for DB write
   return new Response(
     JSON.stringify({ success: true, message_id: resendResult.id }),
     { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
