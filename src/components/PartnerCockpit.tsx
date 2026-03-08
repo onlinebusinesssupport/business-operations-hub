@@ -446,47 +446,16 @@ const PartnerCockpit = ({ client, onBack, onUpdateField }: PartnerCockpitProps) 
         )}
 
         {activeTab === "billing" && (
-          <motion.div key="billing" {...fade} transition={{ duration: 0.25 }} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="border border-border p-4">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Collected</p>
-                <span className="font-display text-xl font-bold text-foreground">{fmt(paidTotal)}</span>
-              </div>
-              <div className="border border-border p-4">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Outstanding</p>
-                <span className="font-display text-xl font-bold text-foreground">{fmt(outstandingTotal)}</span>
-              </div>
-              <div className="border border-border p-4">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Monthly Rate</p>
-                <InlineEdit value={String(client.monthly_rate || 0)} onSave={(v) => onUpdateField(client, "monthly_rate", parseFloat(v) || 0)} className="font-display text-xl font-bold text-foreground" />
-              </div>
-            </div>
-
-            {invoices.length === 0 ? (
-              <div className="border border-border p-8 text-center">
-                <DollarSign size={22} className="mx-auto text-muted-foreground/40 mb-2" strokeWidth={1} />
-                <p className="text-sm text-muted-foreground">No invoices for this partner.</p>
-              </div>
-            ) : (
-              <div className="border border-border divide-y divide-border">
-                <div className="grid grid-cols-5 p-3 text-[10px] uppercase tracking-[0.1em] text-muted-foreground font-medium">
-                  <span>Date</span><span>Description</span><span>Amount</span><span>Status</span><span className="text-right">Due</span>
-                </div>
-                {invoices.map((inv: any) => (
-                  <div key={inv.id} className="grid grid-cols-5 p-4 items-center text-sm">
-                    <span className="text-muted-foreground text-xs">{new Date(inv.invoice_date).toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}</span>
-                    <InlineEdit value={inv.description || ""} onSave={(v) => updateInvField(inv, "description", v)} className="text-sm text-foreground" placeholder="—" />
-                    <InlineEdit value={String(inv.amount)} onSave={(v) => updateInvField(inv, "amount", parseFloat(v) || 0)} className="text-sm font-medium text-foreground" />
-                    <select value={inv.status} onChange={(e) => updateInvField(inv, "status", e.target.value)}
-                      className="text-xs px-2 py-0.5 border-0 bg-transparent focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer">
-                      <option value="draft">Draft</option><option value="sent">Sent</option><option value="paid">Paid</option><option value="overdue">Overdue</option>
-                    </select>
-                    <span className="text-muted-foreground text-xs text-right">{inv.due_date ? new Date(inv.due_date).toLocaleDateString("en-ZA", { day: "numeric", month: "short" }) : "—"}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </motion.div>
+          <BillingTab
+            client={client}
+            invoices={invoices}
+            paidTotal={paidTotal}
+            outstandingTotal={outstandingTotal}
+            fmt={fmt}
+            onUpdateField={onUpdateField}
+            updateInvField={updateInvField}
+            queryClient={queryClient}
+          />
         )}
 
         {activeTab === "insights" && (
