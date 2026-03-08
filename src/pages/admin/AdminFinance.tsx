@@ -260,7 +260,7 @@ const AdminFinance = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">Financial Reports</p>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "'Georgia', serif", color: NAVY }}>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
             Finance Dashboard
           </h1>
         </div>
