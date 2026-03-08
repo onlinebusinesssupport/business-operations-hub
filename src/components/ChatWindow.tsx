@@ -64,6 +64,19 @@ const ChatWindow = ({ lockedRecipientId, lockedRecipientName, showInbox = true }
     enabled: !!user?.id,
   });
 
+  // ─── Fetch profiles for display names ───
+  const { data: profiles = [] } = useQuery({
+    queryKey: ["chat-profiles"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("user_id, full_name, email, company_name");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id && isAdmin,
+  });
+
   // ─── Fetch ALL clients for inbox (admin) ───
   const { data: clients = [] } = useQuery({
     queryKey: ["chat-clients"],
