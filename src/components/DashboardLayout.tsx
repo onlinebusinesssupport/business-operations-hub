@@ -39,7 +39,7 @@ const clientNav = [
   { label: "Reports", href: "/portal/reports", icon: BarChart3 },
   { label: "Files", href: "/portal/files", icon: FolderOpen },
   { label: "Billing", href: "/portal/billing", icon: DollarSign },
-  { label: "Messages", href: "/portal/emails", icon: Mail },
+  { label: "Messages", href: "/portal/messages", icon: MessageSquare },
   { label: "Settings", href: "/portal/settings", icon: Settings },
 ];
 
@@ -58,7 +58,7 @@ const adminNav = [
   { label: "Revenue", href: "/admin/revenue", icon: DollarSign },
   { label: "Finance", href: "/admin/finance", icon: BarChart3 },
   { label: "Accountant", href: "/admin/accountant", icon: BarChart3 },
-  { label: "Emails", href: "/admin/emails", icon: Mail },
+  { label: "Messages", href: "/admin/messages", icon: MessageSquare },
   { label: "Subscribers", href: "/admin/subscribers", icon: Mail },
   { label: "System Health", href: "/admin/settings", icon: Settings },
 ];
