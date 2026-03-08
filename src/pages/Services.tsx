@@ -74,7 +74,7 @@ const services = [
   {
     icon: FileText,
     name: "Company Registration & Setup",
-    pricing: "Project from R8 500",
+    pricing: "From R950",
     pain: "Paralyzed by paperwork. Compliance feels like a maze.",
     outcome: "Your business registered, structured, and ready to trade.",
     idealFor: "New founders, expanding businesses",
