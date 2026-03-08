@@ -8,10 +8,11 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
 import LekoChat from "@/components/LekoChat";
 import Index from "./pages/Index";
+import Services from "./pages/Services";
 import Studios from "./pages/Studios";
 import HowWeWork from "./pages/HowWeWork";
 import Clients from "./pages/Clients";
-
+import Insights from "./pages/Insights";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
@@ -78,7 +79,7 @@ const App = () => (
           <Routes>
             {/* Public */}
             <Route path="/" element={<Index />} />
-            <Route path="/services" element={<Studios />} />
+            <Route path="/services" element={<Services />} />
             <Route path="/studios" element={<Studios />} />
             <Route path="/services/digital-presence" element={<DigitalPresence />} />
             <Route path="/services/lead-engine" element={<LeadEngine />} />
@@ -88,7 +89,7 @@ const App = () => (
             <Route path="/services/grants-awards" element={<GrantsAwards />} />
             <Route path="/results" element={<Media />} />
             <Route path="/media" element={<Media />} />
-            <Route path="/insights" element={<Media />} />
+            <Route path="/insights" element={<Insights />} />
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/review" element={<ReviewSubmit />} />
             <Route path="/terms" element={<Terms />} />

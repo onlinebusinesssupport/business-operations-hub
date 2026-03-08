@@ -4,10 +4,11 @@ import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const navItems = [
-  { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
-  { label: "Reviews", href: "/reviews" },
-  { label: "Media", href: "/media" },
+  { label: "How It Works", href: "/how-it-works" },
+  { label: "Clients", href: "/clients" },
+  { label: "Insights", href: "/insights" },
+  { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
 
