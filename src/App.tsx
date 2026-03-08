@@ -41,6 +41,7 @@ import AutomationStudio from "./pages/portal/studios/AutomationStudio";
 import LeadEngineStudio from "./pages/portal/studios/LeadEngineStudio";
 import SocialsStudio from "./pages/portal/studios/SocialsStudio";
 import ExperiencesStudio from "./pages/portal/studios/ExperiencesStudio";
+import ClientOnboarding from "./pages/portal/ClientOnboarding";
 
 // Admin
 import AdminOverview from "./pages/admin/AdminOverview";
