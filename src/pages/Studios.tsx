@@ -251,7 +251,7 @@ const Studios = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mt-10"
           >
-            <Link to="/apply">
+            <Link to="/contact">
               <Button
                 size="lg"
                 className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2"

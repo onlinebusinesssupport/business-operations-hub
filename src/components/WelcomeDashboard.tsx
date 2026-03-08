@@ -25,7 +25,7 @@ const quickStartItems = [
     icon: User,
     title: "Complete your profile",
     description: "Add your details so your team knows who to reach.",
-    href: "/portal/account",
+    href: "/portal/settings",
     cta: "Go to Settings",
   },
   {
@@ -39,7 +39,7 @@ const quickStartItems = [
     icon: FileText,
     title: "Explore your files",
     description: "Access shared files and templates in one place.",
-    href: "/portal/documents",
+    href: "/portal/files",
     cta: "View Files",
   },
 ];
