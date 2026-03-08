@@ -98,16 +98,19 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       </aside>
 
       <div className="flex-1 flex flex-col min-h-screen">
-        <header className="h-14 bg-background border-b border-divider flex items-center px-6 sticky top-0 z-30">
-          <button
-            className="lg:hidden mr-4 text-foreground"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu size={20} />
-          </button>
-          <span className="text-xs uppercase tracking-widest text-muted-foreground">
-            Admin
-          </span>
+        <header className="h-14 bg-background border-b border-divider flex items-center justify-between px-6 sticky top-0 z-30">
+          <div className="flex items-center">
+            <button
+              className="lg:hidden mr-4 text-foreground"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu size={20} />
+            </button>
+            <span className="text-xs uppercase tracking-widest text-muted-foreground">
+              Admin
+            </span>
+          </div>
+          <NotificationBell />
         </header>
 
         <main className="flex-1 p-6 lg:p-8 max-w-7xl">{children}</main>

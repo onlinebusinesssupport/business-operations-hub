@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.sign-document]
 verify_jwt = false
+
+[functions.notify-new-lead]
+verify_jwt = false
