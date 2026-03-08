@@ -10,11 +10,15 @@ import {
   Menu,
   X,
   LogOut,
+  Layers,
 } from "lucide-react";
 import portraitImg from "@/assets/portrait.png";
+import NotificationBell from "@/components/NotificationBell";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { label: "Dashboard", href: "/portal", icon: LayoutDashboard },
+  { label: "My Studios", href: "/portal/studios", icon: Layers },
   { label: "Active Work", href: "/portal/active-work", icon: Briefcase },
   { label: "Requests", href: "/portal/requests", icon: MessageSquarePlus },
   { label: "Documents", href: "/portal/documents", icon: FileText },
