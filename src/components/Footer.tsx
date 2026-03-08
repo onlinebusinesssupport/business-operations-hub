@@ -115,6 +115,9 @@ const Footer = () => {
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} The Business Support Studio™. All rights reserved.
           </p>
+          <Link to="/login" className="text-[10px] text-muted-foreground/40 hover:text-muted-foreground transition-colors tracking-widest uppercase">
+            Admin
+          </Link>
         </div>
       </div>
     </footer>
