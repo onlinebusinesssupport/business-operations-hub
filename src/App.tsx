@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LekoProvider } from "@/contexts/LekoContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
 import LekoChat from "@/components/LekoChat";
@@ -81,6 +82,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <LekoProvider>
           <Routes>
             {/* Public */}
             <Route path="/" element={<Index />} />
@@ -150,6 +152,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <LekoChat />
+          </LekoProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
