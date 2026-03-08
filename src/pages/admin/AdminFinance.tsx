@@ -61,6 +61,23 @@ function getPeriodRange(period: string) {
    ═══════════════════════════════════════════════ */
 const AdminFinance = () => {
   const [period, setPeriod] = useState("6");
+  const [showUnconfirmed, setShowUnconfirmed] = useState(true);
+  const queryClient = useQueryClient();
+
+  // ── REALTIME SUBSCRIPTIONS ──
+  useEffect(() => {
+    const channel = supabase
+      .channel("finance-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "transactions" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["finance-transactions"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "bank_statements" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["finance-bank-statements"] });
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
   const range = useMemo(() => getPeriodRange(period), [period]);
 
   // ── DATA QUERIES ──
