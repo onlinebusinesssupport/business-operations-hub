@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Search, Plus, Loader2, X, Gauge } from "lucide-react";
+import { ArrowRight, Search, Plus, Loader2, X, Gauge, Trash2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { KanbanBoard, KanbanColumn } from "@/components/KanbanBoard";
 import InlineEdit from "@/components/InlineEdit";
 import { logActivity } from "@/lib/activity";
+import { formatCurrency } from "@/lib/currency";
 import PartnerCockpit from "@/components/PartnerCockpit";
+import LekoRiskGuard from "@/components/LekoRiskGuard";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
