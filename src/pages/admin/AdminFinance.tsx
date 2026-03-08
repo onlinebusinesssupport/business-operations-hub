@@ -11,17 +11,17 @@ import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, PieChart, Pie, Legend,
 } from "recharts";
-import { format, subMonths, startOfMonth, endOfMonth, differenceInDays, parseISO } from "date-fns";
+import { formatCurrency, useCurrency } from "@/lib/currency";
 
 /* ═══════════════════════════════════════════════
-   KPMG-STYLE TOKENS
+   THEME TOKENS — synced with Studio Control
    ═══════════════════════════════════════════════ */
-const NAVY = "#0C2340";
-const SLATE = "#4A5568";
-const GREEN_MUTED = "#276749";
+const NAVY = "hsl(var(--foreground))";
+const SLATE = "hsl(var(--muted-foreground))";
+const GREEN_MUTED = "hsl(var(--primary))";
 const RED_MUTED = "#9B2C2C";
-const BLUE_ACCENT = "#1A365D";
-const CHART_COLORS = ["#0C2340", "#276749", "#2B6CB0", "#4A5568", "#718096"];
+const BLUE_ACCENT = "hsl(var(--primary))";
+const CHART_COLORS = ["hsl(142, 33%, 24%)", "#2B6CB0", "#4A5568", "#718096", "#1A365D"];
 
 /* ═══════════════════════════════════════════════
    CSV EXPORT UTILITY
