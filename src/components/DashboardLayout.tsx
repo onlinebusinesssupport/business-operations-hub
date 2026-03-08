@@ -255,6 +255,9 @@ const DashboardLayout = ({ children, portal }: DashboardLayoutProps) => {
           </PageTransition>
         </main>
       </div>
+
+      {/* LEKO Insight Panel - Admin only */}
+      {isAdminPortal && <LekoInsightPanel />}
     </div>
   );
 };
