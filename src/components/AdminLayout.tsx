@@ -34,6 +34,7 @@ interface AdminLayoutProps {
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const { signOut } = useAuth();
 
   return (
     <div className="min-h-screen flex bg-secondary">
