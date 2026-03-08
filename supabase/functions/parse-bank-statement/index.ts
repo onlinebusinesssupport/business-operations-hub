@@ -251,32 +251,52 @@ South African banks include FNB, Nedbank, Standard Bank, Absa, Capitec. Amounts 
       return new Response(JSON.stringify({ error: "No transactions found in file" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Sanitize and validate dates before insertion
-    const dateRegex = /^\d{4}-\d{2}-\d{2}/;
-    const strictDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    // === STRICT DATA SANITIZATION LAYER ===
+    const DATE_REGEX = /(\d{4}-\d{2}-\d{2})/;
     const sanitized: ParsedTransaction[] = [];
+    let skippedCount = 0;
+
     for (const t of transactions) {
-      let d = t.date?.trim();
-      if (!d) { console.warn("Skipping transaction with missing date:", t.description); continue; }
-      // Strip trailing non-date characters (e.g. "2025-10-27 exterminated" → "2025-10-27")
-      if (dateRegex.test(d) && !strictDateRegex.test(d)) {
-        d = d.slice(0, 10);
-        console.warn(`Sanitized date from "${t.date}" to "${d}"`);
-      }
-      if (!strictDateRegex.test(d)) {
-        console.warn(`Skipping transaction with invalid date "${t.date}":`, t.description);
+      // 1. Date: regex extraction + calendar validation
+      const rawDate = t.date?.trim() ?? "";
+      const dateMatch = rawDate.match(DATE_REGEX);
+      if (!dateMatch) {
+        console.warn(`[Sanitizer] Skipped – no date in "${t.date}":`, t.description);
+        skippedCount++;
         continue;
       }
-      sanitized.push({ ...t, date: d });
-    }
-    transactions = sanitized;
+      const extractedDate = dateMatch[1];
+      const parsed = new Date(extractedDate + "T00:00:00Z");
+      if (isNaN(parsed.getTime())) {
+        console.warn(`[Sanitizer] Skipped – invalid calendar date "${extractedDate}":`, t.description);
+        skippedCount++;
+        continue;
+      }
 
-    if (transactions.length === 0) {
-      return new Response(JSON.stringify({ error: "No transactions with valid dates found" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      // 2. Amount sanitization: strip non-numeric chars (keep digits, dot, minus)
+      const cleanAmount = (val: unknown): number => {
+        if (typeof val === "number" && !isNaN(val)) return val;
+        const s = String(val ?? "0").replace(/[^\d.\-]/g, "");
+        const n = parseFloat(s);
+        return isNaN(n) ? 0 : n;
+      };
+
+      sanitized.push({
+        date: extractedDate,
+        description: t.description || "",
+        amount: cleanAmount(t.amount),
+        balance: t.balance != null ? cleanAmount(t.balance) : null,
+      });
     }
 
-    // Insert transactions
-    const rows = transactions.map(t => ({
+    if (sanitized.length === 0) {
+      return new Response(JSON.stringify({ error: "No transactions with valid dates found", inserted_count: 0, skipped_count: skippedCount }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Insert validated transactions
+    const rows = sanitized.map(t => ({
       statement_id,
       date: t.date,
       description: t.description,
@@ -288,17 +308,17 @@ South African banks include FNB, Nedbank, Standard Bank, Absa, Capitec. Amounts 
     if (insertErr) throw insertErr;
 
     // Update statement totals
-    const totalIn = transactions.filter(t => t.amount > 0).reduce((s, t) => s + t.amount, 0);
-    const totalOut = transactions.filter(t => t.amount < 0).reduce((s, t) => s + Math.abs(t.amount), 0);
+    const totalIn = sanitized.filter(t => t.amount > 0).reduce((s, t) => s + t.amount, 0);
+    const totalOut = sanitized.filter(t => t.amount < 0).reduce((s, t) => s + Math.abs(t.amount), 0);
 
     await supabase.from("bank_statements").update({
-      transaction_count: transactions.length,
+      transaction_count: sanitized.length,
       total_in: totalIn,
       total_out: totalOut,
       status: "processing",
     }).eq("id", statement_id);
 
-    return new Response(JSON.stringify({ success: true, count: transactions.length }), {
+    return new Response(JSON.stringify({ success: true, inserted_count: sanitized.length, skipped_count: skippedCount }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
