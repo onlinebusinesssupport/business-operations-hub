@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
-import { Upload, FileText, Brain, CheckCircle2, AlertTriangle, Calendar, Plus, ArrowLeft, Sparkles } from "lucide-react";
+import { Upload, FileText, Brain, CheckCircle2, AlertTriangle, XCircle, Calendar, Plus, ArrowLeft, Sparkles } from "lucide-react";
 import { format, isPast, isToday } from "date-fns";
 
 /* ────────────────────────── Types ────────────────────────── */
