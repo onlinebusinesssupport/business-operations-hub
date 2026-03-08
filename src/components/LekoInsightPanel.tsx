@@ -107,15 +107,28 @@ const LekoInsightPanel = () => {
   const { data: clientsData } = useQuery({
     queryKey: ["leko-clients"],
     queryFn: async () => {
-      const { data } = await supabase.from("clients").select("id, name, health_score, retainer_used, retainer_limit, subscription_status, last_activity_at").order("name");
+      const { data } = await supabase.from("clients").select("id, name, health_score, retainer_used, retainer_limit, subscription_status, last_activity_at, compliance_status, tax_reference, physical_address, identity_doc_path").order("name");
       const clients = data || [];
       const atRisk = clients.filter((c) => c.subscription_status === "at_risk" || (c.health_score !== null && c.health_score < 50));
       const highRetainer = clients.filter((c) => c.retainer_limit > 0 && (c.retainer_used / c.retainer_limit) >= 0.85);
+      const incompleteOnboarding = clients.filter((c: any) => {
+        const missing: string[] = [];
+        if (!c.identity_doc_path) missing.push("Identity document");
+        if (!c.tax_reference) missing.push("Tax reference");
+        if (!c.physical_address) missing.push("Physical address");
+        return missing.length > 0 ? { name: c.name, missing } : null;
+      }).filter(Boolean);
       return {
         totalClients: clients.length,
         activeClients: clients.filter((c) => c.subscription_status === "active").length,
         atRiskClients: atRisk.map((c) => ({ name: c.name, health: c.health_score })),
         highRetainerUsage: highRetainer.map((c) => ({ name: c.name, used: c.retainer_used, limit: c.retainer_limit })),
+        incompleteOnboarding,
+        complianceSummary: {
+          verified: clients.filter((c: any) => c.compliance_status === "verified").length,
+          pending: clients.filter((c: any) => c.compliance_status === "pending" || !c.compliance_status).length,
+          missing: clients.filter((c: any) => c.compliance_status === "missing_documents").length,
+        },
       };
     },
     enabled: (pageConfig?.dataFetcher === "clients" || pageConfig?.dataFetcher === "overview") && panelOpen,

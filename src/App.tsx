@@ -41,6 +41,7 @@ import AutomationStudio from "./pages/portal/studios/AutomationStudio";
 import LeadEngineStudio from "./pages/portal/studios/LeadEngineStudio";
 import SocialsStudio from "./pages/portal/studios/SocialsStudio";
 import ExperiencesStudio from "./pages/portal/studios/ExperiencesStudio";
+import ClientOnboarding from "./pages/portal/ClientOnboarding";
 
 // Admin
 import AdminOverview from "./pages/admin/AdminOverview";
@@ -129,6 +130,7 @@ const App = () => (
             <Route path="/portal/billing" element={<ProtectedRoute><DashboardLayout portal="client"><Billing /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/messages" element={<ProtectedRoute><DashboardLayout portal="client"><PortalMessages /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/settings" element={<ProtectedRoute><DashboardLayout portal="client"><ClientSettings /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/onboarding" element={<ProtectedRoute><ClientOnboarding /></ProtectedRoute>} />
 
             {/* Admin */}
             <Route path="/admin" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminOverview /></DashboardLayout></ProtectedRoute>} />

@@ -250,12 +250,18 @@ export type Database = {
         Row: {
           account_owner: string | null
           avg_review_score: number | null
+          business_type: string | null
+          company_reg_number: string | null
+          compliance_status: string | null
           contact_profile_id: string | null
           contract_renewal_date: string | null
           created_at: string
           email: string | null
           health_score: number | null
           id: string
+          id_number: string | null
+          id_type: string | null
+          identity_doc_path: string | null
           inquiry_type: string | null
           last_activity_at: string | null
           lead_score: number | null
@@ -268,7 +274,10 @@ export type Database = {
           name: string
           notes: string | null
           nps_score: number | null
+          onboarding_challenge: string | null
+          passport_number: string | null
           phone: string | null
+          physical_address: string | null
           retainer_limit: number
           retainer_used: number
           review_count: number | null
@@ -276,6 +285,7 @@ export type Database = {
           source_page: string | null
           status: string
           subscription_status: string
+          tax_reference: string | null
           tier: string | null
           updated_at: string
           website: string | null
@@ -283,12 +293,18 @@ export type Database = {
         Insert: {
           account_owner?: string | null
           avg_review_score?: number | null
+          business_type?: string | null
+          company_reg_number?: string | null
+          compliance_status?: string | null
           contact_profile_id?: string | null
           contract_renewal_date?: string | null
           created_at?: string
           email?: string | null
           health_score?: number | null
           id?: string
+          id_number?: string | null
+          id_type?: string | null
+          identity_doc_path?: string | null
           inquiry_type?: string | null
           last_activity_at?: string | null
           lead_score?: number | null
@@ -301,7 +317,10 @@ export type Database = {
           name: string
           notes?: string | null
           nps_score?: number | null
+          onboarding_challenge?: string | null
+          passport_number?: string | null
           phone?: string | null
+          physical_address?: string | null
           retainer_limit?: number
           retainer_used?: number
           review_count?: number | null
@@ -309,6 +328,7 @@ export type Database = {
           source_page?: string | null
           status?: string
           subscription_status?: string
+          tax_reference?: string | null
           tier?: string | null
           updated_at?: string
           website?: string | null
@@ -316,12 +336,18 @@ export type Database = {
         Update: {
           account_owner?: string | null
           avg_review_score?: number | null
+          business_type?: string | null
+          company_reg_number?: string | null
+          compliance_status?: string | null
           contact_profile_id?: string | null
           contract_renewal_date?: string | null
           created_at?: string
           email?: string | null
           health_score?: number | null
           id?: string
+          id_number?: string | null
+          id_type?: string | null
+          identity_doc_path?: string | null
           inquiry_type?: string | null
           last_activity_at?: string | null
           lead_score?: number | null
@@ -334,7 +360,10 @@ export type Database = {
           name?: string
           notes?: string | null
           nps_score?: number | null
+          onboarding_challenge?: string | null
+          passport_number?: string | null
           phone?: string | null
+          physical_address?: string | null
           retainer_limit?: number
           retainer_used?: number
           review_count?: number | null
@@ -342,6 +371,7 @@ export type Database = {
           source_page?: string | null
           status?: string
           subscription_status?: string
+          tax_reference?: string | null
           tier?: string | null
           updated_at?: string
           website?: string | null
