@@ -13,6 +13,8 @@ import {
   X,
   LogOut,
 } from "lucide-react";
+import NotificationBell from "@/components/NotificationBell";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
