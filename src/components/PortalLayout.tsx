@@ -106,7 +106,10 @@ const PortalLayout = ({ children }: PortalLayoutProps) => {
 
         {/* Footer */}
         <div className="px-3 py-4 border-t border-divider">
-          <button className="flex items-center gap-3 px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-full rounded-md hover:bg-secondary/60">
+          <button 
+            onClick={signOut}
+            className="flex items-center gap-3 px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-full rounded-md hover:bg-secondary/60"
+          >
             <LogOut size={18} strokeWidth={1.5} />
             Sign Out
           </button>
@@ -116,14 +119,17 @@ const PortalLayout = ({ children }: PortalLayoutProps) => {
       {/* Main */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Top bar */}
-        <header className="h-16 bg-background border-b border-divider flex items-center px-6 sticky top-0 z-30">
-          <button
-            className="lg:hidden mr-4 text-foreground"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu size={20} />
-          </button>
-          <h1 className="text-sm font-medium text-foreground">Client Portal</h1>
+        <header className="h-16 bg-background border-b border-divider flex items-center justify-between px-6 sticky top-0 z-30">
+          <div className="flex items-center">
+            <button
+              className="lg:hidden mr-4 text-foreground"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu size={20} />
+            </button>
+            <h1 className="text-sm font-medium text-foreground">Client Portal</h1>
+          </div>
+          <NotificationBell />
         </header>
 
         {/* Content */}
