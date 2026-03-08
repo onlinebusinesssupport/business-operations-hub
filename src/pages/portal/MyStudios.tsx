@@ -127,8 +127,11 @@ const MyStudios = () => {
     pods.find((p) => p.name === podName);
 
   const getOnboardingStep = (pod: Pod): number => {
-    const cfg = pod.config as Record<string, unknown> | null;
-    return (cfg?.onboarding_step as number) ?? 1;
+    if (pod.config && typeof pod.config === "object" && !Array.isArray(pod.config)) {
+      const cfg = pod.config as Record<string, unknown>;
+      return (cfg.onboarding_step as number) ?? 1;
+    }
+    return 1;
   };
 
   const handleActivate = async (podDef: PodDefinition) => {
