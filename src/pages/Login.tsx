@@ -10,7 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [portalType, setPortalType] = useState<"client" | "admin">("client");
+  
   const navigate = useNavigate();
   const { toast } = useToast();
 
