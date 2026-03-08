@@ -1,82 +1,49 @@
 
-# Make the System Live and Interactive
 
-## Problem Summary
+## Fix: Email Sending Fails — "Run not found or expired"
 
-Two core issues need fixing:
+### Root Cause
 
-1. **Onboarding Wizard shows "Step 1 of 4" but feels empty** -- The wizard exists and has all 4 steps, but clients arriving via the approval flow don't see it because the `approve-application` Edge Function creates a profile with `onboarding_completed` potentially already set, or the profile/client linkage is incomplete. The welcome step (Step 0) also lacks visual warmth -- no branded imagery or clear value proposition.
+The `send-client-email` edge function uses `sendLovableEmail()` with a random `run_id` (`crypto.randomUUID()`). This API requires a valid `run_id` provided by Lovable's webhook system — it's designed for the auth email hook flow where Lovable initiates the run. A random UUID is rejected with "Run not found or expired."
 
-2. **Admin approval feels disconnected** -- When you approve an application, the Edge Function sends an invite email and creates a client record, but there's no visible feedback loop back into the Admin dashboard. The pipeline, applications page, and overview don't refresh or show the activation result. The whole system feels like a shell because actions don't cascade visibly.
+In short: `@lovable.dev/email-js` only works within the auth webhook pipeline. It cannot be used for arbitrary admin-initiated transactional emails.
 
----
+### Solution
 
-## Plan
+Integrate a third-party email service (Resend) to power the admin Email Hub. Resend has a generous free tier (100 emails/day) and works with your existing verified domain (`notify.www.supportstudio.co.za`).
 
-### 1. Fix the Approval-to-Onboarding Pipeline
+### Changes
 
-**Edge Function (`approve-application`):**
-- After creating the client record, also generate 4 default onboarding `work_items` (same as the pipeline activation does) and a welcome `update` entry
-- Log an `activity_log` entry so the activity feeds light up immediately
-- Ensure the profile is created with `onboarding_completed = false` so the wizard triggers on first login
+1. **Add `RESEND_API_KEY` secret** — You'll need to create a free Resend account at resend.com, add your domain, and provide the API key.
 
-**Admin Applications page:**
-- After successful approval, invalidate all relevant queries (`overview-clients`, `overview-work`, `pipeline-*`) so the dashboard metrics update instantly
-- Show a success state with a summary: "Workspace created, invite sent, 4 onboarding tasks generated"
-- Add a "View Workspace" link that navigates to the Partner Workspaces page
+2. **Rewrite `supabase/functions/send-client-email/index.ts`**:
+   - Replace `sendLovableEmail` with a direct `fetch` call to Resend's API (`https://api.resend.com/emails`)
+   - Keep the same branded HTML wrapper, admin auth check, and database logging
+   - Send from `noreply@notify.www.supportstudio.co.za` via Resend
 
-### 2. Upgrade the Onboarding Wizard
+3. **No changes needed** to:
+   - Admin UI (`AdminEmails.tsx`)
+   - Client portal (`Emails.tsx`)
+   - Database schema or RLS policies
+   - Auth email hook (continues using Lovable's built-in system)
 
-Make the 4-step wizard feel premium and alive:
+### Technical detail
 
-- **Step 0 (Welcome):** Add the brand logo/mark, a calming welcome message with the client's name (pulled from the invite metadata), and a preview of what the 4 steps cover
-- **Step 1 (Personal):** Pre-fill name and email from the auth metadata so it feels seamless
-- **Step 2 (Business):** Pre-fill company name and industry from the invite metadata
-- **Step 3 (Final):** Add a completion animation and the brand sign-off line: "Welcome to SUPPORT STUDIO(TM) -- Clarity builds momentum. Systems build freedom."
+```typescript
+// Replace sendLovableEmail with:
+const res = await fetch('https://api.resend.com/emails', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${Deno.env.get('RESEND_API_KEY')}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: `Support Studio <noreply@notify.www.supportstudio.co.za>`,
+    to: body.to_email,
+    subject: body.subject,
+    html,
+    text,
+  }),
+});
+```
 
-### 3. Connect Admin Actions to Visible Results
-
-**AdminOverview:** 
-- Add a "Recent Activations" mini-section that shows the last 3 approved clients with timestamps
-- Ensure all KPI cards pull fresh data after any approval action
-
-**AdminApplications:**
-- After approval, show a confirmation banner with next steps visible
-- Add activity logging so the approval shows in the Global Activity feed
-
-**AdminLeadPipeline:**
-- When a lead is dragged to "Won", also check if there's a matching application and update its status to "approved" for consistency
-- Ensure the `activateClient` mutation creates the same infrastructure as the Edge Function (work items, updates, activity log)
-
-### 4. Client Portal Post-Onboarding Experience
-
-**PortalDashboard:**
-- After completing the onboarding wizard, show a "First Week" welcome banner (Day 1 message) that persists for 7 days
-- The dashboard should immediately show the onboarding work items as "Current Priorities"
-- The activity feed should show the welcome entry
-
-**Requests page:**
-- If `clientId` is null (profile exists but no client linkage), show a clearer message: "Your workspace is being prepared. You'll have full access shortly."
-
-### 5. Database Migration
-
-Add a `client_id` column relationship improvement -- currently `clients.contact_profile_id` links to profiles, but the `get_my_client_id()` function already handles this. No schema changes needed.
-
-Ensure the Edge Function creates an `activity_log` entry by adding an insert after client creation (using the service role client).
-
----
-
-## Technical Details
-
-### Files to modify:
-- `supabase/functions/approve-application/index.ts` -- Add work_items, updates, and activity_log creation after client setup
-- `src/components/OnboardingWizard.tsx` -- Enhance visual design, pre-fill fields from auth metadata, add completion animation
-- `src/pages/admin/AdminApplications.tsx` -- Invalidate broader queries on approval, show richer success state
-- `src/pages/admin/AdminOverview.tsx` -- Add recent activations section
-- `src/pages/portal/PortalDashboard.tsx` -- Add first-week welcome banner
-- `src/pages/portal/Requests.tsx` -- Better empty state when client workspace is pending
-
-### Files to create:
-- None -- all changes fit within existing files
-
-### No new dependencies needed.
