@@ -87,9 +87,15 @@ const Footer = () => {
 
           <div>
             <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium">
-              LEGAL
+              STAY UPDATED
             </span>
-            <ul className="mt-4 space-y-2.5">
+            <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
+              Monthly insights on building structured businesses in South Africa.
+            </p>
+            <div className="mt-3">
+              <NewsletterForm source="footer" compact />
+            </div>
+            <ul className="mt-6 space-y-2.5">
               <li>
                 <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Privacy Policy
