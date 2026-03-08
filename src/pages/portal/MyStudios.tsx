@@ -10,11 +10,14 @@ import {
   Power,
   Loader2,
   CheckCircle2,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
+import PodSigningWizard from "@/components/PodSigningWizard";
 
 interface Pod {
   id: string;
@@ -73,7 +76,7 @@ const AVAILABLE_PODS: PodDefinition[] = [
 
 const ONBOARDING_STEPS = [
   "Pod activated",
-  "NDA / MOU review",
+  "Document signing",
   "Kick-off brief",
   "Pod live",
 ];
@@ -83,6 +86,13 @@ const fade = {
   animate: { opacity: 1, y: 0 },
 };
 
+const getConfig = (pod: Pod): Record<string, unknown> => {
+  if (pod.config && typeof pod.config === "object" && !Array.isArray(pod.config)) {
+    return pod.config as Record<string, unknown>;
+  }
+  return {};
+};
+
 const MyStudios = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -90,6 +100,7 @@ const MyStudios = () => {
   const [loading, setLoading] = useState(true);
   const [activating, setActivating] = useState<string | null>(null);
   const [clientId, setClientId] = useState<string | null>(null);
+  const [expandedPod, setExpandedPod] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!user) return;
@@ -109,7 +120,6 @@ const MyStudios = () => {
     fetchData();
   }, [fetchData]);
 
-  // Realtime subscription
   useEffect(() => {
     if (!clientId) return;
     const channel = supabase
@@ -127,11 +137,13 @@ const MyStudios = () => {
     pods.find((p) => p.name === podName);
 
   const getOnboardingStep = (pod: Pod): number => {
-    if (pod.config && typeof pod.config === "object" && !Array.isArray(pod.config)) {
-      const cfg = pod.config as Record<string, unknown>;
-      return (cfg.onboarding_step as number) ?? 1;
-    }
-    return 1;
+    const cfg = getConfig(pod);
+    return (cfg.onboarding_step as number) ?? 1;
+  };
+
+  const getWorkItemId = (pod: Pod): string | null => {
+    const cfg = getConfig(pod);
+    return (cfg.work_item_id as string) ?? null;
   };
 
   const handleActivate = async (podDef: PodDefinition) => {
@@ -147,9 +159,11 @@ const MyStudios = () => {
 
       toast({
         title: "Pod activated",
-        description: `${podDef.name} is being set up. You'll see progress here shortly.`,
+        description: `${podDef.name} is being set up. Complete the document signing to go live.`,
       });
       await fetchData();
+      // Auto-expand the newly activated pod
+      setExpandedPod(podDef.name);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Something went wrong";
       toast({ title: "Activation failed", description: msg, variant: "destructive" });
@@ -183,7 +197,9 @@ const MyStudios = () => {
           const isActive = existing?.status === "active";
           const isOnboarding = existing && existing.status !== "active";
           const step = existing ? getOnboardingStep(existing) : 0;
+          const workItemId = existing ? getWorkItemId(existing) : null;
           const isCurrentlyActivating = activating === podDef.name;
+          const isExpanded = expandedPod === podDef.name;
           const Icon = podDef.icon;
 
           return (
@@ -191,87 +207,129 @@ const MyStudios = () => {
               key={podDef.name}
               {...fade}
               transition={{ duration: 0.3, delay: i * 0.05 }}
-              className={`border p-6 space-y-4 transition-all duration-200 ${
+              className={`border transition-all duration-200 ${
                 isActive
                   ? "border-primary/30 bg-primary/[0.03]"
+                  : isExpanded && isOnboarding
+                  ? "border-foreground/20 col-span-1 md:col-span-2 xl:col-span-3"
                   : "border-border hover:border-foreground/20"
               }`}
             >
-              {/* Header */}
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-9 h-9 flex items-center justify-center"
-                    style={{ color: isActive ? podDef.color : undefined }}
-                  >
-                    <Icon
-                      size={20}
-                      strokeWidth={1.5}
-                      className={isActive ? "" : "text-muted-foreground"}
-                    />
+              <div className="p-6 space-y-4">
+                {/* Header */}
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-9 h-9 flex items-center justify-center"
+                      style={{ color: isActive ? podDef.color : undefined }}
+                    >
+                      <Icon
+                        size={20}
+                        strokeWidth={1.5}
+                        className={isActive ? "" : "text-muted-foreground"}
+                      />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{podDef.name}</p>
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-0.5">
+                        {isActive ? "Live" : isOnboarding ? "Onboarding" : "Available"}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{podDef.name}</p>
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-0.5">
-                      {isActive ? "Live" : isOnboarding ? "Onboarding" : "Available"}
-                    </p>
+
+                  <div className="flex items-center gap-2">
+                    {isActive && (
+                      <CheckCircle2
+                        size={16}
+                        className="text-primary shrink-0"
+                        strokeWidth={1.5}
+                      />
+                    )}
+                    {isOnboarding && (
+                      <button
+                        onClick={() => setExpandedPod(isExpanded ? null : podDef.name)}
+                        className="text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </button>
+                    )}
                   </div>
                 </div>
 
-                {isActive && (
-                  <CheckCircle2
-                    size={16}
-                    className="text-primary shrink-0 mt-1"
-                    strokeWidth={1.5}
-                  />
+                {/* Description */}
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {podDef.description}
+                </p>
+
+                {/* Onboarding progress */}
+                <AnimatePresence>
+                  {isOnboarding && !isExpanded && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <p className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
+                          Onboarding {step}/{ONBOARDING_STEPS.length}
+                        </p>
+                        <button
+                          onClick={() => setExpandedPod(podDef.name)}
+                          className="text-[10px] text-foreground hover:underline"
+                        >
+                          Complete signing →
+                        </button>
+                      </div>
+                      <Progress
+                        value={(step / ONBOARDING_STEPS.length) * 100}
+                        className="h-1"
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Action */}
+                {!existing && (
+                  <button
+                    onClick={() => handleActivate(podDef)}
+                    disabled={!!activating}
+                    className="flex items-center gap-2 text-xs font-medium text-foreground border border-border px-4 py-2 hover:bg-foreground hover:text-background transition-all duration-150 disabled:opacity-40"
+                  >
+                    {isCurrentlyActivating ? (
+                      <Loader2 size={12} className="animate-spin" />
+                    ) : (
+                      <Power size={12} strokeWidth={1.5} />
+                    )}
+                    {isCurrentlyActivating ? "Activating…" : "Activate Pod"}
+                  </button>
                 )}
               </div>
 
-              {/* Description */}
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                {podDef.description}
-              </p>
-
-              {/* Onboarding progress */}
+              {/* Expanded signing wizard */}
               <AnimatePresence>
-                {isOnboarding && (
+                {isExpanded && isOnboarding && existing && workItemId && clientId && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="space-y-2"
+                    className="border-t border-border"
                   >
-                    <div className="flex items-center justify-between">
-                      <p className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
-                        Onboarding {step}/{ONBOARDING_STEPS.length}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">
-                        {ONBOARDING_STEPS[step - 1] || "In progress"}
-                      </p>
+                    <div className="p-6">
+                      <PodSigningWizard
+                        podId={existing.id}
+                        podName={podDef.name}
+                        workItemId={workItemId}
+                        clientId={clientId}
+                        onComplete={() => {
+                          fetchData();
+                          setExpandedPod(null);
+                        }}
+                      />
                     </div>
-                    <Progress
-                      value={(step / ONBOARDING_STEPS.length) * 100}
-                      className="h-1"
-                    />
                   </motion.div>
                 )}
               </AnimatePresence>
-
-              {/* Action */}
-              {!existing && (
-                <button
-                  onClick={() => handleActivate(podDef)}
-                  disabled={!!activating}
-                  className="flex items-center gap-2 text-xs font-medium text-foreground border border-border px-4 py-2 hover:bg-foreground hover:text-background transition-all duration-150 disabled:opacity-40"
-                >
-                  {isCurrentlyActivating ? (
-                    <Loader2 size={12} className="animate-spin" />
-                  ) : (
-                    <Power size={12} strokeWidth={1.5} />
-                  )}
-                  {isCurrentlyActivating ? "Activating…" : "Activate Pod"}
-                </button>
-              )}
             </motion.div>
           );
         })}
