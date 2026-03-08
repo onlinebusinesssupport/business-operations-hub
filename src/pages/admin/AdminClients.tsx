@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Search, Plus, Loader2, X, Gauge } from "lucide-react";
+import { ArrowRight, Search, Plus, Loader2, X, Gauge, Trash2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { KanbanBoard, KanbanColumn } from "@/components/KanbanBoard";
 import InlineEdit from "@/components/InlineEdit";
 import { logActivity } from "@/lib/activity";
+import { formatCurrency } from "@/lib/currency";
 import PartnerCockpit from "@/components/PartnerCockpit";
+import LekoRiskGuard from "@/components/LekoRiskGuard";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
@@ -38,6 +40,8 @@ const AdminClients = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [view, setView] = useState<"list" | "board">("board");
   const [showInvite, setShowInvite] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [inviteForm, setInviteForm] = useState({ email: "", full_name: "", company_name: "", services: "" });
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -91,6 +95,39 @@ const AdminClients = () => {
       },
     });
   }, [queryClient]);
+
+  const handleDeleteClient = async () => {
+    if (!deleteTarget) return;
+    setDeleteLoading(true);
+    try {
+      // Delete linked records first
+      await supabase.from("work_items").delete().eq("client_id", deleteTarget.id);
+      await supabase.from("invoices").delete().eq("client_id", deleteTarget.id);
+      await supabase.from("updates").delete().eq("client_id", deleteTarget.id);
+      await supabase.from("documents").delete().eq("client_id", deleteTarget.id);
+      await supabase.from("requests").delete().eq("client_id", deleteTarget.id);
+      await supabase.from("pods").delete().eq("client_id", deleteTarget.id);
+      await supabase.from("activity_log").delete().eq("client_id", deleteTarget.id);
+      const { error } = await supabase.from("clients").delete().eq("id", deleteTarget.id);
+      if (error) throw error;
+      queryClient.invalidateQueries({ queryKey: ["admin-clients"] });
+      toast({ title: "Client deleted", description: `${deleteTarget.name} has been removed.` });
+    } catch (err: any) {
+      toast({ title: "Delete failed", description: err.message, variant: "destructive" });
+    } finally {
+      setDeleteLoading(false);
+      setDeleteTarget(null);
+    }
+  };
+
+  const getClientRisks = (client: any) => {
+    const risks: string[] = [];
+    if (client.retainer_used > 0) risks.push(`This client has ${client.retainer_used} retainer hours logged. Deleting will remove all time tracking records.`);
+    if ((client.services || []).length > 0) risks.push(`Active services (${client.services.join(", ")}) will be orphaned.`);
+    if (Number(client.lifetime_revenue) > 0) risks.push(`Lifetime revenue of ${formatCurrency(Number(client.lifetime_revenue))} will be lost from reports.`);
+    if (client.subscription_status === "active") risks.push("This is an ACTIVE subscription. Consider pausing instead of deleting.");
+    return risks;
+  };
 
   const handleDragEnd = useCallback((itemId: string, _source: string, destColumn: string) => {
     const client = clients.find((c: any) => c.id === itemId);
@@ -232,12 +269,20 @@ const AdminClients = () => {
                   </div>
                   {client.monthly_rate > 0 && (
                     <p className="text-[10px] text-muted-foreground mt-2">
-                      R{Number(client.monthly_rate).toLocaleString("en-ZA")}/mo
+                      {formatCurrency(Number(client.monthly_rate))}/mo
                     </p>
                   )}
-                  <p className="text-[10px] text-muted-foreground/60 mt-1">
-                    {(client.services || []).slice(0, 2).join(" · ") || "No services"}
-                  </p>
+                  <div className="mt-2 flex items-center justify-between">
+                    <p className="text-[10px] text-muted-foreground/60">
+                      {(client.services || []).slice(0, 2).join(" · ") || "No services"}
+                    </p>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setDeleteTarget(client); }}
+                      className="text-muted-foreground/40 hover:text-destructive transition-colors p-1"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
                 </div>
               );
             }}
@@ -296,6 +341,16 @@ const AdminClients = () => {
           )}
         </motion.div>
       )}
+
+      <LekoRiskGuard
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDeleteClient}
+        loading={deleteLoading}
+        entityType="Client"
+        entityName={deleteTarget?.name || ""}
+        risks={deleteTarget ? getClientRisks(deleteTarget) : []}
+      />
     </div>
   );
 };

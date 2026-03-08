@@ -12,16 +12,17 @@ import {
   ResponsiveContainer, Cell, PieChart, Pie, Legend,
 } from "recharts";
 import { format, subMonths, startOfMonth, endOfMonth, differenceInDays, parseISO } from "date-fns";
+import { formatCurrency, useCurrency } from "@/lib/currency";
 
 /* ═══════════════════════════════════════════════
-   KPMG-STYLE TOKENS
+   THEME TOKENS — synced with Studio Control
    ═══════════════════════════════════════════════ */
-const NAVY = "#0C2340";
-const SLATE = "#4A5568";
-const GREEN_MUTED = "#276749";
+const NAVY = "hsl(var(--foreground))";
+const SLATE = "hsl(var(--muted-foreground))";
+const GREEN_MUTED = "hsl(var(--primary))";
 const RED_MUTED = "#9B2C2C";
-const BLUE_ACCENT = "#1A365D";
-const CHART_COLORS = ["#0C2340", "#276749", "#2B6CB0", "#4A5568", "#718096"];
+const BLUE_ACCENT = "hsl(var(--primary))";
+const CHART_COLORS = ["hsl(142, 33%, 24%)", "#2B6CB0", "#4A5568", "#718096", "#1A365D"];
 
 /* ═══════════════════════════════════════════════
    CSV EXPORT UTILITY
@@ -251,7 +252,7 @@ const AdminFinance = () => {
     return { outputVAT, inputVAT, payable: outputVAT - inputVAT };
   }, [filteredTransactions]);
 
-  const fmtZAR = (n: number) => `R ${n.toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const fmtZAR = (n: number) => formatCurrency(n);
   const reportDate = format(new Date(), "dd MMMM yyyy, HH:mm");
 
   return (
@@ -260,7 +261,7 @@ const AdminFinance = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">Financial Reports</p>
-          <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: "'Georgia', serif", color: NAVY }}>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
             Finance Dashboard
           </h1>
         </div>

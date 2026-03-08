@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
-import { User, Bell, Shield, Globe, FileText, Plus, Trash2, GripVertical, Save, Loader2, ToggleLeft, ToggleRight } from "lucide-react";
+import { User, Bell, Shield, Globe, FileText, Plus, Trash2, GripVertical, Save, Loader2, ToggleLeft, ToggleRight, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import portraitImg from "@/assets/portrait.png";
+import { useCurrency } from "@/lib/currency";
 
 const stagger = {
   initial: { opacity: 0, y: 12 },
@@ -325,6 +326,9 @@ const AdminSettings = () => {
         </div>
       </motion.div>
 
+      {/* Currency Toggle */}
+      <CurrencyToggleSection />
+
       {/* Platform */}
       <motion.div {...stagger} transition={{ duration: 0.3, delay: 0.25 }} className="border border-border p-6">
         <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-5 flex items-center gap-2">
@@ -337,7 +341,7 @@ const AdminSettings = () => {
           </div>
           <div>
             <p className="text-sm text-foreground">Version</p>
-            <p className="text-xs text-muted-foreground">2.1.0</p>
+            <p className="text-xs text-muted-foreground">2.2.0</p>
           </div>
           <div>
             <p className="text-sm text-foreground">Environment</p>
@@ -348,5 +352,51 @@ const AdminSettings = () => {
     </div>
   );
 };
+
+function CurrencyToggleSection() {
+  const { currency, setCurrency } = useCurrency();
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: 0.22 }}
+      className="border border-border p-6"
+    >
+      <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase mb-5 flex items-center gap-2">
+        <Coins size={14} strokeWidth={1.5} /> Currency
+      </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-foreground">Display Currency</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Toggle between South African Rand (ZAR) and US Dollar (USD) across all financial displays.
+          </p>
+        </div>
+        <div className="flex border border-border">
+          <button
+            onClick={() => setCurrency("ZAR")}
+            className={`text-xs px-4 py-2 transition-colors font-medium ${
+              currency === "ZAR"
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            R ZAR
+          </button>
+          <button
+            onClick={() => setCurrency("USD")}
+            className={`text-xs px-4 py-2 transition-colors font-medium ${
+              currency === "USD"
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            $ USD
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default AdminSettings;
