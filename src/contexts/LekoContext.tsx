@@ -5,7 +5,7 @@ export type InsightType = "risk" | "opportunity" | "action" | "forecast" | "info
 export type InsightSeverity = "critical" | "warning" | "info" | "positive";
 
 export interface LekoInsight {
-  type: "risk" | "opportunity" | "action" | "forecast";
+  type: InsightType;
   title: string;
   body: string;
   action: { label: string; route: string } | null;
