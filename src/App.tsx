@@ -151,6 +151,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <LekoChat />
+          </LekoProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
