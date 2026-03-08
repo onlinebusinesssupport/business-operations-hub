@@ -102,9 +102,9 @@ const AdminSubscribers = () => {
   }, [subscribers, search, sourceFilter]);
 
   const exportCsv = () => {
-    const header = "Email,Source,Date,Active,Origin\n";
+    const header = "Full Name,Email,Source,Date,Active,POPI Consent,Origin\n";
     const body = filtered
-      .map((r) => `${r.email},${r.source},${format(new Date(r.date), "yyyy-MM-dd")},${r.is_active},${r.origin}`)
+      .map((r) => `"${r.full_name || ""}",${r.email},${r.source},${format(new Date(r.date), "yyyy-MM-dd")},${r.is_active},${r.popi_consent ?? ""},${r.origin}`)
       .join("\n");
     const blob = new Blob([header + body], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
