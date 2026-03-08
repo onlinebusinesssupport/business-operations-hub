@@ -182,15 +182,16 @@ const AdminSubscribers = () => {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground py-12">Loading...</TableCell>
+                <TableCell colSpan={6} className="text-center text-muted-foreground py-12">Loading...</TableCell>
               </TableRow>
             ) : filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground py-12">No subscribers found</TableCell>
+                <TableCell colSpan={6} className="text-center text-muted-foreground py-12">No subscribers found</TableCell>
               </TableRow>
             ) : (
               filtered.map((row, i) => (
                 <TableRow key={`${row.email}-${i}`}>
+                  <TableCell className="text-sm">{row.full_name || <span className="text-muted-foreground">—</span>}</TableCell>
                   <TableCell className="font-medium text-sm">{row.email}</TableCell>
                   <TableCell>
                     <Badge variant={sourceBadgeColor(row.source) as any} className="text-[10px] uppercase tracking-wider">
@@ -199,6 +200,17 @@ const AdminSubscribers = () => {
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {format(new Date(row.date), "dd MMM yyyy")}
+                  </TableCell>
+                  <TableCell>
+                    {row.origin === "newsletter" ? (
+                      row.popi_consent ? (
+                        <Badge variant="default" className="text-[10px]">Yes</Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-[10px]">No</Badge>
+                      )
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     {row.origin === "newsletter" ? (
