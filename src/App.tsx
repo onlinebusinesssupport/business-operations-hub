@@ -70,7 +70,7 @@ import Reviews from "./pages/Reviews";
 import ReviewSubmit from "./pages/ReviewSubmit";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
-import PortalEmails from "./pages/portal/Emails";
+import PortalMessages from "./pages/portal/Messages";
 
 const queryClient = new QueryClient();
 
