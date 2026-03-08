@@ -125,6 +125,7 @@ export type Database = {
           id: string
           period_end: string | null
           period_start: string | null
+          skipped_count: number | null
           status: string
           total_in: number | null
           total_out: number | null
@@ -140,6 +141,7 @@ export type Database = {
           id?: string
           period_end?: string | null
           period_start?: string | null
+          skipped_count?: number | null
           status?: string
           total_in?: number | null
           total_out?: number | null
@@ -155,6 +157,7 @@ export type Database = {
           id?: string
           period_end?: string | null
           period_start?: string | null
+          skipped_count?: number | null
           status?: string
           total_in?: number | null
           total_out?: number | null

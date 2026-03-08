@@ -479,7 +479,18 @@ const AdminAccountant = () => {
                         <TableCell className="text-right text-xs text-green-600">R {(s.total_in || 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</TableCell>
                         <TableCell className="text-right text-xs text-destructive">R {(s.total_out || 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</TableCell>
                         <TableCell className="text-xs">{s.transaction_count}</TableCell>
-                        <TableCell>{statusBadge(s.status)}</TableCell>
+                        <TableCell className="flex items-center gap-1.5">
+                          {statusBadge(s.status)}
+                          {s.status !== "processing" && s.transaction_count > 0 && (s.skipped_count || 0) === 0 && (
+                            <CheckCircle2 size={14} className="text-green-600" title="All transactions parsed cleanly" />
+                          )}
+                          {(s.skipped_count || 0) > 0 && s.transaction_count > 0 && (
+                            <AlertTriangle size={14} className="text-yellow-600" title={`${s.skipped_count} lines skipped`} />
+                          )}
+                          {s.status !== "processing" && s.transaction_count === 0 && (
+                            <XCircle size={14} className="text-destructive" title="No valid transactions parsed" />
+                          )}
+                        </TableCell>
                         <TableCell>
                           <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={(e) => { e.stopPropagation(); handleCategorise(s.id); }} disabled={categorising}>
                             <Brain size={12} className="mr-1" /> Categorise
