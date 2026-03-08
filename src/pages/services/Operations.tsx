@@ -15,6 +15,7 @@ const whatWeDo = [
   "Vendor coordination",
   "CRM updates",
   "Research support",
+  "Travel management & bookings",
   "Founder operations",
 ];
 
@@ -23,6 +24,7 @@ const outcomes = [
   "Improved operational consistency",
   "Reduced task switching",
   "Structured internal communication",
+  "Seamless travel logistics",
 ];
 
 const idealFor = [
@@ -79,7 +81,7 @@ const OperationsService = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
           <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">What We Actually Do</h2>
           <p className="mt-6 text-sm text-muted-foreground leading-relaxed">
-            Embedded executive-level virtual support. Not generic VA work — structured, high-trust operational assistance.
+            Embedded executive-level virtual support. Not generic VA work — structured, high-trust operational assistance including travel coordination.
           </p>
           <ul className="mt-6 space-y-3">
             {whatWeDo.map((d) => (

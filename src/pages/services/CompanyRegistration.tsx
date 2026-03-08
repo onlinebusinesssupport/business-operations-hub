@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Check, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowLeft, Check, ArrowRight, FileText } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -8,25 +8,29 @@ import { Button } from "@/components/ui/button";
 const easeOut: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const whatWeDo = [
-  "Travel planning",
-  "Retreat coordination",
-  "Activity curation",
-  "Corporate event logistics",
+  "CIPC company registration (Pty Ltd, NPC)",
+  "Tax registration with SARS (Income Tax, VAT, PAYE)",
+  "B-BBEE certificate & compliance setup",
+  "Business bank account facilitation",
+  "Shareholder & partnership agreements",
+  "Company secretarial documentation",
 ];
 
 const outcomes = [
-  "Seamless execution",
-  "Strengthened team cohesion",
-  "Elevated client experiences",
+  "Fully registered and compliant entity",
+  "Ready to invoice, hire, and operate",
+  "Clear corporate structure from day one",
+  "Positioned for funding and partnerships",
 ];
 
 const idealFor = [
-  "Teams planning retreats",
-  "Founders hosting VIP clients",
-  "Businesses needing seamless travel coordination",
+  "First-time founders registering a new business",
+  "Existing businesses formalizing structure",
+  "Foreign companies entering South Africa",
+  "Entrepreneurs preparing for investment",
 ];
 
-const TravelActivities = () => {
+const CompanyRegistration = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -37,14 +41,14 @@ const TravelActivities = () => {
             <ArrowLeft size={14} /> Back to Services
           </Link>
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: easeOut }} className="flex items-center gap-3 mb-6">
-            <Sparkles size={22} className="text-primary" strokeWidth={1.5} />
-            <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-medium">PREMIUM ADD-ON</span>
+            <FileText size={22} className="text-primary" strokeWidth={1.5} />
+            <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-medium">BUSINESS FORMATION</span>
           </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.05, ease: easeOut }} className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.05] text-foreground uppercase tracking-tight">
-            Travel & Activities
+            Company Registration & Setup
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1, ease: easeOut }} className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg">
-            Experiences that build culture and momentum.
+            From idea to registered entity. We handle the paperwork so you can focus on building.
           </motion.p>
         </div>
       </section>
@@ -52,7 +56,7 @@ const TravelActivities = () => {
       <section className="w-full">
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease: easeOut }} className="aspect-[16/9] overflow-hidden rounded-lg">
-            <img src="/images/service-travel.png" alt="Professionals at an outdoor retreat venue with Cape Town mountains" className="w-full h-full object-cover" loading="lazy" />
+            <img src="/images/service-grants.png" alt="Professional reviewing company registration documents" className="w-full h-full object-cover" loading="lazy" />
           </motion.div>
         </div>
       </section>
@@ -96,12 +100,12 @@ const TravelActivities = () => {
         </div>
       </section>
 
-      {/* Custom Quote */}
+      {/* Pricing */}
       <section className="py-20">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
           <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-tight">Pricing</h2>
           <p className="mt-6 text-sm text-muted-foreground leading-relaxed max-w-xl mx-auto">
-            We custom quote all travel and experience projects based on scope, destination, and group size. Projects start at <span className="text-foreground font-medium">$520 / R8,500</span>, and travel management retainers start at <span className="text-foreground font-medium">$520/mo / R8,500/mo</span>.
+            Clear, transparent pricing for every stage of business formation. Basic Pty Ltd registration from <span className="text-foreground font-medium">R8,500</span>. Full setup packages (registration + tax + B-BBEE + banking) from <span className="text-foreground font-medium">R18,000</span>.
           </p>
           <div className="mt-8">
             <Link to="/contact">
@@ -115,8 +119,8 @@ const TravelActivities = () => {
 
       <section className="py-24 bg-primary text-primary-foreground">
         <div className="container mx-auto px-6 lg:px-8 text-center max-w-2xl">
-          <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-tight">Plan My Experience</h2>
-          <p className="mt-4 text-sm text-primary-foreground/70">From retreats to VIP experiences — we handle every detail.</p>
+          <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-tight">Register Your Business</h2>
+          <p className="mt-4 text-sm text-primary-foreground/70">From CIPC to SARS to B-BBEE — we build your corporate foundation.</p>
           <div className="mt-8">
             <Link to="/contact"><Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">Let's Partner <ArrowRight size={14} /></Button></Link>
           </div>
@@ -136,4 +140,4 @@ const TravelActivities = () => {
   );
 };
 
-export default TravelActivities;
+export default CompanyRegistration;
