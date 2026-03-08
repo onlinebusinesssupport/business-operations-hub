@@ -1,82 +1,76 @@
 
-# Make the System Live and Interactive
 
-## Problem Summary
+## Billing Workflow: Invoice Upload → Client Payment → POP Upload
 
-Two core issues need fixing:
+### Problem
+Currently, invoices are just database records with no file attachments. There's no way for admins to upload an actual invoice document, no way for clients to download it, and no mechanism for clients to upload Proof of Payment (POP) with transaction details.
 
-1. **Onboarding Wizard shows "Step 1 of 4" but feels empty** -- The wizard exists and has all 4 steps, but clients arriving via the approval flow don't see it because the `approve-application` Edge Function creates a profile with `onboarding_completed` potentially already set, or the profile/client linkage is incomplete. The welcome step (Step 0) also lacks visual warmth -- no branded imagery or clear value proposition.
+### Workflow Design
 
-2. **Admin approval feels disconnected** -- When you approve an application, the Edge Function sends an invite email and creates a client record, but there's no visible feedback loop back into the Admin dashboard. The pipeline, applications page, and overview don't refresh or show the activation result. The whole system feels like a shell because actions don't cascade visibly.
+```text
+ADMIN creates invoice          CLIENT sees invoice
+with file + details            downloads PDF/file
+        │                              │
+  [draft] → [sent] ──────────► [visible to client]
+                                       │
+                               Client pays externally
+                                       │
+                               Client uploads POP
+                               + logs details
+                                       │
+                          [awaiting_confirmation] ◄──┘
+                                       │
+                               Admin reviews POP
+                                       │
+                                    [paid] ✓
+```
 
----
+**Invoice statuses**: `draft` → `sent` → `awaiting_confirmation` → `paid` (+ `overdue` as needed)
 
-## Plan
+**Stage trigger**: When admin moves an invoice from `draft` to `sent`, it becomes visible to the client. No new work manager stage needed — the billing tab itself IS the workflow stage.
 
-### 1. Fix the Approval-to-Onboarding Pipeline
+### Database Changes
 
-**Edge Function (`approve-application`):**
-- After creating the client record, also generate 4 default onboarding `work_items` (same as the pipeline activation does) and a welcome `update` entry
-- Log an `activity_log` entry so the activity feeds light up immediately
-- Ensure the profile is created with `onboarding_completed = false` so the wizard triggers on first login
+Add columns to the `invoices` table:
+- `file_path text` — path to uploaded invoice file in storage
+- `pop_file_path text` — path to client's uploaded POP
+- `pop_details jsonb` — client-logged payment details (reference number, bank, amount paid, date paid)
+- `invoice_number text` — already exists
 
-**Admin Applications page:**
-- After successful approval, invalidate all relevant queries (`overview-clients`, `overview-work`, `pipeline-*`) so the dashboard metrics update instantly
-- Show a success state with a summary: "Workspace created, invite sent, 4 onboarding tasks generated"
-- Add a "View Workspace" link that navigates to the Partner Workspaces page
+Add RLS policy so clients can UPDATE their own invoices (only `pop_file_path` and `pop_details` fields — enforced at app level since Postgres column-level RLS isn't practical; the existing "sent"/"awaiting_confirmation" status acts as a guard).
 
-### 2. Upgrade the Onboarding Wizard
+Create a storage bucket `invoice-files` (private) with RLS:
+- Admins can upload/read all
+- Clients can read files in their client folder + upload POP files
 
-Make the 4-step wizard feel premium and alive:
+### Admin Billing Tab Changes (PartnerCockpit)
 
-- **Step 0 (Welcome):** Add the brand logo/mark, a calming welcome message with the client's name (pulled from the invite metadata), and a preview of what the 4 steps cover
-- **Step 1 (Personal):** Pre-fill name and email from the auth metadata so it feels seamless
-- **Step 2 (Business):** Pre-fill company name and industry from the invite metadata
-- **Step 3 (Final):** Add a completion animation and the brand sign-off line: "Welcome to SUPPORT STUDIO(TM) -- Clarity builds momentum. Systems build freedom."
+Enhance the existing billing section:
+1. **"Create Invoice" button** opens a form with: invoice number, amount, due date, description, currency, and **file upload** (PDF/image)
+2. File uploads to `invoice-files/{client_id}/invoices/{filename}`
+3. Invoice list shows a download link for the file
+4. New status option: `awaiting_confirmation` (when client uploads POP)
+5. POP column — admin can view/download the client's uploaded POP and see their logged details
+6. One-click "Confirm Payment" button to mark as `paid`
 
-### 3. Connect Admin Actions to Visible Results
+### Client Billing Page Changes (portal/Billing.tsx)
 
-**AdminOverview:** 
-- Add a "Recent Activations" mini-section that shows the last 3 approved clients with timestamps
-- Ensure all KPI cards pull fresh data after any approval action
+Enhance the existing client billing page:
+1. Invoices with status `sent`, `awaiting_confirmation`, `overdue`, or `paid` are visible (not `draft`)
+2. Each invoice row gets a **"Download Invoice"** button (signed URL from storage)
+3. For unpaid invoices (`sent`/`overdue`): **"Upload POP"** button opens a dialog:
+   - File upload (PDF/image of POP)
+   - Reference/transaction number (text)
+   - Bank name (text)
+   - Amount paid (number)
+   - Date paid (date picker)
+4. On submit: uploads file to `invoice-files/{client_id}/pop/{filename}`, updates invoice with `pop_file_path` + `pop_details`, sets status to `awaiting_confirmation`
+5. Status badges update to reflect the full lifecycle
 
-**AdminApplications:**
-- After approval, show a confirmation banner with next steps visible
-- Add activity logging so the approval shows in the Global Activity feed
+### Technical Notes
 
-**AdminLeadPipeline:**
-- When a lead is dragged to "Won", also check if there's a matching application and update its status to "approved" for consistency
-- Ensure the `activateClient` mutation creates the same infrastructure as the Edge Function (work items, updates, activity log)
+- All file serving uses Supabase signed URLs (time-limited, secure)
+- No external payment APIs — purely file-based workflow
+- Activity log entries for: invoice created, invoice sent, POP uploaded, payment confirmed
+- Client can only upload POP for invoices in `sent` or `overdue` status (app-level guard)
 
-### 4. Client Portal Post-Onboarding Experience
-
-**PortalDashboard:**
-- After completing the onboarding wizard, show a "First Week" welcome banner (Day 1 message) that persists for 7 days
-- The dashboard should immediately show the onboarding work items as "Current Priorities"
-- The activity feed should show the welcome entry
-
-**Requests page:**
-- If `clientId` is null (profile exists but no client linkage), show a clearer message: "Your workspace is being prepared. You'll have full access shortly."
-
-### 5. Database Migration
-
-Add a `client_id` column relationship improvement -- currently `clients.contact_profile_id` links to profiles, but the `get_my_client_id()` function already handles this. No schema changes needed.
-
-Ensure the Edge Function creates an `activity_log` entry by adding an insert after client creation (using the service role client).
-
----
-
-## Technical Details
-
-### Files to modify:
-- `supabase/functions/approve-application/index.ts` -- Add work_items, updates, and activity_log creation after client setup
-- `src/components/OnboardingWizard.tsx` -- Enhance visual design, pre-fill fields from auth metadata, add completion animation
-- `src/pages/admin/AdminApplications.tsx` -- Invalidate broader queries on approval, show richer success state
-- `src/pages/admin/AdminOverview.tsx` -- Add recent activations section
-- `src/pages/portal/PortalDashboard.tsx` -- Add first-week welcome banner
-- `src/pages/portal/Requests.tsx` -- Better empty state when client workspace is pending
-
-### Files to create:
-- None -- all changes fit within existing files
-
-### No new dependencies needed.
