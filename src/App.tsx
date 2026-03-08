@@ -136,6 +136,7 @@ const App = () => (
             <Route path="/admin/pipeline" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminLeadPipeline /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/onboarding" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminOnboardingQueue /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/reviews" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminReviews /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/accountant" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminAccountant /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminSettings /></DashboardLayout></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
