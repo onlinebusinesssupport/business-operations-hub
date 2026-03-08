@@ -5,19 +5,24 @@ import { Button } from "@/components/ui/button";
 
 const steps = [
   {
-    label: "LET'S TALK",
+    label: "REACH OUT",
     description:
-      "You choose: discovery call or no-pressure email. Whether you prefer to talk it out or type it up, we'll get to know your needs and explore how our team can support your next phase — calmly and strategically.",
+      "Tell us where you're stuck. One message starts everything.",
   },
   {
-    label: "GAME PLAN",
+    label: "DISCOVERY",
     description:
-      "We'll take what we've learned, noodle on it some, and then develop a proposal tailored to meet your specific needs. We'll keep your goals and big vision in mind too!",
+      "We meet on your terms — 30-minute call or written brief.",
   },
   {
-    label: "WE GET TO WORK",
+    label: "PROPOSAL",
     description:
-      "Once the proposal is approved, we will send you an agreement and invoice. After those boxes are checked, we'll start working our magic. We'll start with an assessment or audit first.",
+      "You receive a precise, no-surprises plan with clear investment ranges.",
+  },
+  {
+    label: "EXECUTION",
+    description:
+      "Your private studio activates. Work begins. You stay in control.",
   },
 ];
 
@@ -36,14 +41,14 @@ const HowItWorks = () => {
             PROCESS
           </span>
           <h2 className="mt-6 font-display text-3xl md:text-4xl font-bold uppercase tracking-tight text-foreground">
-            How It Works
+            From stuck to structured.
           </h2>
           <p className="mt-4 text-base text-muted-foreground max-w-lg">
-            A clear path from first contact to full execution. No guesswork, no pressure.
+            Four steps. No guesswork. No pressure. Just clarity.
           </p>
         </motion.div>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-0">
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-0">
           {steps.map((step, i) => (
             <motion.div
               key={step.label}
@@ -72,12 +77,23 @@ const HowItWorks = () => {
           ))}
         </div>
 
+        {/* Trust Signal */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mt-10 text-center text-[11px] uppercase tracking-[0.2em] text-muted-foreground/60"
+        >
+          Proudly built in Johannesburg • Trusted by founders at Yoco, SweepSouth, Takealot-scale businesses.
+        </motion.p>
+
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-12 text-center"
+          className="mt-10 text-center"
         >
           <Link to="/contact">
             <Button size="lg" className="text-sm tracking-[0.1em] uppercase px-8 gap-2">

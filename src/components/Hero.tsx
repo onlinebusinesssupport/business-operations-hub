@@ -14,7 +14,7 @@ const Hero = () => {
             transition={{ duration: 0.5 }}
             className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground font-medium"
           >
-            BUSINESS ENABLEMENT
+            PRIVATE OPERATIONS
           </motion.span>
 
           <motion.h1
@@ -23,7 +23,7 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
             className="mt-6 font-display text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight text-foreground uppercase"
           >
-            Business support, reimagined.
+            Support Studio™
           </motion.h1>
 
           <motion.p
@@ -32,7 +32,7 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
             className="mt-6 text-xl md:text-2xl font-display font-medium text-foreground/80"
           >
-            The operating system behind modern founders.
+            The private operating system for South African founders who are done with chaos.
           </motion.p>
 
           <motion.p
@@ -41,7 +41,7 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
             className="mt-4 text-base md:text-lg leading-relaxed text-muted-foreground max-w-xl"
           >
-            THE BUSINESS SUPPORT STUDIO combines operational support, digital brand management, and curated experiences into one intelligent platform.
+            Operational support. Systems that scale. Digital presence that commands respect. All managed from one calm, private studio — built for founders who move fast and expect excellence.
           </motion.p>
 
           <motion.div

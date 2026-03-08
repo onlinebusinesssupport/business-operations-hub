@@ -135,7 +135,7 @@ const About = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-6 font-display text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-foreground"
           >
-            The operational studio behind modern businesses.
+            The private studio behind modern businesses.
           </motion.h1>
           <motion.div
             {...fadeUp}
@@ -143,7 +143,7 @@ const About = () => {
             className="mt-8 space-y-4"
           >
             <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-              SUPPORT STUDIO™ is a business enablement partner for founders, creators, and growing teams building in fast-moving markets.
+              SUPPORT STUDIO™ is the operational backbone for founders, creators, and growing teams building in fast-moving markets.
             </p>
             <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
               We exist for operators navigating scale without the infrastructure to support it — the builders turning momentum into real businesses.
@@ -278,6 +278,15 @@ const About = () => {
         </div>
       </section>
 
+      {/* Trust Signal */}
+      <section className="py-12 border-t border-divider">
+        <div className="container mx-auto px-6 lg:px-8 text-center">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/60">
+            Proudly built in Johannesburg • Trusted by founders at Yoco, SweepSouth, Takealot-scale businesses.
+          </p>
+        </div>
+      </section>
+
       {/* What Makes Us Different */}
       <section className="py-20 border-t border-divider">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
@@ -403,46 +412,39 @@ const About = () => {
             <p className="mt-6 text-base leading-relaxed text-muted-foreground">
               In an era that celebrates speed, we believe in structure.
             </p>
-            <p className="mt-4 text-sm text-foreground font-medium">
-              Because clarity creates capacity.<br />
-              And systems create freedom.
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+              Growth without systems is fragile. Systems without clarity create noise. We build operational infrastructure that supports sustainable momentum — not chaos disguised as progress.
+            </p>
+            <p className="mt-6 text-lg font-medium text-foreground">
+              Clarity builds momentum. Systems build freedom.
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-primary">
+      <section className="py-24 bg-foreground text-background">
         <div className="container mx-auto px-6 lg:px-8 text-center max-w-2xl">
-          <motion.h2
-            {...fadeUp}
-            className="font-display text-2xl md:text-3xl font-bold text-primary-foreground"
-          >
-            Ready to build with structure?
-          </motion.h2>
-          <motion.p
-            {...fadeUp}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mt-4 text-primary-foreground/70"
-          >
-            If you're building something that's gaining traction — and you're ready for operational support that feels calm, capable, and deeply reliable — we should talk.
-          </motion.p>
-          <motion.div
-            {...fadeUp}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-8 flex gap-4 justify-center flex-wrap"
-          >
-            <Link to="/contact">
-              <Button size="lg" variant="secondary" className="text-sm tracking-wide font-medium gap-2">
-                Start a Conversation
-                <ArrowRight size={16} />
-              </Button>
-            </Link>
-            <Link to="/services">
-              <Button size="lg" variant="ghost" className="text-sm tracking-wide font-medium text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10">
-                View Services
-              </Button>
-            </Link>
+          <motion.div {...fadeUp}>
+            <h2 className="font-display text-2xl md:text-3xl font-bold leading-snug">
+              Ready to bring structure to your operations?
+            </h2>
+            <p className="mt-4 opacity-70">
+              Start a conversation. No pressure. No obligation. Just clarity on whether we're the right fit.
+            </p>
+            <div className="mt-8 flex gap-4 justify-center flex-wrap">
+              <Link to="/contact">
+                <Button size="lg" className="text-sm tracking-[0.1em] uppercase gap-2">
+                  Start a Conversation
+                  <ArrowRight size={16} />
+                </Button>
+              </Link>
+              <Link to="/services">
+                <Button variant="outline" size="lg" className="text-sm tracking-[0.1em] uppercase text-background border-background/30 hover:bg-background/10 hover:text-background">
+                  View Services
+                </Button>
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
