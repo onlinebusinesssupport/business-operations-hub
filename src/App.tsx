@@ -27,6 +27,7 @@ import MfaVerify from "./pages/MfaVerify";
 // Client Portal
 import PortalDashboard from "./pages/portal/PortalDashboard";
 import StudiosHub from "./pages/portal/StudiosHub";
+import MyStudios from "./pages/portal/MyStudios";
 import Requests from "./pages/portal/Requests";
 import Progress from "./pages/portal/Progress";
 import ClientReports from "./pages/portal/ClientReports";
