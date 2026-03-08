@@ -265,6 +265,20 @@ const AdminFinance = () => {
           </h1>
         </div>
         <div className="flex items-center gap-3">
+          {unconfirmedCount > 0 && (
+            <button
+              onClick={() => setShowUnconfirmed(!showUnconfirmed)}
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border transition-colors"
+              style={{
+                borderColor: showUnconfirmed ? "#D69E2E" : "#CBD5E0",
+                backgroundColor: showUnconfirmed ? "#FEFCE8" : "transparent",
+                color: showUnconfirmed ? "#92400E" : SLATE,
+              }}
+            >
+              <ShieldAlert size={14} />
+              {showUnconfirmed ? `Showing ${unconfirmedCount} unconfirmed` : `${unconfirmedCount} hidden`}
+            </button>
+          )}
           <Select value={period} onValueChange={setPeriod}>
             <SelectTrigger className="w-[180px] text-xs" style={{ borderColor: NAVY }}>
               <SelectValue />
