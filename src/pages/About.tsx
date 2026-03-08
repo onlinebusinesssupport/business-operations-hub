@@ -430,11 +430,17 @@ const About = () => {
           <motion.div
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-8"
+            className="mt-8 flex gap-4 justify-center flex-wrap"
           >
             <Link to="/contact">
-              <Button size="lg" variant="secondary" className="text-sm tracking-wide font-medium">
-                Work With SUPPORT STUDIO™
+              <Button size="lg" variant="secondary" className="text-sm tracking-wide font-medium gap-2">
+                Start a Conversation
+                <ArrowRight size={16} />
+              </Button>
+            </Link>
+            <Link to="/services">
+              <Button size="lg" variant="ghost" className="text-sm tracking-wide font-medium text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10">
+                View Services
               </Button>
             </Link>
           </motion.div>
