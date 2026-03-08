@@ -104,7 +104,14 @@ Deno.serve(async (req) => {
       });
     }
 
-    const userId = inviteData?.user?.id;
+    let userId = inviteData?.user?.id;
+
+    // Handle already-registered users — look up their existing ID
+    if (!userId && inviteError?.message?.includes("already been registered")) {
+      const { data: listData } = await adminClient.auth.admin.listUsers();
+      const existing = listData?.users?.find((u) => u.email === email);
+      userId = existing?.id ?? null;
+    }
 
     if (userId) {
       // Wait for profile trigger
