@@ -269,8 +269,20 @@ const AdminClients = () => {
                   </div>
                   {client.monthly_rate > 0 && (
                     <p className="text-[10px] text-muted-foreground mt-2">
-                      R{Number(client.monthly_rate).toLocaleString("en-ZA")}/mo
+                      {formatCurrency(Number(client.monthly_rate))}/mo
                     </p>
+                  )}
+                  <div className="mt-2 flex items-center justify-between">
+                    <p className="text-[10px] text-muted-foreground/60">
+                      {(client.services || []).slice(0, 2).join(" · ") || "No services"}
+                    </p>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setDeleteTarget(client); }}
+                      className="text-muted-foreground/40 hover:text-destructive transition-colors p-1"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
                   )}
                   <p className="text-[10px] text-muted-foreground/60 mt-1">
                     {(client.services || []).slice(0, 2).join(" · ") || "No services"}
