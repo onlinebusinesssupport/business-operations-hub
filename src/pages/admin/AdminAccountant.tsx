@@ -172,7 +172,7 @@ const AdminAccountant = () => {
       }
 
       // Call parse edge function
-      const { error: fnErr } = await supabase.functions.invoke("parse-bank-statement", {
+      const { data: parseResult, error: fnErr } = await supabase.functions.invoke("parse-bank-statement", {
         body: {
           statement_id: (stmt as any).id,
           file_content: fileContent,
@@ -181,7 +181,19 @@ const AdminAccountant = () => {
       });
       if (fnErr) throw fnErr;
 
-      toast({ title: "Statement uploaded", description: "Transactions are being parsed..." });
+      const { inserted_count = 0, skipped_count = 0, success } = parseResult || {};
+
+      if (success) {
+        if (inserted_count === 0) {
+          toast({ title: "Import failed", description: "No valid transactions found in the file.", variant: "destructive" });
+        } else if (skipped_count > 0) {
+          toast({ title: "Import complete", description: `${inserted_count} transactions saved. ${skipped_count} lines were skipped due to unreadable data.` });
+        } else {
+          toast({ title: "Import successful", description: `Successfully imported all ${inserted_count} transactions.` });
+        }
+      } else {
+        toast({ title: "Statement uploaded", description: "Transactions are being parsed..." });
+      }
       qc.invalidateQueries({ queryKey: ["bank_statements"] });
 
       // Auto-trigger categorisation
