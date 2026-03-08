@@ -125,7 +125,7 @@ const App = () => (
             <Route path="/portal/reports" element={<ProtectedRoute><DashboardLayout portal="client"><ClientReports /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/files" element={<ProtectedRoute><DashboardLayout portal="client"><Files /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/billing" element={<ProtectedRoute><DashboardLayout portal="client"><Billing /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/portal/emails" element={<ProtectedRoute><DashboardLayout portal="client"><PortalEmails /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/messages" element={<ProtectedRoute><DashboardLayout portal="client"><PortalMessages /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/settings" element={<ProtectedRoute><DashboardLayout portal="client"><ClientSettings /></DashboardLayout></ProtectedRoute>} />
 
             {/* Admin */}
