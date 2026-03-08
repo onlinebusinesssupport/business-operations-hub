@@ -55,7 +55,7 @@ const services = [
     pain: "Events that fall flat. Offsites feel like admin burdens.",
     outcome: "Experiences that build culture and momentum.",
     idealFor: "Leadership teams, HR directors",
-    pricing: "Project from R15 000",
+    pricing: "Custom quote",
     href: "/services/corporate-events",
   },
 ];
