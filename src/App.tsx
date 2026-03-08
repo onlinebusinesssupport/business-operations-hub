@@ -82,7 +82,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
+          <LekoProvider>
             {/* Public */}
             <Route path="/" element={<Index />} />
             <Route path="/services" element={<Services />} />
