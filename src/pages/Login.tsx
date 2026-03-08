@@ -73,14 +73,7 @@ const Login = () => {
         .eq("role", "admin")
         .maybeSingle();
 
-      if (portalType === "admin" && !roleData) {
-        toast({ title: "Access denied", description: "This account does not have admin privileges.", variant: "destructive" });
-        await supabase.auth.signOut();
-        setLoading(false);
-        return;
-      }
-
-      navigate(roleData && portalType === "admin" ? "/admin" : "/portal");
+      navigate(roleData ? "/admin" : "/portal");
     }
   };
 
