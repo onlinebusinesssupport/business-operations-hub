@@ -44,6 +44,7 @@ interface BankStatement {
   total_in: number;
   total_out: number;
   transaction_count: number;
+  skipped_count: number;
   created_at: string;
 }
 
