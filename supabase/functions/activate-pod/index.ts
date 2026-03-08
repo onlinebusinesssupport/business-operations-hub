@@ -121,13 +121,22 @@ Deno.serve(async (req) => {
       stages.map((s) => ({ ...s, work_item_id: workItem.id }))
     );
 
-    // 4. Create NDA signed_document record
-    await supabase.from("signed_documents").insert({
-      project_id: workItem.id,
-      type: "NDA",
-      signed_by_client: false,
-      signed_by_admin: false,
-    });
+    // 4. Create all three document records (NDA, MOU, Service Agreement)
+    const docTypes = ["NDA", "MOU", "Service Agreement"];
+    await supabase.from("signed_documents").insert(
+      docTypes.map((type) => ({
+        project_id: workItem.id,
+        type,
+        signed_by_client: false,
+        signed_by_admin: false,
+      }))
+    );
+
+    // Store work_item_id in pod config for linking
+    await supabase
+      .from("pods")
+      .update({ config: { onboarding_step: 1, work_item_id: workItem.id } })
+      .eq("id", pod.id);
 
     // 5. Log activity for admin notification
     await supabase.from("activity_log").insert({
