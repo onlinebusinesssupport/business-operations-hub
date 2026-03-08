@@ -8,10 +8,11 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
 import LekoChat from "@/components/LekoChat";
 import Index from "./pages/Index";
+import Services from "./pages/Services";
 import Studios from "./pages/Studios";
 import HowWeWork from "./pages/HowWeWork";
 import Clients from "./pages/Clients";
-
+import Insights from "./pages/Insights";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
