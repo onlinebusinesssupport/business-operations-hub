@@ -68,11 +68,24 @@ const AdminLeadPipeline = () => {
     }
   };
 
+  const normalizeService = (s: string) => {
+    const map: Record<string, string> = {
+      "grants & awards": "Company Registration",
+      "grants and awards": "Company Registration",
+      "grants": "Company Registration",
+      "travel & activities": "Corporate Events",
+      "travel and activities": "Corporate Events",
+      "executive travel": "Corporate Events",
+    };
+    return map[s.toLowerCase()] || s;
+  };
+
   const leads: PipelineLead[] = [
     ...contacts.map((c: any) => ({
       id: `contact-${c.id}`, db_id: c.id, type: "contact" as const,
       name: c.name, email: c.email, business: c.company || "—",
-      stage: "new_inquiry" as PipelineStage, service_interest: c.service_interest,
+      stage: (c.lifecycle_stage || "new_inquiry") as PipelineStage,
+      service_interest: c.service_interest ? normalizeService(c.service_interest) : undefined,
       website: c.website, notes: c.message, created_at: c.created_at, raw: c,
     })),
     ...applications.map((a: any) => ({
