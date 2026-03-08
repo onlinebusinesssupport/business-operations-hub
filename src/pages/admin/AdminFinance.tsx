@@ -5,7 +5,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { Download, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Clock, ShieldCheck, ShieldAlert } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, PieChart, Pie, Legend,
