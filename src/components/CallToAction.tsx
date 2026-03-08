@@ -27,8 +27,7 @@ const CallToAction = () => {
             <Link to="/contact">
               <Button
                 size="lg"
-                variant="outline"
-                className="text-sm tracking-[0.1em] uppercase px-8 gap-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                className="text-sm tracking-[0.1em] uppercase px-8 gap-2 bg-primary-foreground text-primary hover:bg-primary-foreground/90"
               >
                 Start a Conversation
                 <ArrowRight size={16} />
@@ -38,7 +37,7 @@ const CallToAction = () => {
               <Button
                 size="lg"
                 variant="ghost"
-                className="text-sm tracking-[0.1em] uppercase px-8 text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/5"
+                className="text-sm tracking-[0.1em] uppercase px-8 text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10"
               >
                 View Services
               </Button>

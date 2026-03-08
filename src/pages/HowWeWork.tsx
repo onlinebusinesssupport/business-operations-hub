@@ -191,13 +191,13 @@ const HowWeWork = () => {
             </p>
             <div className="mt-8 flex gap-4 flex-wrap">
               <Link to="/contact">
-                <Button variant="secondary" size="lg" className="text-sm tracking-[0.1em] uppercase gap-2">
+                <Button size="lg" className="text-sm tracking-[0.1em] uppercase gap-2 bg-background text-foreground hover:bg-background/90">
                   Start a Conversation
                   <ArrowRight size={16} />
                 </Button>
               </Link>
               <Link to="/services">
-                <Button variant="ghost" size="lg" className="text-sm tracking-[0.1em] uppercase text-background/70 hover:text-background hover:bg-background/10">
+                <Button variant="ghost" size="lg" className="text-sm tracking-[0.1em] uppercase text-background/70 border border-background/30 hover:bg-background/10 hover:text-background">
                   View Services
                 </Button>
               </Link>
