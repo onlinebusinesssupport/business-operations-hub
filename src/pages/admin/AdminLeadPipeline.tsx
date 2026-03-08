@@ -68,17 +68,31 @@ const AdminLeadPipeline = () => {
     }
   };
 
+  const normalizeService = (s: string) => {
+    const map: Record<string, string> = {
+      "grants & awards": "Company Registration",
+      "grants and awards": "Company Registration",
+      "grants": "Company Registration",
+      "travel & activities": "Corporate Events",
+      "travel and activities": "Corporate Events",
+      "executive travel": "Corporate Events",
+    };
+    return map[s.toLowerCase()] || s;
+  };
+
   const leads: PipelineLead[] = [
     ...contacts.map((c: any) => ({
       id: `contact-${c.id}`, db_id: c.id, type: "contact" as const,
       name: c.name, email: c.email, business: c.company || "—",
-      stage: "new_inquiry" as PipelineStage, service_interest: c.service_interest,
+      stage: (c.lifecycle_stage || "new_inquiry") as PipelineStage,
+      service_interest: c.service_interest ? normalizeService(c.service_interest) : undefined,
       website: c.website, notes: c.message, created_at: c.created_at, raw: c,
     })),
     ...applications.map((a: any) => ({
       id: `app-${a.id}`, db_id: a.id, type: "application" as const,
       name: a.full_name, email: a.email, business: a.business_name,
-      stage: appStageMap(a.status), service_interest: a.areas_of_support?.join(", "),
+      stage: appStageMap(a.status),
+      service_interest: a.areas_of_support?.map((s: string) => normalizeService(s)).join(", "),
       website: a.website, notes: a.admin_notes || a.pain_points,
       created_at: a.created_at, raw: a,
     })),
@@ -97,6 +111,9 @@ const AdminLeadPipeline = () => {
           proposal: "proposal", won: "approved",
         };
         const { error } = await supabase.from("applications").update({ status: statusMap[newStage] }).eq("id", lead.db_id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("contact_submissions").update({ lifecycle_stage: newStage } as any).eq("id", lead.db_id);
         if (error) throw error;
       }
       await logActivity({
