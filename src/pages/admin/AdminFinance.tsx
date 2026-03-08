@@ -5,24 +5,22 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Clock, ShieldCheck, ShieldAlert } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Download, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Clock, ShieldAlert } from "lucide-react";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, PieChart, Pie, Legend,
 } from "recharts";
-import { format, subMonths, startOfMonth, endOfMonth, differenceInDays, parseISO } from "date-fns";
-import { formatCurrency, useCurrency } from "@/lib/currency";
+import { format, subMonths, startOfMonth, differenceInDays, parseISO } from "date-fns";
+import { formatCurrency } from "@/lib/currency";
 
 /* ═══════════════════════════════════════════════
-   THEME TOKENS — synced with Studio Control
+   CHART COLORS — emerald palette matching Studio Control
    ═══════════════════════════════════════════════ */
-const NAVY = "hsl(var(--foreground))";
-const SLATE = "hsl(var(--muted-foreground))";
-const GREEN_MUTED = "hsl(var(--primary))";
-const RED_MUTED = "#9B2C2C";
-const BLUE_ACCENT = "hsl(var(--primary))";
-const CHART_COLORS = ["hsl(142, 33%, 24%)", "#2B6CB0", "#4A5568", "#718096", "#1A365D"];
+const EMERALD = "#2d7a5f";
+const EMERALD_LIGHT = "#3a9b79";
+const SLATE_CHART = "#6b7280";
+const RED_CHART = "#dc2626";
+const CHART_COLORS = [EMERALD, EMERALD_LIGHT, "#4b9ecf", SLATE_CHART, "#a78bfa"];
 
 /* ═══════════════════════════════════════════════
    CSV EXPORT UTILITY
@@ -76,9 +74,9 @@ const AdminFinance = () => {
         queryClient.invalidateQueries({ queryKey: ["finance-bank-statements"] });
       })
       .subscribe();
-
     return () => { supabase.removeChannel(channel); };
   }, [queryClient]);
+
   const range = useMemo(() => getPeriodRange(period), [period]);
 
   // ── DATA QUERIES ──
@@ -98,7 +96,6 @@ const AdminFinance = () => {
     },
   });
 
-  // Filter confirmed/unconfirmed based on toggle
   const transactions = useMemo(
     () => showUnconfirmed ? allTransactions : allTransactions.filter((t: any) => t.confirmed),
     [allTransactions, showUnconfirmed]
@@ -125,7 +122,7 @@ const AdminFinance = () => {
     },
   });
 
-  // ── FILTERED INVOICES ──
+  // ── FILTERED DATA ──
   const filteredInvoices = useMemo(
     () => invoices.filter((i: any) => {
       const d = parseISO(i.invoice_date);
@@ -194,7 +191,6 @@ const AdminFinance = () => {
     const totalExpenses = expense.reduce((s: number, t: any) => s + Math.abs(Number(t.amount)), 0);
     const totalVAT = filteredTransactions.reduce((s: number, t: any) => s + Number(t.vat_amount || 0), 0);
 
-    // Group by category
     const incomeByCategory: Record<string, number> = {};
     income.forEach((t: any) => {
       const cat = t.chart_of_accounts?.category || "Other Income";
@@ -216,7 +212,6 @@ const AdminFinance = () => {
     const totalIn = inflows.reduce((s: number, t: any) => s + Number(t.amount), 0);
     const totalOut = Math.abs(outflows.reduce((s: number, t: any) => s + Number(t.amount), 0));
 
-    // Monthly trend
     const monthMap: Record<string, { inflow: number; outflow: number }> = {};
     filteredTransactions.forEach((t: any) => {
       const key = format(parseISO(t.date), "MMM yyyy");
@@ -227,7 +222,6 @@ const AdminFinance = () => {
     });
     const monthly = Object.entries(monthMap).map(([month, v]) => ({ month, ...v }));
 
-    // Top expense categories
     const catMap: Record<string, number> = {};
     outflows.forEach((t: any) => {
       const cat = t.chart_of_accounts?.category || t.ai_category || "Uncategorised";
@@ -252,7 +246,7 @@ const AdminFinance = () => {
     return { outputVAT, inputVAT, payable: outputVAT - inputVAT };
   }, [filteredTransactions]);
 
-  const fmtZAR = (n: number) => formatCurrency(n);
+  const fmt = (n: number) => formatCurrency(n);
   const reportDate = format(new Date(), "dd MMMM yyyy, HH:mm");
 
   return (
@@ -260,7 +254,7 @@ const AdminFinance = () => {
       {/* ── HEADER ── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">Financial Reports</p>
+          <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-1">Financial Reports</p>
           <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
             Finance Dashboard
           </h1>
@@ -269,19 +263,18 @@ const AdminFinance = () => {
           {unconfirmedCount > 0 && (
             <button
               onClick={() => setShowUnconfirmed(!showUnconfirmed)}
-              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border transition-colors"
-              style={{
-                borderColor: showUnconfirmed ? "#D69E2E" : "#CBD5E0",
-                backgroundColor: showUnconfirmed ? "#FEFCE8" : "transparent",
-                color: showUnconfirmed ? "#92400E" : SLATE,
-              }}
+              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 border transition-colors ${
+                showUnconfirmed
+                  ? "border-amber-500/40 bg-amber-500/10 text-amber-400"
+                  : "border-border text-muted-foreground"
+              }`}
             >
               <ShieldAlert size={14} />
               {showUnconfirmed ? `Showing ${unconfirmedCount} unconfirmed` : `${unconfirmedCount} hidden`}
             </button>
           )}
           <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="w-[180px] text-xs" style={{ borderColor: NAVY }}>
+            <SelectTrigger className="w-[180px] text-xs border-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -295,13 +288,12 @@ const AdminFinance = () => {
 
       {/* ── TABS ── */}
       <Tabs defaultValue="revenue" className="space-y-6">
-        <TabsList className="bg-transparent border-b rounded-none w-full justify-start gap-0 h-auto p-0" style={{ borderColor: NAVY + "30" }}>
+        <TabsList className="bg-transparent border-b border-border rounded-none w-full justify-start gap-0 h-auto p-0">
           {["revenue", "pnl", "cashflow", "compliance"].map(tab => (
             <TabsTrigger
               key={tab}
               value={tab}
-              className="rounded-none border-b-2 border-transparent px-5 py-3 text-xs font-semibold uppercase tracking-[0.1em] data-[state=active]:border-b-2 data-[state=active]:shadow-none data-[state=active]:bg-transparent"
-              style={{ fontFamily: "'Georgia', serif" }}
+              className="rounded-none border-b-2 border-transparent px-5 py-3 text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:bg-transparent"
             >
               {{ revenue: "Revenue & Sales", pnl: "Profit & Loss", cashflow: "Cash Flow", compliance: "Compliance & Tax" }[tab]}
             </TabsTrigger>
@@ -310,24 +302,22 @@ const AdminFinance = () => {
 
         {/* ═══════ TAB A: REVENUE ═══════ */}
         <TabsContent value="revenue" className="space-y-6">
-          {/* KPI row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <KpiCard label="Total Invoiced" value={fmtZAR(totalRevenue)} icon={<TrendingUp size={16} />} accent={NAVY} />
-            <KpiCard label="Total Collected" value={fmtZAR(totalPaid)} icon={<CheckCircle2 size={16} />} accent={GREEN_MUTED} />
-            <KpiCard label="Collection Rate" value={`${collectionRate}%`} icon={<TrendingUp size={16} />} accent={collectionRate >= 80 ? GREEN_MUTED : RED_MUTED} />
-            <KpiCard label="Outstanding" value={fmtZAR(totalRevenue - totalPaid)} icon={<Clock size={16} />} accent={RED_MUTED} />
+            <KpiCard label="Total Invoiced" value={fmt(totalRevenue)} icon={<TrendingUp size={16} />} variant="default" />
+            <KpiCard label="Total Collected" value={fmt(totalPaid)} icon={<CheckCircle2 size={16} />} variant="positive" />
+            <KpiCard label="Collection Rate" value={`${collectionRate}%`} icon={<TrendingUp size={16} />} variant={collectionRate >= 80 ? "positive" : "negative"} />
+            <KpiCard label="Outstanding" value={fmt(totalRevenue - totalPaid)} icon={<Clock size={16} />} variant="negative" />
           </div>
 
-          {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ReportCard title="Monthly Revenue Trend" onExport={() => exportCSV("revenue-monthly", ["Month", "Amount"], monthlyRevenue.map(r => [r.month, r.amount]))}>
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={monthlyRevenue}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: SLATE }} />
-                  <YAxis tick={{ fontSize: 11, fill: SLATE }} tickFormatter={v => `R${(v / 1000).toFixed(0)}k`} />
-                  <Tooltip formatter={(v: number) => fmtZAR(v)} />
-                  <Bar dataKey="amount" fill={NAVY} radius={[2, 2, 0, 0]} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(0 0% 20%)" />
+                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9ca3af" }} />
+                  <YAxis tick={{ fontSize: 11, fill: "#9ca3af" }} tickFormatter={v => `${formatCurrency(v).split(" ")[0]}${(v / 1000).toFixed(0)}k`} />
+                  <Tooltip formatter={(v: number) => fmt(v)} contentStyle={{ backgroundColor: "#111", border: "1px solid #333", color: "#fff" }} />
+                  <Bar dataKey="amount" fill={EMERALD} radius={[2, 2, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </ReportCard>
@@ -335,11 +325,11 @@ const AdminFinance = () => {
             <ReportCard title="Revenue by Client" onExport={() => exportCSV("revenue-client", ["Client", "Amount"], revenueByClient.map(r => [r.client, r.amount]))}>
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={revenueByClient} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                  <XAxis type="number" tick={{ fontSize: 11, fill: SLATE }} tickFormatter={v => `R${(v / 1000).toFixed(0)}k`} />
-                  <YAxis dataKey="client" type="category" tick={{ fontSize: 11, fill: SLATE }} width={120} />
-                  <Tooltip formatter={(v: number) => fmtZAR(v)} />
-                  <Bar dataKey="amount" fill={BLUE_ACCENT}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(0 0% 20%)" />
+                  <XAxis type="number" tick={{ fontSize: 11, fill: "#9ca3af" }} tickFormatter={v => `${formatCurrency(v).split(" ")[0]}${(v / 1000).toFixed(0)}k`} />
+                  <YAxis dataKey="client" type="category" tick={{ fontSize: 11, fill: "#9ca3af" }} width={120} />
+                  <Tooltip formatter={(v: number) => fmt(v)} contentStyle={{ backgroundColor: "#111", border: "1px solid #333", color: "#fff" }} />
+                  <Bar dataKey="amount" fill={EMERALD}>
                     {revenueByClient.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
                   </Bar>
                 </BarChart>
@@ -350,18 +340,18 @@ const AdminFinance = () => {
           {/* Aging */}
           <ReportCard title="Invoice Aging Analysis" onExport={() => exportCSV("invoice-aging", ["Bucket", "Amount"], invoiceAging.map(r => [r.bucket, r.amount]))}>
             <div className="overflow-auto">
-              <table className="w-full text-sm" style={{ fontFamily: "'Courier New', monospace" }}>
+              <table className="w-full text-sm font-mono">
                 <thead>
-                  <tr style={{ backgroundColor: NAVY + "10", borderBottom: `2px solid ${NAVY}` }}>
-                    <th className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: NAVY }}>Aging Bucket</th>
-                    <th className="text-right px-4 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: NAVY }}>Outstanding Amount</th>
+                  <tr className="border-b border-border bg-muted/30">
+                    <th className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">Aging Bucket</th>
+                    <th className="text-right px-4 py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">Outstanding Amount</th>
                   </tr>
                 </thead>
                 <tbody>
                   {invoiceAging.map((row, i) => (
-                    <tr key={row.bucket} className={i % 2 === 0 ? "" : "bg-muted/30"} style={{ borderBottom: "1px solid #E2E8F0" }}>
-                      <td className="px-4 py-3">{row.bucket}</td>
-                      <td className="px-4 py-3 text-right font-mono" style={{ color: row.amount > 0 ? RED_MUTED : GREEN_MUTED }}>{fmtZAR(row.amount)}</td>
+                    <tr key={row.bucket} className={`border-b border-border/50 ${i % 2 === 0 ? "" : "bg-muted/20"}`}>
+                      <td className="px-4 py-3 text-foreground">{row.bucket}</td>
+                      <td className={`px-4 py-3 text-right font-mono ${row.amount > 0 ? "text-red-400" : "text-emerald-400"}`}>{fmt(row.amount)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -388,23 +378,23 @@ const AdminFinance = () => {
                 ["GROSS PROFIT", pnl.grossProfit],
                 ["VAT (Net)", pnl.totalVAT],
               ];
-              exportCSV("profit-and-loss", ["Description", "Amount (ZAR)"], rows);
+              exportCSV("profit-and-loss", ["Description", "Amount"], rows);
             }}
           >
             <div className="overflow-auto">
-              <table className="w-full text-sm" style={{ fontFamily: "'Courier New', monospace" }}>
+              <table className="w-full text-sm font-mono">
                 <tbody>
-                  <PnlSection heading="Revenue" items={pnl.incomeByCategory} total={pnl.totalIncome} fmtZAR={fmtZAR} color={GREEN_MUTED} />
-                  <PnlSection heading="Operating Expenses" items={pnl.expenseByCategory} total={pnl.totalExpenses} fmtZAR={fmtZAR} color={RED_MUTED} />
-                  <tr style={{ borderTop: `3px double ${NAVY}` }}>
-                    <td className="px-4 py-3 font-bold text-sm" style={{ color: NAVY, fontFamily: "'Georgia', serif" }}>NET PROFIT / (LOSS)</td>
-                    <td className="px-4 py-3 text-right font-bold text-base" style={{ color: pnl.grossProfit >= 0 ? GREEN_MUTED : RED_MUTED }}>
-                      {fmtZAR(pnl.grossProfit)}
+                  <PnlSection heading="Revenue" items={pnl.incomeByCategory} total={pnl.totalIncome} fmt={fmt} positive />
+                  <PnlSection heading="Operating Expenses" items={pnl.expenseByCategory} total={pnl.totalExpenses} fmt={fmt} positive={false} />
+                  <tr className="border-t-2 border-foreground/30">
+                    <td className="px-4 py-3 font-bold text-sm text-foreground font-display">NET PROFIT / (LOSS)</td>
+                    <td className={`px-4 py-3 text-right font-bold text-base ${pnl.grossProfit >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                      {fmt(pnl.grossProfit)}
                     </td>
                   </tr>
                   <tr className="bg-muted/20">
                     <td className="px-4 py-2 text-xs text-muted-foreground">VAT Summary (Net)</td>
-                    <td className="px-4 py-2 text-right text-xs text-muted-foreground font-mono">{fmtZAR(pnl.totalVAT)}</td>
+                    <td className="px-4 py-2 text-right text-xs text-muted-foreground font-mono">{fmt(pnl.totalVAT)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -412,8 +402,8 @@ const AdminFinance = () => {
           </ReportCard>
 
           {filteredTransactions.length === 0 && (
-            <div className="flex items-center gap-3 p-4 border rounded-none bg-muted/20" style={{ borderColor: NAVY + "20" }}>
-              <AlertCircle size={16} style={{ color: NAVY }} />
+            <div className="flex items-center gap-3 p-4 border border-border bg-muted/20">
+              <AlertCircle size={16} className="text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
                 No confirmed transactions found for this period. Import and confirm bank statement transactions in the Accountant module.
               </p>
@@ -424,9 +414,9 @@ const AdminFinance = () => {
         {/* ═══════ TAB C: CASH FLOW ═══════ */}
         <TabsContent value="cashflow" className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <KpiCard label="Total Inflows" value={fmtZAR(cashFlow.totalIn)} icon={<TrendingUp size={16} />} accent={GREEN_MUTED} />
-            <KpiCard label="Total Outflows" value={fmtZAR(cashFlow.totalOut)} icon={<TrendingDown size={16} />} accent={RED_MUTED} />
-            <KpiCard label="Net Cash Flow" value={fmtZAR(cashFlow.net)} icon={<TrendingUp size={16} />} accent={cashFlow.net >= 0 ? GREEN_MUTED : RED_MUTED} />
+            <KpiCard label="Total Inflows" value={fmt(cashFlow.totalIn)} icon={<TrendingUp size={16} />} variant="positive" />
+            <KpiCard label="Total Outflows" value={fmt(cashFlow.totalOut)} icon={<TrendingDown size={16} />} variant="negative" />
+            <KpiCard label="Net Cash Flow" value={fmt(cashFlow.net)} icon={<TrendingUp size={16} />} variant={cashFlow.net >= 0 ? "positive" : "negative"} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -434,13 +424,13 @@ const AdminFinance = () => {
               <ReportCard title="Monthly Cash Movement" onExport={() => exportCSV("cashflow-monthly", ["Month", "Inflow", "Outflow"], cashFlow.monthly.map(m => [m.month, m.inflow, m.outflow]))}>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={cashFlow.monthly}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: SLATE }} />
-                    <YAxis tick={{ fontSize: 11, fill: SLATE }} tickFormatter={v => `R${(v / 1000).toFixed(0)}k`} />
-                    <Tooltip formatter={(v: number) => fmtZAR(v)} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(0 0% 20%)" />
+                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9ca3af" }} />
+                    <YAxis tick={{ fontSize: 11, fill: "#9ca3af" }} tickFormatter={v => `${formatCurrency(v).split(" ")[0]}${(v / 1000).toFixed(0)}k`} />
+                    <Tooltip formatter={(v: number) => fmt(v)} contentStyle={{ backgroundColor: "#111", border: "1px solid #333", color: "#fff" }} />
                     <Legend />
-                    <Line type="monotone" dataKey="inflow" stroke={GREEN_MUTED} strokeWidth={2} dot={{ r: 3 }} name="Inflows" />
-                    <Line type="monotone" dataKey="outflow" stroke={RED_MUTED} strokeWidth={2} dot={{ r: 3 }} name="Outflows" />
+                    <Line type="monotone" dataKey="inflow" stroke={EMERALD} strokeWidth={2} dot={{ r: 3 }} name="Inflows" />
+                    <Line type="monotone" dataKey="outflow" stroke={RED_CHART} strokeWidth={2} dot={{ r: 3 }} name="Outflows" />
                   </LineChart>
                 </ResponsiveContainer>
               </ReportCard>
@@ -452,33 +442,32 @@ const AdminFinance = () => {
                   <Pie data={cashFlow.topExpenses} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
                     {cashFlow.topExpenses.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
                   </Pie>
-                  <Tooltip formatter={(v: number) => fmtZAR(v)} />
+                  <Tooltip formatter={(v: number) => fmt(v)} contentStyle={{ backgroundColor: "#111", border: "1px solid #333", color: "#fff" }} />
                 </PieChart>
               </ResponsiveContainer>
             </ReportCard>
           </div>
 
-          {/* Bank statements summary */}
           {bankStatements.length > 0 && (
             <ReportCard title="Imported Bank Statements">
               <div className="overflow-auto">
-                <table className="w-full text-sm" style={{ fontFamily: "'Courier New', monospace" }}>
+                <table className="w-full text-sm font-mono">
                   <thead>
-                    <tr style={{ backgroundColor: NAVY + "10", borderBottom: `2px solid ${NAVY}` }}>
+                    <tr className="border-b border-border bg-muted/30">
                       {["Bank", "Account", "Period", "Transactions", "Total In", "Total Out"].map(h => (
-                        <th key={h} className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: NAVY }}>{h}</th>
+                        <th key={h} className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {bankStatements.map((bs: any, i: number) => (
-                      <tr key={bs.id} className={i % 2 === 0 ? "" : "bg-muted/30"} style={{ borderBottom: "1px solid #E2E8F0" }}>
-                        <td className="px-4 py-2">{bs.bank_name || "—"}</td>
-                        <td className="px-4 py-2">{bs.account_number || "—"}</td>
-                        <td className="px-4 py-2 text-xs">{bs.period_start && bs.period_end ? `${bs.period_start} – ${bs.period_end}` : "—"}</td>
-                        <td className="px-4 py-2 text-center">{bs.transaction_count}</td>
-                        <td className="px-4 py-2 text-right" style={{ color: GREEN_MUTED }}>{fmtZAR(Number(bs.total_in || 0))}</td>
-                        <td className="px-4 py-2 text-right" style={{ color: RED_MUTED }}>{fmtZAR(Number(bs.total_out || 0))}</td>
+                      <tr key={bs.id} className={`border-b border-border/50 ${i % 2 === 0 ? "" : "bg-muted/20"}`}>
+                        <td className="px-4 py-2 text-foreground">{bs.bank_name || "—"}</td>
+                        <td className="px-4 py-2 text-foreground">{bs.account_number || "—"}</td>
+                        <td className="px-4 py-2 text-xs text-muted-foreground">{bs.period_start && bs.period_end ? `${bs.period_start} – ${bs.period_end}` : "—"}</td>
+                        <td className="px-4 py-2 text-center text-foreground">{bs.transaction_count}</td>
+                        <td className="px-4 py-2 text-right text-emerald-400">{fmt(Number(bs.total_in || 0))}</td>
+                        <td className="px-4 py-2 text-right text-red-400">{fmt(Number(bs.total_out || 0))}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -491,18 +480,18 @@ const AdminFinance = () => {
         {/* ═══════ TAB D: COMPLIANCE & TAX ═══════ */}
         <TabsContent value="compliance" className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <KpiCard label="Output VAT" value={fmtZAR(vatSummary.outputVAT)} icon={<TrendingUp size={16} />} accent={NAVY} />
-            <KpiCard label="Input VAT" value={fmtZAR(vatSummary.inputVAT)} icon={<TrendingDown size={16} />} accent={BLUE_ACCENT} />
-            <KpiCard label="VAT Payable" value={fmtZAR(vatSummary.payable)} icon={<AlertCircle size={16} />} accent={vatSummary.payable > 0 ? RED_MUTED : GREEN_MUTED} />
+            <KpiCard label="Output VAT" value={fmt(vatSummary.outputVAT)} icon={<TrendingUp size={16} />} variant="default" />
+            <KpiCard label="Input VAT" value={fmt(vatSummary.inputVAT)} icon={<TrendingDown size={16} />} variant="default" />
+            <KpiCard label="VAT Payable" value={fmt(vatSummary.payable)} icon={<AlertCircle size={16} />} variant={vatSummary.payable > 0 ? "negative" : "positive"} />
           </div>
 
           <ReportCard title="Compliance Calendar & Filing Deadlines" onExport={() => exportCSV("compliance", ["Title", "Body", "Due Date", "Frequency", "Status"], compliance.map((c: any) => [c.title, c.body, c.due_date, c.frequency, c.status]))}>
             <div className="overflow-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr style={{ backgroundColor: NAVY + "10", borderBottom: `2px solid ${NAVY}` }}>
+                  <tr className="border-b border-border bg-muted/30">
                     {["Filing", "Authority", "Due Date", "Frequency", "Status"].map(h => (
-                      <th key={h} className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider" style={{ color: NAVY }}>{h}</th>
+                      <th key={h} className="text-left px-4 py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -510,20 +499,20 @@ const AdminFinance = () => {
                   {compliance.map((item: any, i: number) => {
                     const overdue = new Date(item.due_date) < new Date() && item.status !== "filed";
                     return (
-                      <tr key={item.id} className={i % 2 === 0 ? "" : "bg-muted/30"} style={{ borderBottom: "1px solid #E2E8F0" }}>
-                        <td className="px-4 py-3 font-medium">{item.title}</td>
+                      <tr key={item.id} className={`border-b border-border/50 ${i % 2 === 0 ? "" : "bg-muted/20"}`}>
+                        <td className="px-4 py-3 font-medium text-foreground">{item.title}</td>
                         <td className="px-4 py-3">
-                          <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold rounded-sm uppercase tracking-wider" style={{ backgroundColor: NAVY + "15", color: NAVY }}>
+                          <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-primary/15 text-primary">
                             {item.body}
                           </span>
                         </td>
-                        <td className="px-4 py-3 font-mono text-xs" style={{ color: overdue ? RED_MUTED : undefined }}>
+                        <td className={`px-4 py-3 font-mono text-xs ${overdue ? "text-red-400" : "text-foreground"}`}>
                           {item.due_date}
                         </td>
-                        <td className="px-4 py-3 capitalize text-xs">{item.frequency}</td>
+                        <td className="px-4 py-3 capitalize text-xs text-muted-foreground">{item.frequency}</td>
                         <td className="px-4 py-3">
                           <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${
-                            item.status === "filed" ? "text-green-700" : overdue ? "text-red-700" : "text-amber-600"
+                            item.status === "filed" ? "text-emerald-400" : overdue ? "text-red-400" : "text-amber-400"
                           }`}>
                             {item.status === "filed" ? <CheckCircle2 size={13} /> : overdue ? <AlertCircle size={13} /> : <Clock size={13} />}
                             {item.status === "filed" ? "Filed" : overdue ? "Overdue" : "Upcoming"}
@@ -543,8 +532,8 @@ const AdminFinance = () => {
       </Tabs>
 
       {/* ── FOOTER ── */}
-      <div className="border-t pt-4 mt-8 flex justify-between items-center" style={{ borderColor: NAVY + "20" }}>
-        <p className="text-[10px] text-muted-foreground" style={{ fontFamily: "'Georgia', serif" }}>
+      <div className="border-t border-border pt-4 mt-8 flex justify-between items-center">
+        <p className="text-[10px] text-muted-foreground">
           Prepared by THE BUSINESS SUPPORT STUDIO™ — {reportDate}
         </p>
         <p className="text-[10px] text-muted-foreground italic">Confidential</p>
@@ -566,54 +555,58 @@ const AdminFinance = () => {
    SUB-COMPONENTS
    ═══════════════════════════════════════════════ */
 
-function KpiCard({ label, value, icon, accent }: { label: string; value: string; icon: React.ReactNode; accent: string }) {
+type KpiVariant = "default" | "positive" | "negative";
+
+function KpiCard({ label, value, icon, variant = "default" }: { label: string; value: string; icon: React.ReactNode; variant?: KpiVariant }) {
+  const borderClass = variant === "positive" ? "border-l-emerald-500" : variant === "negative" ? "border-l-red-500" : "border-l-primary";
+  const valueClass = variant === "positive" ? "text-emerald-400" : variant === "negative" ? "text-red-400" : "text-foreground";
+  const iconBg = variant === "positive" ? "bg-emerald-500/10 text-emerald-400" : variant === "negative" ? "bg-red-500/10 text-red-400" : "bg-primary/10 text-primary";
+
   return (
-    <Card className="rounded-none border-l-4" style={{ borderLeftColor: accent }}>
-      <CardContent className="p-4 flex items-center justify-between">
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-1">{label}</p>
-          <p className="text-lg font-bold" style={{ fontFamily: "'Courier New', monospace", color: accent }}>{value}</p>
-        </div>
-        <div className="p-2 rounded-none" style={{ backgroundColor: accent + "15", color: accent }}>{icon}</div>
-      </CardContent>
-    </Card>
+    <div className={`bg-card border border-border border-l-4 ${borderClass} p-4 flex items-center justify-between`}>
+      <div>
+        <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-1">{label}</p>
+        <p className={`text-lg font-bold font-mono ${valueClass}`}>{value}</p>
+      </div>
+      <div className={`p-2 ${iconBg}`}>{icon}</div>
+    </div>
   );
 }
 
 function ReportCard({ title, subtitle, children, onExport }: { title: string; subtitle?: string; children: React.ReactNode; onExport?: () => void }) {
   return (
-    <Card className="rounded-none overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-3" style={{ backgroundColor: NAVY, color: "white" }}>
+    <div className="bg-card border border-border overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-muted/30">
         <div>
-          <h3 className="text-sm font-semibold tracking-wide" style={{ fontFamily: "'Georgia', serif" }}>{title}</h3>
-          {subtitle && <p className="text-[10px] text-white/60 mt-0.5">{subtitle}</p>}
+          <h3 className="text-sm font-semibold tracking-wide text-foreground font-display">{title}</h3>
+          {subtitle && <p className="text-[10px] text-muted-foreground mt-0.5">{subtitle}</p>}
         </div>
         {onExport && (
-          <Button variant="ghost" size="sm" onClick={onExport} className="text-white/70 hover:text-white hover:bg-white/10 h-7 px-2">
+          <Button variant="ghost" size="sm" onClick={onExport} className="text-muted-foreground hover:text-foreground h-7 px-2">
             <Download size={14} className="mr-1" /> CSV
           </Button>
         )}
       </div>
-      <CardContent className="p-5">{children}</CardContent>
-    </Card>
+      <div className="p-5">{children}</div>
+    </div>
   );
 }
 
-function PnlSection({ heading, items, total, fmtZAR, color }: { heading: string; items: Record<string, number>; total: number; fmtZAR: (n: number) => string; color: string }) {
+function PnlSection({ heading, items, total, fmt, positive }: { heading: string; items: Record<string, number>; total: number; fmt: (n: number) => string; positive: boolean }) {
   return (
     <>
-      <tr style={{ backgroundColor: NAVY + "08" }}>
-        <td colSpan={2} className="px-4 py-2 text-xs font-bold uppercase tracking-[0.15em]" style={{ color: NAVY, fontFamily: "'Georgia', serif" }}>{heading}</td>
+      <tr className="bg-muted/30">
+        <td colSpan={2} className="px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] text-muted-foreground font-display">{heading}</td>
       </tr>
       {Object.entries(items).map(([cat, amt], i) => (
-        <tr key={cat} className={i % 2 === 0 ? "" : "bg-muted/20"} style={{ borderBottom: "1px solid #E2E8F0" }}>
-          <td className="px-4 py-2 pl-8 text-sm">{cat}</td>
-          <td className="px-4 py-2 text-right font-mono text-sm">{fmtZAR(amt)}</td>
+        <tr key={cat} className={`border-b border-border/50 ${i % 2 === 0 ? "" : "bg-muted/20"}`}>
+          <td className="px-4 py-2 pl-8 text-sm text-foreground">{cat}</td>
+          <td className="px-4 py-2 text-right font-mono text-sm text-foreground">{fmt(amt)}</td>
         </tr>
       ))}
-      <tr style={{ borderTop: `1px solid ${NAVY}`, borderBottom: `2px solid ${NAVY}` }}>
-        <td className="px-4 py-2 font-semibold text-sm" style={{ color: NAVY }}>Total {heading}</td>
-        <td className="px-4 py-2 text-right font-bold font-mono" style={{ color }}>{fmtZAR(total)}</td>
+      <tr className="border-t border-foreground/20 border-b-2 border-b-foreground/20">
+        <td className="px-4 py-2 font-semibold text-sm text-foreground">Total {heading}</td>
+        <td className={`px-4 py-2 text-right font-bold font-mono ${positive ? "text-emerald-400" : "text-red-400"}`}>{fmt(total)}</td>
       </tr>
     </>
   );
