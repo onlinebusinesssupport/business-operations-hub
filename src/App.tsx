@@ -85,8 +85,8 @@ const App = () => (
             <Route path="/services/lead-engine" element={<LeadEngine />} />
             <Route path="/services/automation" element={<AutomationService />} />
             <Route path="/services/operations" element={<OperationsService />} />
-            <Route path="/services/travel-activities" element={<TravelActivities />} />
-            <Route path="/services/grants-awards" element={<GrantsAwards />} />
+            <Route path="/services/corporate-events" element={<CorporateEvents />} />
+            <Route path="/services/company-registration" element={<CompanyRegistration />} />
             <Route path="/results" element={<Media />} />
             <Route path="/media" element={<Media />} />
             <Route path="/insights" element={<Insights />} />
