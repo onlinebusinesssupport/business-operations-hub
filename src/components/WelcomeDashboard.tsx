@@ -25,7 +25,7 @@ const quickStartItems = [
     icon: User,
     title: "Complete your profile",
     description: "Add your details so your team knows who to reach.",
-    href: "/portal/account",
+    href: "/portal/settings",
     cta: "Go to Settings",
   },
   {
