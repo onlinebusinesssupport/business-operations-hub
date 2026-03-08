@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.activate-pod]
 verify_jwt = false
+
+[functions.sign-document]
+verify_jwt = false
