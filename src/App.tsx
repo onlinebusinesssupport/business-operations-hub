@@ -57,6 +57,7 @@ import AdminOnboardingQueue from "./pages/admin/AdminOnboardingQueue";
 import AdminAccountant from "./pages/admin/AdminAccountant";
 import AdminFinance from "./pages/admin/AdminFinance";
 import AdminSubscribers from "./pages/admin/AdminSubscribers";
+import AdminEmails from "./pages/admin/AdminEmails";
 
 // Service detail pages
 import DigitalPresence from "./pages/services/DigitalPresence";
