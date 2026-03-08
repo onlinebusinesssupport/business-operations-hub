@@ -115,6 +115,87 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_statements: {
+        Row: {
+          account_number: string | null
+          bank_name: string | null
+          created_at: string
+          file_name: string
+          file_path: string | null
+          id: string
+          period_end: string | null
+          period_start: string | null
+          status: string
+          total_in: number | null
+          total_out: number | null
+          transaction_count: number | null
+          upload_date: string
+        }
+        Insert: {
+          account_number?: string | null
+          bank_name?: string | null
+          created_at?: string
+          file_name: string
+          file_path?: string | null
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          status?: string
+          total_in?: number | null
+          total_out?: number | null
+          transaction_count?: number | null
+          upload_date?: string
+        }
+        Update: {
+          account_number?: string | null
+          bank_name?: string | null
+          created_at?: string
+          file_name?: string
+          file_path?: string | null
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          status?: string
+          total_in?: number | null
+          total_out?: number | null
+          transaction_count?: number | null
+          upload_date?: string
+        }
+        Relationships: []
+      }
+      chart_of_accounts: {
+        Row: {
+          category: string
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          tax_treatment: string
+          type: Database["public"]["Enums"]["account_type"]
+        }
+        Insert: {
+          category?: string
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          tax_treatment?: string
+          type: Database["public"]["Enums"]["account_type"]
+        }
+        Update: {
+          category?: string
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          tax_treatment?: string
+          type?: Database["public"]["Enums"]["account_type"]
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           account_owner: string | null
@@ -224,6 +305,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      compliance_items: {
+        Row: {
+          body: Database["public"]["Enums"]["compliance_body"]
+          created_at: string
+          due_date: string
+          frequency: string
+          id: string
+          notes: string | null
+          status: string
+          title: string
+        }
+        Insert: {
+          body?: Database["public"]["Enums"]["compliance_body"]
+          created_at?: string
+          due_date: string
+          frequency?: string
+          id?: string
+          notes?: string | null
+          status?: string
+          title: string
+        }
+        Update: {
+          body?: Database["public"]["Enums"]["compliance_body"]
+          created_at?: string
+          due_date?: string
+          frequency?: string
+          id?: string
+          notes?: string | null
+          status?: string
+          title?: string
+        }
+        Relationships: []
       }
       contact_submissions: {
         Row: {
@@ -826,6 +940,69 @@ export type Database = {
           },
         ]
       }
+      transactions: {
+        Row: {
+          account_id: string | null
+          ai_category: string | null
+          ai_confidence: number | null
+          amount: number
+          balance: number | null
+          confirmed: boolean
+          created_at: string
+          date: string
+          description: string
+          id: string
+          notes: string | null
+          statement_id: string
+          vat_amount: number | null
+        }
+        Insert: {
+          account_id?: string | null
+          ai_category?: string | null
+          ai_confidence?: number | null
+          amount?: number
+          balance?: number | null
+          confirmed?: boolean
+          created_at?: string
+          date: string
+          description?: string
+          id?: string
+          notes?: string | null
+          statement_id: string
+          vat_amount?: number | null
+        }
+        Update: {
+          account_id?: string | null
+          ai_category?: string | null
+          ai_confidence?: number | null
+          amount?: number
+          balance?: number | null
+          confirmed?: boolean
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          notes?: string | null
+          statement_id?: string
+          vat_amount?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "chart_of_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_statement_id_fkey"
+            columns: ["statement_id"]
+            isOneToOne: false
+            referencedRelation: "bank_statements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       updates: {
         Row: {
           client_id: string
@@ -998,7 +1175,9 @@ export type Database = {
       }
     }
     Enums: {
+      account_type: "income" | "expense" | "asset" | "liability" | "equity"
       app_role: "admin" | "client"
+      compliance_body: "SARS" | "CIPC" | "UIF" | "COIDA" | "Other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1126,7 +1305,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      account_type: ["income", "expense", "asset", "liability", "equity"],
       app_role: ["admin", "client"],
+      compliance_body: ["SARS", "CIPC", "UIF", "COIDA", "Other"],
     },
   },
 } as const
