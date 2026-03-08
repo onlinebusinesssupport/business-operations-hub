@@ -27,6 +27,7 @@ import MfaVerify from "./pages/MfaVerify";
 // Client Portal
 import PortalDashboard from "./pages/portal/PortalDashboard";
 import StudiosHub from "./pages/portal/StudiosHub";
+import MyStudios from "./pages/portal/MyStudios";
 import Requests from "./pages/portal/Requests";
 import Progress from "./pages/portal/Progress";
 import ClientReports from "./pages/portal/ClientReports";
@@ -107,6 +108,7 @@ const App = () => (
             {/* Client Portal */}
             <Route path="/portal" element={<ProtectedRoute><DashboardLayout portal="client"><PortalDashboard /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/studios" element={<ProtectedRoute><DashboardLayout portal="client"><StudiosHub /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/my-studios" element={<ProtectedRoute><DashboardLayout portal="client"><MyStudios /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/studios/operations" element={<ProtectedRoute><DashboardLayout portal="client"><OperationsStudio /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/studios/automation" element={<ProtectedRoute><DashboardLayout portal="client"><AutomationStudio /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/studios/lead-engine" element={<ProtectedRoute><DashboardLayout portal="client"><LeadEngineStudio /></DashboardLayout></ProtectedRoute>} />

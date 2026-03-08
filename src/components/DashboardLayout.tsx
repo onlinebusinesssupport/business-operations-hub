@@ -32,7 +32,7 @@ import PageTransition from "./PageTransition";
 /* ─── Nav configs ─── */
 const clientNav = [
   { label: "Dashboard", href: "/portal", icon: LayoutDashboard },
-  { label: "Studios", href: "/portal/studios", icon: Layers },
+  { label: "My Studios", href: "/portal/my-studios", icon: Layers },
   { label: "Requests", href: "/portal/requests", icon: MessageSquarePlus },
   { label: "Progress", href: "/portal/progress", icon: Activity },
   { label: "Reports", href: "/portal/reports", icon: BarChart3 },
