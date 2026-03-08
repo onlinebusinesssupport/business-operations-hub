@@ -283,10 +283,6 @@ const AdminClients = () => {
                       <Trash2 size={12} />
                     </button>
                   </div>
-                  )}
-                  <p className="text-[10px] text-muted-foreground/60 mt-1">
-                    {(client.services || []).slice(0, 2).join(" · ") || "No services"}
-                  </p>
                 </div>
               );
             }}
