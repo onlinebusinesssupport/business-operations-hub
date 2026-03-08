@@ -373,6 +373,44 @@ export type Database = {
         }
         Relationships: []
       }
+      pods: {
+        Row: {
+          client_id: string
+          config: Json | null
+          created_at: string
+          id: string
+          name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          config?: Json | null
+          created_at?: string
+          id?: string
+          name: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          config?: Json | null
+          created_at?: string
+          id?: string
+          name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pods_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -639,6 +677,53 @@ export type Database = {
           },
         ]
       }
+      signed_documents: {
+        Row: {
+          created_at: string
+          esign_provider: string | null
+          file_path: string | null
+          id: string
+          project_id: string
+          signed_at: string | null
+          signed_by_admin: boolean
+          signed_by_client: boolean
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          esign_provider?: string | null
+          file_path?: string | null
+          id?: string
+          project_id: string
+          signed_at?: string | null
+          signed_by_admin?: boolean
+          signed_by_client?: boolean
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          esign_provider?: string | null
+          file_path?: string | null
+          id?: string
+          project_id?: string
+          signed_at?: string | null
+          signed_by_admin?: boolean
+          signed_by_client?: boolean
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signed_documents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "work_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       updates: {
         Row: {
           client_id: string
@@ -745,6 +830,50 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workflow_stages: {
+        Row: {
+          created_at: string
+          due_date: string | null
+          feedback: Json | null
+          id: string
+          name: string
+          order_index: number
+          status: string
+          updated_at: string
+          work_item_id: string
+        }
+        Insert: {
+          created_at?: string
+          due_date?: string | null
+          feedback?: Json | null
+          id?: string
+          name: string
+          order_index?: number
+          status?: string
+          updated_at?: string
+          work_item_id: string
+        }
+        Update: {
+          created_at?: string
+          due_date?: string | null
+          feedback?: Json | null
+          id?: string
+          name?: string
+          order_index?: number
+          status?: string
+          updated_at?: string
+          work_item_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_stages_work_item_id_fkey"
+            columns: ["work_item_id"]
+            isOneToOne: false
+            referencedRelation: "work_items"
             referencedColumns: ["id"]
           },
         ]
