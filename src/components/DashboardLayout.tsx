@@ -39,7 +39,7 @@ const clientNav = [
   { label: "Reports", href: "/portal/reports", icon: BarChart3 },
   { label: "Files", href: "/portal/files", icon: FolderOpen },
   { label: "Billing", href: "/portal/billing", icon: DollarSign },
-  { label: "Messages", href: "/portal/emails", icon: Mail },
+  { label: "Messages", href: "/portal/messages", icon: MessageSquare },
   { label: "Settings", href: "/portal/settings", icon: Settings },
 ];
 
