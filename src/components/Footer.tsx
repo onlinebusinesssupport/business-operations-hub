@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   return (
@@ -12,6 +14,12 @@ const Footer = () => {
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-xs">
               Support that moves at your speed.
             </p>
+            <Link to="/contact" className="mt-4 inline-block">
+              <Button size="sm" className="text-xs tracking-wide gap-1.5">
+                Start a Conversation
+                <ArrowRight size={12} />
+              </Button>
+            </Link>
           </div>
 
           <div>
@@ -21,7 +29,7 @@ const Footer = () => {
             <ul className="mt-4 space-y-2.5">
               {[
                 { label: "Services", href: "/services" },
-                { label: "Media", href: "/media" },
+                { label: "How It Works", href: "/how-it-works" },
                 { label: "About", href: "/about" },
                 { label: "Contact", href: "/contact" },
               ].map((link) => (
@@ -44,10 +52,10 @@ const Footer = () => {
             <ul className="mt-4 space-y-2.5">
               <li>
                 <Link
-                  to="/apply"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  to="/contact"
+                  className="text-sm text-foreground font-medium hover:text-primary transition-colors"
                 >
-                  Apply
+                  Contact Us
                 </Link>
               </li>
               <li>

@@ -102,7 +102,7 @@ const ServicesPreview = () => {
         >
           <Link to="/services">
             <Button variant="outline" size="lg" className="text-sm tracking-wide">
-              View All Services
+              View Services
             </Button>
           </Link>
         </motion.div>

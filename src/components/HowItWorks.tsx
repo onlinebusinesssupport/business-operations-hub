@@ -1,14 +1,11 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const steps = [
   {
-    label: "REACH OUT",
-    description:
-      "Tell us a little about you. Fill out our quick support form and give us a glimpse of your business, your goals, and what's weighing on you right now. We'll make sure it's a good fit before moving forward.",
-  },
-  {
-    label: "LET'S TALK (OR NOT!)",
+    label: "LET'S TALK",
     description:
       "You choose: discovery call or no-pressure email. Whether you prefer to talk it out or type it up, we'll get to know your needs and explore how our team can support your next phase — calmly and strategically.",
   },
@@ -46,7 +43,7 @@ const HowItWorks = () => {
           </p>
         </motion.div>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-0">
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-0">
           {steps.map((step, i) => (
             <motion.div
               key={step.label}
@@ -74,6 +71,21 @@ const HowItWorks = () => {
             </motion.div>
           ))}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-12 text-center"
+        >
+          <Link to="/contact">
+            <Button size="lg" className="text-sm tracking-[0.1em] uppercase px-8 gap-2">
+              Start a Conversation
+              <ArrowRight size={16} />
+            </Button>
+          </Link>
+        </motion.div>
       </div>
     </section>
   );

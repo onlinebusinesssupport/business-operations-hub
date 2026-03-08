@@ -3,26 +3,19 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 const steps = [
   {
     number: "01",
-    title: "Reach Out",
-    description:
-      "Tell us a little about you. Fill out our quick support form and give us a glimpse of your business, your goals, and what's weighing on you right now. We'll make sure it's a good fit before moving forward.",
-    detail:
-      "It takes less than 5 minutes. No commitment required.",
-  },
-  {
-    number: "02",
-    title: "Let's Talk (Or Not!)",
+    title: "Let's Talk",
     description:
       "You choose: discovery call or no-pressure email. Whether you prefer to talk it out or type it up, we'll get to know your needs and explore how our team can support your next phase — calmly and strategically.",
     detail:
       "We meet you where you're comfortable. No hard sell, ever.",
   },
   {
-    number: "03",
+    number: "02",
     title: "Game Plan",
     description:
       "We'll take what we've learned, noodle on it some, and then develop a proposal tailored to meet your specific needs. We'll keep your goals and big vision in mind too!",
@@ -30,7 +23,7 @@ const steps = [
       "Every proposal is custom-built. No cookie-cutter packages.",
   },
   {
-    number: "04",
+    number: "03",
     title: "We Get to Work",
     description:
       "Once the proposal is approved, we will send you an agreement and invoice. After those boxes are checked, we'll start working our magic. We'll start with an assessment or audit first.",
@@ -93,6 +86,18 @@ const HowWeWork = () => {
           >
             From first contact to full execution — here is exactly how an engagement with The Business Support Studio works.
           </motion.p>
+          <motion.div
+            {...fadeUp}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mt-8"
+          >
+            <Link to="/contact">
+              <Button size="lg" className="text-sm tracking-wide gap-2">
+                Start a Conversation
+                <ArrowRight size={16} />
+              </Button>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
@@ -110,7 +115,7 @@ const HowWeWork = () => {
                 className="py-12 md:py-16 grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12"
               >
                 <div className="md:col-span-2">
-                  <span className="text-xs font-sans tracking-widest text-terracotta uppercase">
+                  <span className="text-xs font-sans tracking-widest text-primary uppercase">
                     {step.number}
                   </span>
                 </div>
@@ -173,12 +178,18 @@ const HowWeWork = () => {
               Ready to get started?
             </h2>
             <p className="mt-4 text-sm md:text-base leading-relaxed opacity-70">
-              Fill out our quick form. It takes less than 5 minutes and costs nothing.
+              Start a conversation. It costs nothing and takes just a few minutes.
             </p>
-            <div className="mt-8">
+            <div className="mt-8 flex gap-4 flex-wrap">
               <Link to="/contact">
-                <Button variant="secondary" size="lg" className="text-sm tracking-wide">
-                  Let's Partner
+                <Button variant="secondary" size="lg" className="text-sm tracking-wide gap-2">
+                  Start a Conversation
+                  <ArrowRight size={16} />
+                </Button>
+              </Link>
+              <Link to="/services">
+                <Button variant="ghost" size="lg" className="text-sm tracking-wide text-background/70 hover:text-background hover:bg-background/10">
+                  View Services
                 </Button>
               </Link>
             </div>
