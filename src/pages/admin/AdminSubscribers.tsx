@@ -171,9 +171,11 @@ const AdminSubscribers = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Source</TableHead>
               <TableHead>Date</TableHead>
+              <TableHead>POPI</TableHead>
               <TableHead>Active</TableHead>
             </TableRow>
           </TableHeader>
