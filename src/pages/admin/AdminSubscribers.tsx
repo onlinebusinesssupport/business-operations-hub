@@ -11,9 +11,11 @@ import { format } from "date-fns";
 
 interface SubscriberRow {
   email: string;
+  full_name?: string;
   source: string;
   date: string;
   is_active: boolean;
+  popi_consent?: boolean;
   origin: "newsletter" | "contact" | "application";
   id?: string;
 }
