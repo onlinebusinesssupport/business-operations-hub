@@ -8,6 +8,7 @@ import {
   Container,
   Head,
   Heading,
+  Hr,
   Html,
   Preview,
   Text,
@@ -24,20 +25,21 @@ export const RecoveryEmail = ({
 }: RecoveryEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Reset your password for {siteName}</Preview>
+    <Preview>Reset your password — Support Studio™</Preview>
     <Body style={main}>
       <Container style={container}>
+        <Text style={brand}>SUPPORT STUDIO™</Text>
+        <Hr style={divider} />
         <Heading style={h1}>Reset your password</Heading>
         <Text style={text}>
-          We received a request to reset your password for {siteName}. Click
-          the button below to choose a new password.
+          We received a request to reset your password. Click the button below
+          to choose a new one.
         </Text>
         <Button style={button} href={confirmationUrl}>
           Reset Password
         </Button>
         <Text style={footer}>
-          If you didn't request a password reset, you can safely ignore this
-          email. Your password will not be changed.
+          If you didn't request this, your password remains unchanged. No action needed.
         </Text>
       </Container>
     </Body>
@@ -46,26 +48,34 @@ export const RecoveryEmail = ({
 
 export default RecoveryEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
+const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', 'Space Grotesk', Arial, sans-serif" }
+const container = { padding: '40px 32px', maxWidth: '480px', margin: '0 auto' }
+const brand = {
+  fontSize: '11px',
+  fontWeight: '600' as const,
+  letterSpacing: '0.3em',
+  color: '#1E3D2F',
+  textTransform: 'uppercase' as const,
+  margin: '0 0 24px',
+}
+const divider = { borderColor: '#E8E5DF', margin: '0 0 32px' }
 const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
+  fontSize: '24px',
+  fontWeight: '700' as const,
+  fontFamily: "'Space Grotesk', Arial, sans-serif",
+  color: '#121212',
+  margin: '0 0 16px',
 }
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
+const text = { fontSize: '15px', color: '#666666', lineHeight: '1.6', margin: '0 0 20px' }
 const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
+  backgroundColor: '#1E3D2F',
+  color: '#F5F3EF',
   fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 20px',
+  fontWeight: '600' as const,
+  borderRadius: '0px',
+  padding: '14px 28px',
   textDecoration: 'none',
+  display: 'inline-block' as const,
+  margin: '0 0 32px',
 }
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
+const footer = { fontSize: '12px', color: '#999999', margin: '0', lineHeight: '1.5' }
