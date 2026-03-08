@@ -99,7 +99,7 @@ const Login = () => {
           Sign in to access your workspace.
         </p>
 
-        <form onSubmit={handleLogin} className="mt-8 space-y-4">
+        <form onSubmit={handleLogin} className="mt-8 space-y-4" autoComplete="off">
           <div>
             <label className="text-xs text-muted-foreground block mb-1.5">Email</label>
             <input
@@ -107,6 +107,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="off"
               className="w-full px-3 py-2.5 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-foreground/20"
             />
           </div>
@@ -117,6 +118,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="new-password"
               className="w-full px-3 py-2.5 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-foreground/20"
             />
           </div>
