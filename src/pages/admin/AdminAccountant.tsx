@@ -482,13 +482,13 @@ const AdminAccountant = () => {
                         <TableCell className="flex items-center gap-1.5">
                           {statusBadge(s.status)}
                           {s.status !== "processing" && s.transaction_count > 0 && (s.skipped_count || 0) === 0 && (
-                            <CheckCircle2 size={14} className="text-green-600" title="All transactions parsed cleanly" />
+                            <span title="All transactions parsed cleanly"><CheckCircle2 size={14} className="text-green-600" /></span>
                           )}
                           {(s.skipped_count || 0) > 0 && s.transaction_count > 0 && (
-                            <AlertTriangle size={14} className="text-yellow-600" title={`${s.skipped_count} lines skipped`} />
+                            <span title={`${s.skipped_count} lines skipped`}><AlertTriangle size={14} className="text-yellow-600" /></span>
                           )}
                           {s.status !== "processing" && s.transaction_count === 0 && (
-                            <XCircle size={14} className="text-destructive" title="No valid transactions parsed" />
+                            <span title="No valid transactions parsed"><XCircle size={14} className="text-destructive" /></span>
                           )}
                         </TableCell>
                         <TableCell>
