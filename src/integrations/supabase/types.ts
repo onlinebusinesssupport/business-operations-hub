@@ -591,24 +591,30 @@ export type Database = {
       newsletter_subscribers: {
         Row: {
           email: string
+          full_name: string | null
           id: string
           is_active: boolean
+          popi_consent: boolean
           source: string
           subscribed_at: string
           unsubscribed_at: string | null
         }
         Insert: {
           email: string
+          full_name?: string | null
           id?: string
           is_active?: boolean
+          popi_consent?: boolean
           source?: string
           subscribed_at?: string
           unsubscribed_at?: string | null
         }
         Update: {
           email?: string
+          full_name?: string | null
           id?: string
           is_active?: boolean
+          popi_consent?: boolean
           source?: string
           subscribed_at?: string
           unsubscribed_at?: string | null
