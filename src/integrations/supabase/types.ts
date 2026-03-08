@@ -724,6 +724,54 @@ export type Database = {
           },
         ]
       }
+      stage_comments: {
+        Row: {
+          attachment_name: string | null
+          attachment_url: string | null
+          author_id: string
+          content: string
+          created_at: string
+          id: string
+          stage_id: string
+          work_item_id: string
+        }
+        Insert: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          author_id: string
+          content: string
+          created_at?: string
+          id?: string
+          stage_id: string
+          work_item_id: string
+        }
+        Update: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          author_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          stage_id?: string
+          work_item_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stage_comments_stage_id_fkey"
+            columns: ["stage_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_stages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stage_comments_work_item_id_fkey"
+            columns: ["work_item_id"]
+            isOneToOne: false
+            referencedRelation: "work_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       updates: {
         Row: {
           client_id: string
@@ -840,6 +888,7 @@ export type Database = {
           due_date: string | null
           feedback: Json | null
           id: string
+          meeting_url: string | null
           name: string
           order_index: number
           status: string
@@ -851,6 +900,7 @@ export type Database = {
           due_date?: string | null
           feedback?: Json | null
           id?: string
+          meeting_url?: string | null
           name: string
           order_index?: number
           status?: string
@@ -862,6 +912,7 @@ export type Database = {
           due_date?: string | null
           feedback?: Json | null
           id?: string
+          meeting_url?: string | null
           name?: string
           order_index?: number
           status?: string
