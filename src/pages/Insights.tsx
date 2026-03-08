@@ -123,19 +123,27 @@ const Insights = () => {
         </div>
       </section>
 
-      {/* Newsletter CTA */}
+      {/* CTA */}
       <section className="py-24">
         <div className="container mx-auto px-6 lg:px-8 max-w-xl text-center">
           <motion.div {...fadeUp}>
             <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium">
-              STAY INFORMED
+              GET IN TOUCH
             </span>
             <h2 className="mt-4 font-serif text-2xl md:text-3xl font-medium text-foreground">
-              Operational insights, delivered monthly.
+              Ready to discuss your operational needs?
             </h2>
             <p className="mt-4 text-sm text-muted-foreground">
-              No spam. Just practical perspectives on building structured, scalable businesses in South Africa.
+              Start a conversation with our team. No pressure, no obligation.
             </p>
+            <div className="mt-8">
+              <Link to="/contact">
+                <Button size="lg" className="text-sm tracking-wide gap-2">
+                  Start a Conversation
+                  <ArrowRight size={16} />
+                </Button>
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
