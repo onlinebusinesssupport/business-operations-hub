@@ -163,11 +163,12 @@ const Clients = () => {
           <motion.div
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-8 flex gap-4 justify-center"
+            className="mt-8 flex gap-4 justify-center flex-wrap"
           >
             <Link to="/contact">
-              <Button size="lg" className="text-sm tracking-wide">
-                Work With Us
+              <Button size="lg" className="text-sm tracking-wide gap-2">
+                Start a Conversation
+                <ArrowRight size={16} />
               </Button>
             </Link>
             <Link to="/services">
