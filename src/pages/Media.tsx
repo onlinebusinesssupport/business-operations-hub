@@ -4,6 +4,7 @@ import { ArrowRight, Play, FileText, Mic } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import NewsletterForm from "@/components/NewsletterForm";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },

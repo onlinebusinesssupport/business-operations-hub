@@ -27,9 +27,8 @@ const AdminSubscribers = () => {
   const fetchAll = async () => {
     setLoading(true);
 
-    // Fetch all three sources in parallel
     const [nlRes, csRes, appRes] = await Promise.all([
-      supabase.from("newsletter_subscribers").select("*").order("subscribed_at", { ascending: false }),
+      (supabase as any).from("newsletter_subscribers").select("*").order("subscribed_at", { ascending: false }),
       supabase.from("contact_submissions").select("email, created_at").order("created_at", { ascending: false }),
       supabase.from("applications").select("email, created_at").order("created_at", { ascending: false }),
     ]);
@@ -37,7 +36,6 @@ const AdminSubscribers = () => {
     const rows: SubscriberRow[] = [];
     const seen = new Set<string>();
 
-    // Newsletter subscribers first (primary source)
     (nlRes.data || []).forEach((s: any) => {
       const key = s.email.toLowerCase();
       seen.add(key);
@@ -51,33 +49,19 @@ const AdminSubscribers = () => {
       });
     });
 
-    // Contact submissions (deduplicated)
     (csRes.data || []).forEach((c: any) => {
       const key = c.email.toLowerCase();
       if (!seen.has(key)) {
         seen.add(key);
-        rows.push({
-          email: c.email,
-          source: "contact_form",
-          date: c.created_at,
-          is_active: true,
-          origin: "contact",
-        });
+        rows.push({ email: c.email, source: "contact_form", date: c.created_at, is_active: true, origin: "contact" });
       }
     });
 
-    // Applications (deduplicated)
     (appRes.data || []).forEach((a: any) => {
       const key = a.email.toLowerCase();
       if (!seen.has(key)) {
         seen.add(key);
-        rows.push({
-          email: a.email,
-          source: "application",
-          date: a.created_at,
-          is_active: true,
-          origin: "application",
-        });
+        rows.push({ email: a.email, source: "application", date: a.created_at, is_active: true, origin: "application" });
       }
     });
 
@@ -89,7 +73,7 @@ const AdminSubscribers = () => {
 
   const toggleActive = async (row: SubscriberRow) => {
     if (row.origin !== "newsletter" || !row.id) return;
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("newsletter_subscribers")
       .update({ is_active: !row.is_active, unsubscribed_at: row.is_active ? new Date().toISOString() : null })
       .eq("id", row.id);

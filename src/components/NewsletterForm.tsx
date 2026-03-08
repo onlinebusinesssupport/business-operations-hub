@@ -27,8 +27,7 @@ const NewsletterForm = ({ source, compact = false }: NewsletterFormProps) => {
     }
 
     setLoading(true);
-    // Upsert to handle duplicates silently
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("newsletter_subscribers")
       .upsert(
         { email: parsed.data.toLowerCase(), source, is_active: true },
