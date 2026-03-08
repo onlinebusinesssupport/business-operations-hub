@@ -10,7 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [portalType, setPortalType] = useState<"client" | "admin">("client");
+  
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -73,14 +73,7 @@ const Login = () => {
         .eq("role", "admin")
         .maybeSingle();
 
-      if (portalType === "admin" && !roleData) {
-        toast({ title: "Access denied", description: "This account does not have admin privileges.", variant: "destructive" });
-        await supabase.auth.signOut();
-        setLoading(false);
-        return;
-      }
-
-      navigate(roleData && portalType === "admin" ? "/admin" : "/portal");
+      navigate(roleData ? "/admin" : "/portal");
     }
   };
 
@@ -96,39 +89,11 @@ const Login = () => {
           THE BUSINESS SUPPORT STUDIO™
         </Link>
 
-        {/* Portal type selector */}
-        <div className="flex border border-border overflow-hidden mb-8">
-          <button
-            type="button"
-            onClick={() => setPortalType("client")}
-            className={`flex-1 py-2.5 text-xs uppercase tracking-widest font-medium transition-colors duration-200 ${
-              portalType === "client"
-                ? "bg-primary text-primary-foreground"
-                : "bg-background text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Client
-          </button>
-          <button
-            type="button"
-            onClick={() => setPortalType("admin")}
-            className={`flex-1 py-2.5 text-xs uppercase tracking-widest font-medium transition-colors duration-200 ${
-              portalType === "admin"
-                ? "bg-primary text-primary-foreground"
-                : "bg-background text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Admin
-          </button>
-        </div>
-
         <h1 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">
           Enter THE BUSINESS SUPPORT STUDIO
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {portalType === "client"
-            ? "Access your Studio and step into structured support."
-            : "Sign in to manage platform operations."}
+          Sign in to access your workspace.
         </p>
 
         <form onSubmit={handleLogin} className="mt-8 space-y-4">
@@ -206,14 +171,12 @@ const Login = () => {
           <Link to="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
             Forgot your password?
           </Link>
-          {portalType === "client" && (
-            <p className="text-xs text-muted-foreground">
-              No account?{" "}
-              <Link to="/apply" className="text-foreground hover:underline">
-                Apply for access
-              </Link>
-            </p>
-          )}
+          <p className="text-xs text-muted-foreground">
+            No account?{" "}
+            <Link to="/apply" className="text-foreground hover:underline">
+              Apply for access
+            </Link>
+          </p>
         </div>
       </motion.div>
     </div>
