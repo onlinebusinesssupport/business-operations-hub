@@ -3,63 +3,97 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Settings, Zap, Target, Globe, Award, Plane } from "lucide-react";
 
-const tiers = [
+const services = [
   {
-    name: "Executive Operations Support",
-    price: "$3,500–$6,500",
-    frequency: "/mo",
-    hours: "20–30 hrs/week",
-    bestFor: "Early-stage founders, 5–20 person teams",
+    icon: Settings,
+    name: "Operations",
+    pricing: "R8 500 – R15 000/mo",
+    pain: "Drowning in admin while your business runs on memory and maybes.",
+    outcome: "The backbone that lets you focus on growth — not fires.",
+    idealFor: "Scaling founders, 5–30 person teams",
     features: [
-      "Calendar management & inbox governance",
+      "Calendar & inbox governance",
       "Meeting preparation & follow-ups",
-      "Logistics coordination",
-      "Workflow optimization",
-      "Monthly reporting summaries",
-    ],
-  },
-  {
-    name: "Fractional Operations Director",
-    price: "$6,500–$12,000",
-    frequency: "/mo",
-    hours: "30–40 hrs/week",
-    bestFor: "Growing businesses, Series A-B, 15–50 person teams",
-    features: [
-      "Everything in Executive Support",
-      "Operations strategy & quarterly planning",
-      "Systems design & efficiency roadmaps",
-      "Financial operations & expense tracking",
-      "HR coordination & vendor management",
-    ],
-  },
-  {
-    name: "Specialized Consulting",
-    price: "$8,000–$30,000+",
-    frequency: "",
-    hours: "Project-based",
-    bestFor: "Specific operational challenges or initiatives",
-    features: [
-      "Cash flow architecture",
-      "Hiring systems & vendor optimization",
+      "Vendor & logistics coordination",
+      "Monthly reporting & dashboards",
       "Process documentation",
-      "Growth transition planning",
-      "Custom systems implementation",
     ],
   },
   {
-    name: "Hospitality Consulting",
-    price: "$5,000–$15,000",
-    frequency: "/mo",
-    hours: "Project or retainer",
-    bestFor: "Hotels, restaurants, travel, service businesses",
+    icon: Zap,
+    name: "Automation & Systems",
+    pricing: "R6 500 – R12 000/mo",
+    pain: "Manual processes eating hours. No one knows the workflow except you.",
+    outcome: "Systems that run while you sleep — documented, reliable, scalable.",
+    idealFor: "Operators eliminating bottlenecks",
     features: [
-      "Guest experience optimization",
-      "Operations management & coordination",
-      "Staff training & service standards",
-      "Revenue management & compliance",
-      "Quality assurance systems",
+      "Workflow automation design",
+      "CRM & tool integrations",
+      "SOP documentation",
+      "Process optimization",
+      "Team onboarding systems",
+    ],
+  },
+  {
+    icon: Target,
+    name: "Lead Engine",
+    pricing: "R9 500 – R18 000/mo",
+    pain: "Inconsistent pipeline. Feast-or-famine revenue cycles.",
+    outcome: "Predictable demand, engineered — not hoped for.",
+    idealFor: "Founders ready to scale revenue",
+    features: [
+      "Lead generation strategy",
+      "Outbound campaign management",
+      "CRM pipeline optimization",
+      "Lead qualification systems",
+      "Conversion tracking & reporting",
+    ],
+  },
+  {
+    icon: Globe,
+    name: "Digital Presence",
+    pricing: "R7 500 – R14 000/mo",
+    pain: "Your brand looks amateur. Competitors are outpacing you online.",
+    outcome: "A digital presence that commands respect and converts.",
+    idealFor: "Professionals, consultants, creators",
+    features: [
+      "Social media management",
+      "Content strategy & creation",
+      "Brand consistency audits",
+      "Online reputation management",
+      "Engagement optimization",
+    ],
+  },
+  {
+    icon: Award,
+    name: "Grants & Funding",
+    pricing: "Project from R25 000",
+    pain: "Leaving money on the table. Applications going nowhere.",
+    outcome: "Funding secured. Recognition earned. Credibility amplified.",
+    idealFor: "Impact-driven businesses, NGOs",
+    features: [
+      "Grant research & identification",
+      "Application writing & editing",
+      "Award submissions",
+      "Funding strategy consultation",
+      "Compliance documentation",
+    ],
+  },
+  {
+    icon: Plane,
+    name: "Executive Travel & Experiences",
+    pricing: "Project from R12 000",
+    pain: "Wasting hours on logistics. Trips that don't match your standards.",
+    outcome: "Travel planned like business — flawlessly, without the admin.",
+    idealFor: "Executives, HNWIs, corporate teams",
+    features: [
+      "Itinerary design & booking",
+      "Executive travel coordination",
+      "Corporate retreat planning",
+      "VIP experience curation",
+      "24/7 travel support",
     ],
   },
 ];
@@ -88,16 +122,16 @@ const Services = () => {
           <motion.h1
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.05 }}
-            className="mt-6 font-serif text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-foreground"
+            className="mt-6 font-display text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-foreground"
           >
-            Structured support for founders building real businesses.
+            Six engines. One private studio.
           </motion.h1>
           <motion.p
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-6 text-lg text-muted-foreground leading-relaxed"
           >
-            Choose the level of operational support that fits your stage. Every engagement includes a dedicated client portal with transparent reporting.
+            Built for founders who are done with chaos. Each service is designed to solve a specific operational pain point — with clear pricing and measurable outcomes.
           </motion.p>
           <motion.div
             {...fadeUp}
@@ -105,7 +139,7 @@ const Services = () => {
             className="mt-8"
           >
             <Link to="/contact">
-              <Button size="lg" className="text-sm tracking-wide gap-2">
+              <Button size="lg" className="text-sm tracking-[0.1em] uppercase gap-2">
                 Start a Conversation
                 <ArrowRight size={16} />
               </Button>
@@ -114,63 +148,33 @@ const Services = () => {
         </div>
       </section>
 
-      {/* Tier Comparison Table */}
+      {/* Services Grid */}
       <section className="py-20 bg-secondary">
         <div className="container mx-auto px-6 lg:px-8">
-          <motion.h2
-            {...fadeUp}
-            className="font-serif text-2xl md:text-3xl font-bold text-foreground"
-          >
-            Service Tiers Overview
-          </motion.h2>
-
-          {/* Desktop Table */}
-          <motion.div
-            {...fadeUp}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mt-10 hidden lg:block overflow-x-auto"
-          >
-            <table className="w-full text-left">
-              <thead>
-                <tr className="bg-primary text-primary-foreground">
-                  <th className="p-4 text-sm font-medium">Service Tier</th>
-                  <th className="p-4 text-sm font-medium">Monthly Investment</th>
-                  <th className="p-4 text-sm font-medium">Hours/Week</th>
-                  <th className="p-4 text-sm font-medium">Best For</th>
-                  <th className="p-4 text-sm font-medium">Key Features</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tiers.map((tier, i) => (
-                  <tr key={tier.name} className={i % 2 === 0 ? "bg-background" : "bg-secondary"}>
-                    <td className="p-4 text-sm font-medium text-foreground">{tier.name}</td>
-                    <td className="p-4 text-sm text-foreground">{tier.price}{tier.frequency}</td>
-                    <td className="p-4 text-sm text-foreground">{tier.hours}</td>
-                    <td className="p-4 text-sm text-muted-foreground">{tier.bestFor}</td>
-                    <td className="p-4 text-sm text-muted-foreground">{tier.features.slice(0, 3).join(", ")}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </motion.div>
-
-          {/* Mobile Cards */}
-          <div className="mt-10 lg:hidden grid grid-cols-1 gap-6">
-            {tiers.map((tier, i) => (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {services.map((service, i) => (
               <motion.div
-                key={tier.name}
+                key={service.name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
                 className="bg-background border-l-2 border-primary p-8"
               >
-                <h3 className="font-serif text-xl font-bold text-foreground">{tier.name}</h3>
-                <p className="mt-2 text-lg font-medium text-primary">{tier.price}{tier.frequency}</p>
-                <p className="text-xs text-muted-foreground">{tier.hours}</p>
-                <p className="mt-3 text-sm italic text-muted-foreground">Best for: {tier.bestFor}</p>
+                <div className="flex items-start gap-4">
+                  <service.icon size={24} className="text-primary shrink-0 mt-1" strokeWidth={1.5} />
+                  <div className="flex-1">
+                    <h3 className="font-display text-xl font-bold text-foreground">{service.name}</h3>
+                    <p className="mt-1 text-sm font-medium text-primary">{service.pricing}</p>
+                  </div>
+                </div>
+                <p className="mt-4 text-sm italic text-muted-foreground">{service.pain}</p>
+                <p className="mt-2 text-sm font-medium text-foreground/80">{service.outcome}</p>
+                <p className="mt-3 text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60">
+                  Ideal for: {service.idealFor}
+                </p>
                 <ul className="mt-4 space-y-2">
-                  {tier.features.map((f) => (
+                  {service.features.map((f) => (
                     <li key={f} className="text-sm text-foreground/80 flex items-start gap-2">
                       <span className="mt-1.5 h-1.5 w-1.5 bg-primary shrink-0" />
                       {f}
@@ -183,70 +187,12 @@ const Services = () => {
         </div>
       </section>
 
-      {/* What Clients Receive */}
-      <section className="py-20">
-        <div className="container mx-auto px-6 lg:px-8">
-          <motion.h2
-            {...fadeUp}
-            className="font-serif text-2xl md:text-3xl font-bold text-foreground"
-          >
-            What Clients Receive
-          </motion.h2>
-
-          <div className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              {
-                title: "Executive Operations Support Includes:",
-                items: [
-                  "Calendar & Time Management: Complete governance, scheduling, conflict resolution",
-                  "Inbox Management: Email triage, priority flagging, response drafting",
-                  "Meeting Preparation: Agenda setting, research, post-meeting follow-up",
-                ],
-              },
-              {
-                title: "Fractional Operations Director Includes:",
-                items: [
-                  "Everything above, plus:",
-                  "Operations Strategy: Quarterly planning, systems design, efficiency roadmaps",
-                  "Financial Operations: Cash flow forecasting, expense tracking, vendor management",
-                ],
-              },
-              {
-                title: "Specialized Consulting Includes:",
-                items: [
-                  "Cash Flow Architecture: Financial systems design and implementation",
-                  "Hiring & Team Systems: Workflow design, onboarding, performance management",
-                  "Vendor Optimization: Audit, renegotiation, performance management",
-                ],
-              },
-              {
-                title: "Hospitality Consulting Includes:",
-                items: [
-                  "Guest Experience: Satisfaction optimization, complaint reduction, review management",
-                  "Operations Management: Front office, housekeeping, F&B coordination",
-                  "Staff Training: Service standards, team building, culture development",
-                ],
-              },
-            ].map((block, i) => (
-              <motion.div
-                key={block.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="bg-secondary border-l-2 border-primary p-8"
-              >
-                <h3 className="font-serif text-base font-bold text-foreground">{block.title}</h3>
-                <ul className="mt-4 space-y-2">
-                  {block.items.map((item) => (
-                    <li key={item} className="text-sm text-muted-foreground leading-relaxed">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
+      {/* Trust Signal */}
+      <section className="py-12 border-t border-divider">
+        <div className="container mx-auto px-6 lg:px-8 text-center">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/60">
+            Proudly built in Johannesburg • Trusted by founders at Yoco, SweepSouth, Takealot-scale businesses.
+          </p>
         </div>
       </section>
 
@@ -255,7 +201,7 @@ const Services = () => {
         <div className="container mx-auto px-6 lg:px-8 text-center max-w-2xl">
           <motion.h2
             {...fadeUp}
-            className="font-serif text-2xl md:text-3xl font-bold leading-snug"
+            className="font-display text-2xl md:text-3xl font-bold leading-snug"
           >
             Ready to bring structure to your operations?
           </motion.h2>
@@ -264,7 +210,7 @@ const Services = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-4 opacity-70"
           >
-            Start a conversation and we'll work out the right support for where you are now.
+            Start a conversation. No pressure. No obligation. Just clarity on whether we're the right fit.
           </motion.p>
           <motion.div
             {...fadeUp}
@@ -272,7 +218,7 @@ const Services = () => {
             className="mt-8 flex gap-4 justify-center flex-wrap"
           >
             <Link to="/contact">
-              <Button size="lg" className="text-sm tracking-wide px-8 gap-2">
+              <Button size="lg" className="text-sm tracking-[0.1em] uppercase px-8 gap-2">
                 Start a Conversation
                 <ArrowRight size={16} />
               </Button>

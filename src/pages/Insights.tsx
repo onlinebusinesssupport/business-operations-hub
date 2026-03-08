@@ -74,7 +74,7 @@ const Insights = () => {
           <motion.h1
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mt-6 font-serif text-3xl md:text-4xl lg:text-5xl font-medium leading-tight text-foreground"
+            className="mt-6 font-display text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-foreground"
           >
             Perspectives on operations, systems, and growth.
           </motion.h1>
@@ -83,8 +83,7 @@ const Insights = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-6 text-lg text-muted-foreground leading-relaxed"
           >
-            Practical thinking from the team at The Business Support Studio — grounded in real experience
-            supporting South African businesses.
+            Practical thinking from Support Studio™ — grounded in real experience supporting South African businesses.
           </motion.p>
         </div>
       </section>
@@ -108,7 +107,7 @@ const Insights = () => {
                   </span>
                 </div>
                 <div className="md:col-span-7">
-                  <h3 className="font-serif text-lg md:text-xl font-medium text-foreground group-hover:text-muted-foreground transition-colors">
+                  <h3 className="font-display text-lg md:text-xl font-bold text-foreground group-hover:text-muted-foreground transition-colors">
                     {article.title}
                   </h3>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
@@ -133,15 +132,15 @@ const Insights = () => {
             <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium">
               GET IN TOUCH
             </span>
-            <h2 className="mt-4 font-serif text-2xl md:text-3xl font-medium text-foreground">
+            <h2 className="mt-4 font-display text-2xl md:text-3xl font-bold text-foreground">
               Ready to discuss your operational needs?
             </h2>
             <p className="mt-4 text-sm text-muted-foreground">
-              Start a conversation with our team. No pressure, no obligation.
+              Start a conversation. No pressure. No obligation.
             </p>
             <div className="mt-8">
               <Link to="/contact">
-                <Button size="lg" className="text-sm tracking-wide gap-2">
+                <Button size="lg" className="text-sm tracking-[0.1em] uppercase gap-2">
                   Start a Conversation
                   <ArrowRight size={16} />
                 </Button>

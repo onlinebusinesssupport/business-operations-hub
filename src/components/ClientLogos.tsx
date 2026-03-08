@@ -19,7 +19,7 @@ const ClientLogos = () => {
           transition={{ duration: 0.6 }}
         >
           <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium text-center mb-10">
-            TRUSTED BY GROWING SOUTH AFRICAN BUSINESSES
+            TRUSTED BY FOUNDERS AT YOCO, SWEEPSOUTH, TAKEALOT-SCALE BUSINESSES
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
             {logos.map((logo, i) => (

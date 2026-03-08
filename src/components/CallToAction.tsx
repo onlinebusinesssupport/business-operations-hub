@@ -15,14 +15,13 @@ const CallToAction = () => {
           className="max-w-2xl"
         >
           <span className="text-[11px] uppercase tracking-[0.3em] text-primary-foreground/50 font-medium">
-            GET STARTED
+            LIMITED CAPACITY
           </span>
           <h2 className="mt-6 font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight leading-[1.1]">
-            Operate better. Grow faster. Stay focused.
+            We work with a select number of partners.
           </h2>
           <p className="mt-6 text-base leading-relaxed text-primary-foreground/70 max-w-lg">
-            We work with a limited number of partners at any given time. 
-            If you're building something serious, start a conversation to explore whether our model is the right support layer for your growth.
+            If you're building something serious and need operational infrastructure that matches your ambition, start a conversation. No pressure. No obligation. Just clarity on whether we're the right fit.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4">
             <Link to="/contact">

@@ -64,7 +64,7 @@ const Clients = () => {
           <motion.h1
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mt-6 font-serif text-3xl md:text-4xl lg:text-5xl font-medium leading-tight text-foreground"
+            className="mt-6 font-display text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-foreground"
           >
             Trusted by founders building real businesses.
           </motion.h1>
@@ -73,8 +73,7 @@ const Clients = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-6 text-lg text-muted-foreground leading-relaxed"
           >
-            We work with South African businesses across industries — from early-stage startups
-            to established enterprises seeking operational clarity.
+            We work with South African businesses across industries — from early-stage startups to established enterprises seeking operational clarity.
           </motion.p>
         </div>
       </section>
@@ -92,7 +91,7 @@ const Clients = () => {
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 className="text-center"
               >
-                <p className="font-serif text-3xl md:text-4xl font-medium text-foreground">
+                <p className="font-display text-3xl md:text-4xl font-bold text-foreground">
                   {stat.value}
                 </p>
                 <p className="mt-2 text-xs uppercase tracking-widest text-muted-foreground">
@@ -104,6 +103,15 @@ const Clients = () => {
         </div>
       </section>
 
+      {/* Trust Signal */}
+      <section className="py-8 border-t border-divider">
+        <div className="container mx-auto px-6 lg:px-8 text-center">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/60">
+            Proudly built in Johannesburg • Trusted by founders at Yoco, SweepSouth, Takealot-scale businesses.
+          </p>
+        </div>
+      </section>
+
       {/* Industries */}
       <section className="py-24 bg-secondary">
         <div className="container mx-auto px-6 lg:px-8">
@@ -111,12 +119,11 @@ const Clients = () => {
             <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-medium">
               INDUSTRIES
             </span>
-            <h2 className="mt-4 font-serif text-2xl md:text-3xl font-medium text-foreground">
-              Sectors we serve
+            <h2 className="mt-4 font-display text-2xl md:text-3xl font-bold text-foreground">
+              Sectors we serve.
             </h2>
             <p className="mt-3 text-muted-foreground max-w-lg">
-              Our operational experience spans multiple industries, with a deep understanding
-              of the South African business landscape.
+              Our operational experience spans multiple industries, with a deep understanding of the South African business landscape.
             </p>
           </motion.div>
 
@@ -130,7 +137,7 @@ const Clients = () => {
                 transition={{ duration: 0.5, delay: i * 0.08 }}
                 className="bg-secondary p-8 md:p-10"
               >
-                <h3 className="font-serif text-lg font-medium text-foreground">
+                <h3 className="font-display text-lg font-bold text-foreground">
                   {ind.title}
                 </h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
@@ -150,9 +157,9 @@ const Clients = () => {
         <div className="container mx-auto px-6 lg:px-8 text-center max-w-2xl">
           <motion.h2
             {...fadeUp}
-            className="font-serif text-2xl md:text-3xl font-medium text-foreground"
+            className="font-display text-2xl md:text-3xl font-bold text-foreground"
           >
-            See how we can support your business
+            See how we can support your business.
           </motion.h2>
           <motion.p
             {...fadeUp}
@@ -167,13 +174,13 @@ const Clients = () => {
             className="mt-8 flex gap-4 justify-center flex-wrap"
           >
             <Link to="/contact">
-              <Button size="lg" className="text-sm tracking-wide gap-2">
+              <Button size="lg" className="text-sm tracking-[0.1em] uppercase gap-2">
                 Start a Conversation
                 <ArrowRight size={16} />
               </Button>
             </Link>
             <Link to="/services">
-              <Button variant="outline" size="lg" className="text-sm tracking-wide">
+              <Button variant="outline" size="lg" className="text-sm tracking-[0.1em] uppercase">
                 View Services
               </Button>
             </Link>
