@@ -43,6 +43,7 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // 1. Insert contact submission
     const { error } = await supabase.from("contact_submissions").insert({
       name: name.trim(),
       email: email.trim(),
@@ -56,6 +57,29 @@ const Contact = () => {
     if (error) {
       toast({ title: "Submission failed", description: error.message, variant: "destructive" });
       return;
+    }
+
+    // 2. Auto-create client record as "New Lead"
+    const { data: newClient, error: clientError } = await supabase.from("clients").insert({
+      name: company.trim() || name.trim(),
+      email: email.trim(),
+      website: website.trim() || null,
+      status: "lead",
+      lifecycle_stage: "new_inquiry",
+      inquiry_type: serviceInterest || null,
+      source_page: "/contact",
+      notes: message.trim(),
+    }).select().single();
+
+    // 3. Notify admins via edge function
+    if (newClient) {
+      await supabase.functions.invoke("notify-new-lead", {
+        body: {
+          client_id: newClient.id,
+          client_name: newClient.name,
+          source: "Contact Form",
+        },
+      });
     }
 
     setSubmitted(true);

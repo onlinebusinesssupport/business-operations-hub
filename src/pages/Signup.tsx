@@ -68,7 +68,7 @@ const Signup = () => {
   const handleSignup = async () => {
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
       options: {
@@ -87,6 +87,28 @@ const Signup = () => {
       toast({ title: "Unable to sign up", description: error.message, variant: "destructive" });
       setLoading(false);
       return;
+    }
+
+    // Auto-create client record with status "onboarding"
+    const { data: newClient } = await supabase.from("clients").insert({
+      name: companyName.trim(),
+      email: email.trim(),
+      phone: phone.trim() || null,
+      status: "onboarding",
+      lifecycle_stage: "onboarding",
+      inquiry_type: industry || null,
+      source_page: "/signup",
+    }).select().single();
+
+    // Notify admins
+    if (newClient) {
+      await supabase.functions.invoke("notify-new-lead", {
+        body: {
+          client_id: newClient.id,
+          client_name: newClient.name,
+          source: "Signup Form",
+        },
+      });
     }
 
     setSubmitted(true);

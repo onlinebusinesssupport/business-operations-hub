@@ -13,6 +13,8 @@ import {
   X,
   LogOut,
 } from "lucide-react";
+import NotificationBell from "@/components/NotificationBell";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
@@ -32,6 +34,7 @@ interface AdminLayoutProps {
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const { signOut } = useAuth();
 
   return (
     <div className="min-h-screen flex bg-secondary">
@@ -84,7 +87,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </nav>
 
         <div className="px-3 py-4 border-t border-background/10">
-          <button className="flex items-center gap-3 px-3 py-2 text-sm text-background/50 hover:text-background transition-colors w-full rounded-md hover:bg-background/10">
+          <button 
+            onClick={signOut}
+            className="flex items-center gap-3 px-3 py-2 text-sm text-background/50 hover:text-background transition-colors w-full rounded-md hover:bg-background/10"
+          >
             <LogOut size={17} strokeWidth={1.5} />
             Sign Out
           </button>
@@ -92,16 +98,19 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       </aside>
 
       <div className="flex-1 flex flex-col min-h-screen">
-        <header className="h-14 bg-background border-b border-divider flex items-center px-6 sticky top-0 z-30">
-          <button
-            className="lg:hidden mr-4 text-foreground"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu size={20} />
-          </button>
-          <span className="text-xs uppercase tracking-widest text-muted-foreground">
-            Admin
-          </span>
+        <header className="h-14 bg-background border-b border-divider flex items-center justify-between px-6 sticky top-0 z-30">
+          <div className="flex items-center">
+            <button
+              className="lg:hidden mr-4 text-foreground"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu size={20} />
+            </button>
+            <span className="text-xs uppercase tracking-widest text-muted-foreground">
+              Admin
+            </span>
+          </div>
+          <NotificationBell />
         </header>
 
         <main className="flex-1 p-6 lg:p-8 max-w-7xl">{children}</main>

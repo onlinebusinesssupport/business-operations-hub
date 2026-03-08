@@ -122,8 +122,10 @@ export type Database = {
           contact_profile_id: string | null
           contract_renewal_date: string | null
           created_at: string
+          email: string | null
           health_score: number | null
           id: string
+          inquiry_type: string | null
           last_activity_at: string | null
           lead_score: number | null
           lead_source: string | null
@@ -135,10 +137,12 @@ export type Database = {
           name: string
           notes: string | null
           nps_score: number | null
+          phone: string | null
           retainer_limit: number
           retainer_used: number
           review_count: number | null
           services: string[] | null
+          source_page: string | null
           status: string
           subscription_status: string
           tier: string | null
@@ -151,8 +155,10 @@ export type Database = {
           contact_profile_id?: string | null
           contract_renewal_date?: string | null
           created_at?: string
+          email?: string | null
           health_score?: number | null
           id?: string
+          inquiry_type?: string | null
           last_activity_at?: string | null
           lead_score?: number | null
           lead_source?: string | null
@@ -164,10 +170,12 @@ export type Database = {
           name: string
           notes?: string | null
           nps_score?: number | null
+          phone?: string | null
           retainer_limit?: number
           retainer_used?: number
           review_count?: number | null
           services?: string[] | null
+          source_page?: string | null
           status?: string
           subscription_status?: string
           tier?: string | null
@@ -180,8 +188,10 @@ export type Database = {
           contact_profile_id?: string | null
           contract_renewal_date?: string | null
           created_at?: string
+          email?: string | null
           health_score?: number | null
           id?: string
+          inquiry_type?: string | null
           last_activity_at?: string | null
           lead_score?: number | null
           lead_source?: string | null
@@ -193,10 +203,12 @@ export type Database = {
           name?: string
           notes?: string | null
           nps_score?: number | null
+          phone?: string | null
           retainer_limit?: number
           retainer_used?: number
           review_count?: number | null
           services?: string[] | null
+          source_page?: string | null
           status?: string
           subscription_status?: string
           tier?: string | null
@@ -342,6 +354,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          link: string | null
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       onboarding_templates: {
         Row: {
