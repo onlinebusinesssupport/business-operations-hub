@@ -310,10 +310,13 @@ export type Database = {
           currency: string
           description: string | null
           due_date: string | null
+          file_path: string | null
           id: string
           invoice_date: string
           invoice_number: string | null
           paid_date: string | null
+          pop_details: Json | null
+          pop_file_path: string | null
           services: string[] | null
           status: string
           updated_at: string
@@ -325,10 +328,13 @@ export type Database = {
           currency?: string
           description?: string | null
           due_date?: string | null
+          file_path?: string | null
           id?: string
           invoice_date?: string
           invoice_number?: string | null
           paid_date?: string | null
+          pop_details?: Json | null
+          pop_file_path?: string | null
           services?: string[] | null
           status?: string
           updated_at?: string
@@ -340,10 +346,13 @@ export type Database = {
           currency?: string
           description?: string | null
           due_date?: string | null
+          file_path?: string | null
           id?: string
           invoice_date?: string
           invoice_number?: string | null
           paid_date?: string | null
+          pop_details?: Json | null
+          pop_file_path?: string | null
           services?: string[] | null
           status?: string
           updated_at?: string
