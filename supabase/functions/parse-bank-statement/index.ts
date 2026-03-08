@@ -316,6 +316,7 @@ South African banks include FNB, Nedbank, Standard Bank, Absa, Capitec. Amounts 
       total_in: totalIn,
       total_out: totalOut,
       status: "processing",
+      skipped_count: skippedCount,
     }).eq("id", statement_id);
 
     return new Response(JSON.stringify({ success: true, inserted_count: sanitized.length, skipped_count: skippedCount }), {

@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
-import { Upload, FileText, Brain, CheckCircle2, AlertTriangle, Calendar, Plus, ArrowLeft, Sparkles } from "lucide-react";
+import { Upload, FileText, Brain, CheckCircle2, AlertTriangle, XCircle, Calendar, Plus, ArrowLeft, Sparkles } from "lucide-react";
 import { format, isPast, isToday } from "date-fns";
 
 /* ────────────────────────── Types ────────────────────────── */
@@ -44,6 +44,7 @@ interface BankStatement {
   total_in: number;
   total_out: number;
   transaction_count: number;
+  skipped_count: number;
   created_at: string;
 }
 
@@ -171,7 +172,7 @@ const AdminAccountant = () => {
       }
 
       // Call parse edge function
-      const { error: fnErr } = await supabase.functions.invoke("parse-bank-statement", {
+      const { data: parseResult, error: fnErr } = await supabase.functions.invoke("parse-bank-statement", {
         body: {
           statement_id: (stmt as any).id,
           file_content: fileContent,
@@ -180,7 +181,19 @@ const AdminAccountant = () => {
       });
       if (fnErr) throw fnErr;
 
-      toast({ title: "Statement uploaded", description: "Transactions are being parsed..." });
+      const { inserted_count = 0, skipped_count = 0, success } = parseResult || {};
+
+      if (success) {
+        if (inserted_count === 0) {
+          toast({ title: "Import failed", description: "No valid transactions found in the file.", variant: "destructive" });
+        } else if (skipped_count > 0) {
+          toast({ title: "Import complete", description: `${inserted_count} transactions saved. ${skipped_count} lines were skipped due to unreadable data.` });
+        } else {
+          toast({ title: "Import successful", description: `Successfully imported all ${inserted_count} transactions.` });
+        }
+      } else {
+        toast({ title: "Statement uploaded", description: "Transactions are being parsed..." });
+      }
       qc.invalidateQueries({ queryKey: ["bank_statements"] });
 
       // Auto-trigger categorisation
@@ -466,7 +479,18 @@ const AdminAccountant = () => {
                         <TableCell className="text-right text-xs text-green-600">R {(s.total_in || 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</TableCell>
                         <TableCell className="text-right text-xs text-destructive">R {(s.total_out || 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</TableCell>
                         <TableCell className="text-xs">{s.transaction_count}</TableCell>
-                        <TableCell>{statusBadge(s.status)}</TableCell>
+                        <TableCell className="flex items-center gap-1.5">
+                          {statusBadge(s.status)}
+                          {s.status !== "processing" && s.transaction_count > 0 && (s.skipped_count || 0) === 0 && (
+                            <span title="All transactions parsed cleanly"><CheckCircle2 size={14} className="text-green-600" /></span>
+                          )}
+                          {(s.skipped_count || 0) > 0 && s.transaction_count > 0 && (
+                            <span title={`${s.skipped_count} lines skipped`}><AlertTriangle size={14} className="text-yellow-600" /></span>
+                          )}
+                          {s.status !== "processing" && s.transaction_count === 0 && (
+                            <span title="No valid transactions parsed"><XCircle size={14} className="text-destructive" /></span>
+                          )}
+                        </TableCell>
                         <TableCell>
                           <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={(e) => { e.stopPropagation(); handleCategorise(s.id); }} disabled={categorising}>
                             <Brain size={12} className="mr-1" /> Categorise

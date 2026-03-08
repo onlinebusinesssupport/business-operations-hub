@@ -1,0 +1,1 @@
+ALTER TABLE public.bank_statements ADD COLUMN IF NOT EXISTS skipped_count integer DEFAULT 0;
