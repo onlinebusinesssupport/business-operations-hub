@@ -178,7 +178,7 @@ const Login = () => {
           </Link>
           <p className="text-xs text-muted-foreground">
             No account?{" "}
-            <Link to="/apply" className="text-foreground hover:underline">
+            <Link to="/contact" className="text-foreground hover:underline">
               Apply for access
             </Link>
           </p>

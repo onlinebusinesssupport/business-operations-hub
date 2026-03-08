@@ -52,7 +52,7 @@ import AdminTemplates from "./pages/admin/AdminTemplates";
 import AdminReports from "./pages/admin/AdminReports";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminRevenue from "./pages/admin/AdminRevenue";
-import AdminLeadPipeline from "./pages/admin/AdminLeadPipeline";
+// AdminLeadPipeline removed — pipeline route redirects to Applications
 import AdminReviews from "./pages/admin/AdminReviews";
 import AdminOnboardingQueue from "./pages/admin/AdminOnboardingQueue";
 import AdminAccountant from "./pages/admin/AdminAccountant";

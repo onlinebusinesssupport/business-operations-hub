@@ -221,7 +221,7 @@ const Media = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-8 flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Link to="/apply">
+            <Link to="/contact">
               <Button size="lg" variant="secondary" className="text-[11px] tracking-[0.15em] uppercase px-8 gap-2">
                 Apply for Access <ArrowRight size={14} />
               </Button>

@@ -13,7 +13,7 @@ import lekoAvatar from "@/assets/leko-avatar.png";
 const PAGE_CONFIG: Record<string, { label: string; dataFetcher: string }> = {
   "/admin/accountant": { label: "Accountant", dataFetcher: "accountant" },
   "/admin/finance": { label: "Finance", dataFetcher: "finance" },
-  "/admin/pipeline": { label: "Lead Pipeline", dataFetcher: "pipeline" },
+  "/admin/applications": { label: "Applications", dataFetcher: "applications" },
   "/admin/clients": { label: "Partner Workspaces", dataFetcher: "clients" },
   "/admin": { label: "Studio Overview", dataFetcher: "overview" },
   "/admin/revenue": { label: "Revenue", dataFetcher: "revenue" },

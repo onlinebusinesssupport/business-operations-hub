@@ -39,7 +39,7 @@ const quickStartItems = [
     icon: FileText,
     title: "Explore your files",
     description: "Access shared files and templates in one place.",
-    href: "/portal/documents",
+    href: "/portal/files",
     cta: "View Files",
   },
 ];
