@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
-import { User, Bell, Shield, Globe, FileText, Plus, Trash2, GripVertical, Save, Loader2, ToggleLeft, ToggleRight } from "lucide-react";
+import { User, Bell, Shield, Globe, FileText, Plus, Trash2, GripVertical, Save, Loader2, ToggleLeft, ToggleRight, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
