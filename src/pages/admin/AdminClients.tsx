@@ -96,6 +96,39 @@ const AdminClients = () => {
     });
   }, [queryClient]);
 
+  const handleDeleteClient = async () => {
+    if (!deleteTarget) return;
+    setDeleteLoading(true);
+    try {
+      // Delete linked records first
+      await supabase.from("work_items").delete().eq("client_id", deleteTarget.id);
+      await supabase.from("invoices").delete().eq("client_id", deleteTarget.id);
+      await supabase.from("updates").delete().eq("client_id", deleteTarget.id);
+      await supabase.from("documents").delete().eq("client_id", deleteTarget.id);
+      await supabase.from("requests").delete().eq("client_id", deleteTarget.id);
+      await supabase.from("pods").delete().eq("client_id", deleteTarget.id);
+      await supabase.from("activity_log").delete().eq("client_id", deleteTarget.id);
+      const { error } = await supabase.from("clients").delete().eq("id", deleteTarget.id);
+      if (error) throw error;
+      queryClient.invalidateQueries({ queryKey: ["admin-clients"] });
+      toast({ title: "Client deleted", description: `${deleteTarget.name} has been removed.` });
+    } catch (err: any) {
+      toast({ title: "Delete failed", description: err.message, variant: "destructive" });
+    } finally {
+      setDeleteLoading(false);
+      setDeleteTarget(null);
+    }
+  };
+
+  const getClientRisks = (client: any) => {
+    const risks: string[] = [];
+    if (client.retainer_used > 0) risks.push(`This client has ${client.retainer_used} retainer hours logged. Deleting will remove all time tracking records.`);
+    if ((client.services || []).length > 0) risks.push(`Active services (${client.services.join(", ")}) will be orphaned.`);
+    if (Number(client.lifetime_revenue) > 0) risks.push(`Lifetime revenue of ${formatCurrency(Number(client.lifetime_revenue))} will be lost from reports.`);
+    if (client.subscription_status === "active") risks.push("This is an ACTIVE subscription. Consider pausing instead of deleting.");
+    return risks;
+  };
+
   const handleDragEnd = useCallback((itemId: string, _source: string, destColumn: string) => {
     const client = clients.find((c: any) => c.id === itemId);
     if (!client) return;
