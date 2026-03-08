@@ -233,51 +233,72 @@ const AdminSettings = () => {
           <p className="text-xs text-muted-foreground">
             These tasks are automatically created for every new client on approval. Drag to reorder, edit inline.
           </p>
-          {tasks.map((task, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="border border-border p-4 space-y-3"
-            >
-              <div className="flex items-start gap-3">
-                <GripVertical size={14} className="text-muted-foreground mt-2 shrink-0 cursor-grab" />
-                <div className="flex-1 space-y-3">
-                  <Input
-                    value={task.title}
-                    onChange={(e) => updateTask(index, "title", e.target.value)}
-                    placeholder="Task title"
-                    className="bg-card border-border text-sm font-medium"
-                  />
-                  <Input
-                    value={task.description}
-                    onChange={(e) => updateTask(index, "description", e.target.value)}
-                    placeholder="Task description"
-                    className="bg-card border-border text-xs"
-                  />
-                  <div className="flex items-center gap-2">
-                    <Label className="text-[10px] uppercase tracking-wider text-muted-foreground shrink-0">Priority</Label>
-                    <div className="flex gap-1">
-                      {["low", "medium", "high"].map((p) => (
-                        <button
-                          key={p}
-                          onClick={() => updateTask(index, "priority", p)}
-                          className={`text-[10px] px-2 py-1 border transition-all capitalize ${
-                            task.priority === p
-                              ? "border-primary bg-primary/5 text-foreground"
-                              : "border-border text-muted-foreground hover:border-primary/40"
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="onboarding-tasks">
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-3">
+                  {tasks.map((task, index) => (
+                    <Draggable key={`task-${index}`} draggableId={`task-${index}`} index={index}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          className={`border p-4 space-y-3 transition-shadow ${
+                            snapshot.isDragging
+                              ? "border-primary shadow-lg bg-card ring-1 ring-primary/20"
+                              : "border-border bg-background"
                           }`}
-                        >{p}</button>
-                      ))}
-                    </div>
-                  </div>
+                        >
+                          <div className="flex items-start gap-3">
+                            <div
+                              {...provided.dragHandleProps}
+                              className="text-muted-foreground mt-2 shrink-0 cursor-grab active:cursor-grabbing hover:text-foreground transition-colors"
+                            >
+                              <GripVertical size={14} />
+                            </div>
+                            <div className="flex-1 space-y-3">
+                              <Input
+                                value={task.title}
+                                onChange={(e) => updateTask(index, "title", e.target.value)}
+                                placeholder="Task title"
+                                className="bg-card border-border text-sm font-medium"
+                              />
+                              <Input
+                                value={task.description}
+                                onChange={(e) => updateTask(index, "description", e.target.value)}
+                                placeholder="Task description"
+                                className="bg-card border-border text-xs"
+                              />
+                              <div className="flex items-center gap-2">
+                                <Label className="text-[10px] uppercase tracking-wider text-muted-foreground shrink-0">Priority</Label>
+                                <div className="flex gap-1">
+                                  {["low", "medium", "high"].map((p) => (
+                                    <button
+                                      key={p}
+                                      onClick={() => updateTask(index, "priority", p)}
+                                      className={`text-[10px] px-2 py-1 border transition-all capitalize ${
+                                        task.priority === p
+                                          ? "border-primary bg-primary/5 text-foreground"
+                                          : "border-border text-muted-foreground hover:border-primary/40"
+                                      }`}
+                                    >{p}</button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                            <button onClick={() => removeTask(index)} className="text-muted-foreground hover:text-destructive transition-colors mt-2 shrink-0">
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
                 </div>
-                <button onClick={() => removeTask(index)} className="text-muted-foreground hover:text-destructive transition-colors mt-2 shrink-0">
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            </motion.div>
-          ))}
+              )}
+            </Droppable>
+          </DragDropContext>
 
           <button
             onClick={addTask}
