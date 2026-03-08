@@ -296,6 +296,38 @@ const PartnerCockpit = ({ client, onBack, onUpdateField }: PartnerCockpitProps) 
               </div>
             </div>
 
+            {/* Compliance Status */}
+            {(() => {
+              const compliance = getComplianceDisplay(client.compliance_status);
+              return (
+                <div className={`border border-border p-4 flex items-center justify-between ${compliance.bg}`}>
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">{compliance.emoji}</span>
+                    <div>
+                      <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">Compliance Status</p>
+                      <p className={`text-sm font-medium ${compliance.color}`}>{compliance.label}</p>
+                    </div>
+                  </div>
+                  {client.id_number && (
+                    <div className="text-right">
+                      <p className="text-[10px] text-muted-foreground uppercase">ID Number</p>
+                      <p className="text-xs font-mono text-foreground">{showSensitive ? client.id_number : maskSensitive(client.id_number)}</p>
+                    </div>
+                  )}
+                  {client.passport_number && !client.id_number && (
+                    <div className="text-right">
+                      <p className="text-[10px] text-muted-foreground uppercase">Passport</p>
+                      <p className="text-xs font-mono text-foreground">{showSensitive ? client.passport_number : maskSensitive(client.passport_number)}</p>
+                    </div>
+                  )}
+                  <Button variant="ghost" size="sm" onClick={() => setShowSensitive(!showSensitive)} className="text-xs gap-1">
+                    {showSensitive ? <EyeOff size={12} /> : <Eye size={12} />}
+                    {showSensitive ? "Mask" : "Reveal"}
+                  </Button>
+                </div>
+              );
+            })()}
+
             {/* Contact + Studios */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="border border-border p-5 space-y-3">
@@ -304,6 +336,8 @@ const PartnerCockpit = ({ client, onBack, onUpdateField }: PartnerCockpitProps) 
                   <div className="flex justify-between"><span className="text-muted-foreground">Name</span><span className="text-foreground">{profile?.full_name || "—"}</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span className="text-foreground">{profile?.email || "—"}</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span className="text-foreground">{profile?.phone || "—"}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Address</span><span className="text-foreground text-right max-w-[200px] truncate">{client.physical_address || "—"}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Business Type</span><span className="text-foreground capitalize">{(client.business_type || "—").replace("_", " ")}</span></div>
                 </div>
               </div>
               <div className="border border-border p-5 space-y-3">
