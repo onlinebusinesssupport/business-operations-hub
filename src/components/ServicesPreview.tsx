@@ -46,7 +46,7 @@ const services = [
     pain: "Paralyzed by paperwork. Compliance feels like a maze.",
     outcome: "Registered, structured, ready to trade.",
     idealFor: "New founders, expanding businesses",
-    pricing: "Project from R8 500",
+    pricing: "From R950",
     href: "/services/company-registration",
   },
   {
