@@ -15,6 +15,7 @@ import { logActivity } from "@/lib/activity";
 import { ActivityFeed } from "@/components/ActivityFeed";
 import CrmModule from "@/components/CrmModule";
 import ReputationDashboard from "@/components/ReputationDashboard";
+import AdminBillingTab from "@/components/AdminBillingTab";
 
 const fade = { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 } };
 
