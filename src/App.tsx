@@ -140,7 +140,8 @@ const App = () => (
             <Route path="/admin/reports" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminReports /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/revenue" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminRevenue /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/applications" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminApplications /></DashboardLayout></ProtectedRoute>} />
-            <Route path="/admin/pipeline" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminLeadPipeline /></DashboardLayout></ProtectedRoute>} />
+            {/* Pipeline removed — leads now handled via Applications */}
+            <Route path="/admin/pipeline" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminApplications /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/onboarding" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminOnboardingQueue /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/reviews" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminReviews /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/finance" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminFinance /></DashboardLayout></ProtectedRoute>} />
