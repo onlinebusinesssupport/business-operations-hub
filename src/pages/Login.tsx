@@ -183,12 +183,48 @@ const Login = () => {
             </Link>
           </p>
           <p className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors pt-1">
-            <button type="button" onClick={() => {
-              document.querySelector<HTMLInputElement>('input[type="email"]')?.focus();
-            }} className="hover:underline cursor-pointer">
+            <button type="button" onClick={() => setShowMagicLink(!showMagicLink)} className="hover:underline cursor-pointer">
               Studio Control →
             </button>
           </p>
+          {showMagicLink && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="mt-3 p-4 border border-border rounded space-y-3"
+            >
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Admin Magic Link</p>
+              <input
+                type="email"
+                value={magicEmail}
+                onChange={(e) => setMagicEmail(e.target.value)}
+                placeholder="Admin email"
+                autoComplete="off"
+                className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-foreground/20"
+              />
+              <Button
+                type="button"
+                size="sm"
+                className="w-full text-xs tracking-wide"
+                disabled={magicLoading || !magicEmail}
+                onClick={async () => {
+                  setMagicLoading(true);
+                  const { error } = await supabase.auth.signInWithOtp({
+                    email: magicEmail,
+                    options: { emailRedirectTo: window.location.origin + "/login" },
+                  });
+                  setMagicLoading(false);
+                  if (error) {
+                    toast({ title: "Failed to send link", description: error.message, variant: "destructive" });
+                  } else {
+                    toast({ title: "Magic link sent", description: "Check your inbox and click the link to sign in." });
+                  }
+                }}
+              >
+                {magicLoading ? "Sending…" : "Send Magic Link"}
+              </Button>
+            </motion.div>
+          )}
         </div>
       </motion.div>
     </div>
