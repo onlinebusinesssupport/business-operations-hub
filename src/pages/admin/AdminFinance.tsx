@@ -251,7 +251,7 @@ const AdminFinance = () => {
     return { outputVAT, inputVAT, payable: outputVAT - inputVAT };
   }, [filteredTransactions]);
 
-  const fmtZAR = (n: number) => `R ${n.toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const fmtZAR = (n: number) => formatCurrency(n);
   const reportDate = format(new Date(), "dd MMMM yyyy, HH:mm");
 
   return (
