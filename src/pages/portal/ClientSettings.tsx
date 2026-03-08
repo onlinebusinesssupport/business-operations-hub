@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Mail, Building, Calendar, Bell, Shield, Save, Check } from "lucide-react";
+import { Mail, Building, Calendar, Bell, Shield, Save, Check, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import MfaEnroll from "@/components/MfaEnroll";
+import { useCurrency } from "@/lib/currency";
 
 const fade = {
   initial: { opacity: 0, y: 12 },
