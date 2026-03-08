@@ -91,7 +91,8 @@ const AdminLeadPipeline = () => {
     ...applications.map((a: any) => ({
       id: `app-${a.id}`, db_id: a.id, type: "application" as const,
       name: a.full_name, email: a.email, business: a.business_name,
-      stage: appStageMap(a.status), service_interest: a.areas_of_support?.join(", "),
+      stage: appStageMap(a.status),
+      service_interest: a.areas_of_support?.map((s: string) => normalizeService(s)).join(", "),
       website: a.website, notes: a.admin_notes || a.pain_points,
       created_at: a.created_at, raw: a,
     })),
