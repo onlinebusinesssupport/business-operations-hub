@@ -1,105 +1,82 @@
 
+# Make the System Live and Interactive
 
-## Accountant Module — Phase 1: Full Foundation (Admin Only)
+## Problem Summary
 
-This builds a SAGE-like bookkeeping system inside the admin backend with three pillars: chart of accounts, AI-powered bank statement processing, and SA tax/compliance tracking.
+Two core issues need fixing:
 
----
+1. **Onboarding Wizard shows "Step 1 of 4" but feels empty** -- The wizard exists and has all 4 steps, but clients arriving via the approval flow don't see it because the `approve-application` Edge Function creates a profile with `onboarding_completed` potentially already set, or the profile/client linkage is incomplete. The welcome step (Step 0) also lacks visual warmth -- no branded imagery or clear value proposition.
 
-### 1. Database Schema (3 new tables + 1 migration)
-
-**`chart_of_accounts`** — Cost centres, profit centres, GL accounts
-- `id`, `code` (text, e.g. "5100"), `name` ("Office Rent"), `type` (enum: `income | expense | asset | liability | equity`), `category` (text, e.g. "Cost of Sales", "Operating Expenses"), `tax_treatment` (text: "vat_inclusive", "vat_exclusive", "exempt", "zero_rated"), `is_active` boolean, `created_at`
-- Seeded with standard SA SME accounts (SARS-aligned categories)
-
-**`bank_statements`** — Uploaded statement metadata
-- `id`, `file_path` (text), `file_name`, `upload_date`, `period_start` (date), `period_end` (date), `bank_name` (text), `account_number` (text), `status` ("processing" | "categorised" | "reviewed"), `total_in` (numeric), `total_out` (numeric), `transaction_count` (int), `created_at`
-
-**`transactions`** — Individual line items from statements
-- `id`, `statement_id` (FK → bank_statements), `date`, `description` (text — raw bank description), `amount` (numeric, positive=credit, negative=debit), `balance` (numeric, nullable), `account_id` (FK → chart_of_accounts, nullable — AI suggests, admin confirms), `ai_category` (text — AI's suggestion before confirmation), `ai_confidence` (numeric 0-1), `confirmed` (boolean default false), `vat_amount` (numeric, nullable), `notes` (text), `created_at`
-
-**`compliance_items`** — Tax deadlines and regulatory obligations
-- `id`, `title` ("VAT201 Return"), `body` (enum: "SARS" | "CIPC" | "UIF" | "COIDA" | "Other"), `due_date` (date), `frequency` ("monthly" | "bi-monthly" | "quarterly" | "annual" | "once"), `status` ("upcoming" | "due" | "submitted" | "overdue"), `notes`, `created_at`
-- Seeded with standard SA obligations (VAT, provisional tax, CIPC annual return, UIF, PAYE if applicable)
-
-All tables: RLS admin-only. Storage bucket `bank-statements` (private, admin-only).
+2. **Admin approval feels disconnected** -- When you approve an application, the Edge Function sends an invite email and creates a client record, but there's no visible feedback loop back into the Admin dashboard. The pipeline, applications page, and overview don't refresh or show the activation result. The whole system feels like a shell because actions don't cascade visibly.
 
 ---
 
-### 2. AI Transaction Categorisation (Edge Function)
+## Plan
 
-**`supabase/functions/categorise-transactions/index.ts`**
-- Accepts statement_id, fetches uncategorised transactions
-- Uses Lovable AI (gemini-3-flash-preview) with an SA-specific system prompt:
-  - Knows SA VAT rate (15%), common bank description patterns (FNB, Nedbank, Absa, Standard Bank)
-  - Maps transactions to chart_of_accounts codes
-  - Returns structured output via tool calling: `{ account_code, confidence, vat_amount, reasoning }`
-- Batches transactions (50 at a time) to stay within token limits
-- Updates each transaction's `ai_category`, `ai_confidence`, `account_id`
-- Sets statement status to "categorised"
+### 1. Fix the Approval-to-Onboarding Pipeline
 
-**`supabase/functions/parse-bank-statement/index.ts`**
-- Accepts uploaded file (CSV or PDF)
-- CSV: Parses rows, detects SA bank formats (FNB, Nedbank, Standard Bank, Absa all have slightly different CSV layouts — the AI identifies the format)
-- PDF: Sends to Lovable AI with the document content for extraction
-- Inserts transactions into the `transactions` table
-- Triggers categorisation automatically
+**Edge Function (`approve-application`):**
+- After creating the client record, also generate 4 default onboarding `work_items` (same as the pipeline activation does) and a welcome `update` entry
+- Log an `activity_log` entry so the activity feeds light up immediately
+- Ensure the profile is created with `onboarding_completed = false` so the wizard triggers on first login
 
----
+**Admin Applications page:**
+- After successful approval, invalidate all relevant queries (`overview-clients`, `overview-work`, `pipeline-*`) so the dashboard metrics update instantly
+- Show a success state with a summary: "Workspace created, invite sent, 4 onboarding tasks generated"
+- Add a "View Workspace" link that navigates to the Partner Workspaces page
 
-### 3. Admin UI — New Route: `/admin/accountant`
+### 2. Upgrade the Onboarding Wizard
 
-**Three tabs:**
+Make the 4-step wizard feel premium and alive:
 
-**A. Statements Tab**
-- Upload button (drag-drop zone for CSV/PDF)
-- List of uploaded statements with: period, bank, status badge, transaction count, totals
-- Click a statement → transaction review view
+- **Step 0 (Welcome):** Add the brand logo/mark, a calming welcome message with the client's name (pulled from the invite metadata), and a preview of what the 4 steps cover
+- **Step 1 (Personal):** Pre-fill name and email from the auth metadata so it feels seamless
+- **Step 2 (Business):** Pre-fill company name and industry from the invite metadata
+- **Step 3 (Final):** Add a completion animation and the brand sign-off line: "Welcome to SUPPORT STUDIO(TM) -- Clarity builds momentum. Systems build freedom."
 
-**B. Transaction Review**
-- Table of transactions for selected statement
-- Each row: date, description, amount, AI-suggested category (with confidence %), confirm/override dropdown (from chart_of_accounts)
-- Bulk confirm button for high-confidence matches (>80%)
-- Filter: uncategorised, confirmed, all
-- Running totals: income vs expense
+### 3. Connect Admin Actions to Visible Results
 
-**C. Compliance Tracker Tab**
-- Calendar-style list of upcoming obligations
-- Each item: title, body (SARS/CIPC/etc), due date, status, overdue indicator
-- Quick-add for new items
-- AI advisory button: "What should I know?" — calls Lovable AI with current compliance state + SA regulatory context
+**AdminOverview:** 
+- Add a "Recent Activations" mini-section that shows the last 3 approved clients with timestamps
+- Ensure all KPI cards pull fresh data after any approval action
 
-**D. Chart of Accounts Tab**
-- CRUD table for accounts
-- Pre-seeded with ~30 standard SA SME accounts
-- Type and tax treatment columns
-- Active/inactive toggle
+**AdminApplications:**
+- After approval, show a confirmation banner with next steps visible
+- Add activity logging so the approval shows in the Global Activity feed
 
----
+**AdminLeadPipeline:**
+- When a lead is dragged to "Won", also check if there's a matching application and update its status to "approved" for consistency
+- Ensure the `activateClient` mutation creates the same infrastructure as the Edge Function (work items, updates, activity log)
 
-### 4. Navigation
+### 4. Client Portal Post-Onboarding Experience
 
-- Add "Accountant" to admin sidebar (icon: Calculator or BookOpen)
-- Route: `/admin/accountant`
+**PortalDashboard:**
+- After completing the onboarding wizard, show a "First Week" welcome banner (Day 1 message) that persists for 7 days
+- The dashboard should immediately show the onboarding work items as "Current Priorities"
+- The activity feed should show the welcome entry
+
+**Requests page:**
+- If `clientId` is null (profile exists but no client linkage), show a clearer message: "Your workspace is being prepared. You'll have full access shortly."
+
+### 5. Database Migration
+
+Add a `client_id` column relationship improvement -- currently `clients.contact_profile_id` links to profiles, but the `get_my_client_id()` function already handles this. No schema changes needed.
+
+Ensure the Edge Function creates an `activity_log` entry by adding an insert after client creation (using the service role client).
 
 ---
 
-### 5. Implementation Order
+## Technical Details
 
-1. DB migration (tables + seed data + storage bucket + RLS)
-2. Chart of Accounts UI (static CRUD, no AI needed)
-3. Statement upload + CSV/PDF parsing edge function
-4. Transaction review UI
-5. AI categorisation edge function
-6. Compliance tracker (table + seed + UI)
+### Files to modify:
+- `supabase/functions/approve-application/index.ts` -- Add work_items, updates, and activity_log creation after client setup
+- `src/components/OnboardingWizard.tsx` -- Enhance visual design, pre-fill fields from auth metadata, add completion animation
+- `src/pages/admin/AdminApplications.tsx` -- Invalidate broader queries on approval, show richer success state
+- `src/pages/admin/AdminOverview.tsx` -- Add recent activations section
+- `src/pages/portal/PortalDashboard.tsx` -- Add first-week welcome banner
+- `src/pages/portal/Requests.tsx` -- Better empty state when client workspace is pending
 
----
+### Files to create:
+- None -- all changes fit within existing files
 
-### Technical Notes
-
-- CSV parsing happens in the edge function (Deno), no external libraries needed for basic CSV
-- PDF parsing uses Lovable AI to extract structured transaction data from the document text
-- All AI calls use `LOVABLE_API_KEY` (already configured)
-- No external accounting APIs — everything is self-contained
-- VAT calculations at 15% applied by AI based on `tax_treatment` of the matched account
-
+### No new dependencies needed.
