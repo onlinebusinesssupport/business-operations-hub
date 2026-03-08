@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import portraitImg from "@/assets/portrait.png";
+import { useCurrency } from "@/lib/currency";
 
 const stagger = {
   initial: { opacity: 0, y: 12 },
