@@ -1,11 +1,12 @@
-import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useMemo, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { Download, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Clock, ShieldCheck, ShieldAlert } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, PieChart, Pie, Legend,
@@ -60,6 +61,23 @@ function getPeriodRange(period: string) {
    ═══════════════════════════════════════════════ */
 const AdminFinance = () => {
   const [period, setPeriod] = useState("6");
+  const [showUnconfirmed, setShowUnconfirmed] = useState(true);
+  const queryClient = useQueryClient();
+
+  // ── REALTIME SUBSCRIPTIONS ──
+  useEffect(() => {
+    const channel = supabase
+      .channel("finance-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "transactions" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["finance-transactions"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "bank_statements" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["finance-bank-statements"] });
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
   const range = useMemo(() => getPeriodRange(period), [period]);
 
   // ── DATA QUERIES ──
@@ -71,13 +89,24 @@ const AdminFinance = () => {
     },
   });
 
-  const { data: transactions = [] } = useQuery({
+  const { data: allTransactions = [] } = useQuery({
     queryKey: ["finance-transactions"],
     queryFn: async () => {
-      const { data } = await supabase.from("transactions").select("*, chart_of_accounts(name, type, category)").eq("confirmed", true);
+      const { data } = await supabase.from("transactions").select("*, chart_of_accounts(name, type, category)");
       return data || [];
     },
   });
+
+  // Filter confirmed/unconfirmed based on toggle
+  const transactions = useMemo(
+    () => showUnconfirmed ? allTransactions : allTransactions.filter((t: any) => t.confirmed),
+    [allTransactions, showUnconfirmed]
+  );
+
+  const unconfirmedCount = useMemo(
+    () => allTransactions.filter((t: any) => !t.confirmed).length,
+    [allTransactions]
+  );
 
   const { data: compliance = [] } = useQuery({
     queryKey: ["finance-compliance"],
@@ -236,6 +265,20 @@ const AdminFinance = () => {
           </h1>
         </div>
         <div className="flex items-center gap-3">
+          {unconfirmedCount > 0 && (
+            <button
+              onClick={() => setShowUnconfirmed(!showUnconfirmed)}
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border transition-colors"
+              style={{
+                borderColor: showUnconfirmed ? "#D69E2E" : "#CBD5E0",
+                backgroundColor: showUnconfirmed ? "#FEFCE8" : "transparent",
+                color: showUnconfirmed ? "#92400E" : SLATE,
+              }}
+            >
+              <ShieldAlert size={14} />
+              {showUnconfirmed ? `Showing ${unconfirmedCount} unconfirmed` : `${unconfirmedCount} hidden`}
+            </button>
+          )}
           <Select value={period} onValueChange={setPeriod}>
             <SelectTrigger className="w-[180px] text-xs" style={{ borderColor: NAVY }}>
               <SelectValue />
