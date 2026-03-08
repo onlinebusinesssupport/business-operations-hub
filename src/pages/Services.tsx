@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Settings, Zap, Target, Globe, Award, Plane } from "lucide-react";
+import { ArrowRight, Settings, Zap, Target, Globe, FileText, Users } from "lucide-react";
 
 const services = [
   {
@@ -17,6 +17,7 @@ const services = [
       "Calendar & inbox governance",
       "Meeting preparation & follow-ups",
       "Vendor & logistics coordination",
+      "Travel management & bookings",
       "Monthly reporting & dashboards",
       "Process documentation",
     ],
@@ -67,33 +68,33 @@ const services = [
     ],
   },
   {
-    icon: Award,
-    name: "Grants & Funding",
-    pricing: "Project from R25 000",
-    pain: "Leaving money on the table. Applications going nowhere.",
-    outcome: "Funding secured. Recognition earned. Credibility amplified.",
-    idealFor: "Impact-driven businesses, NGOs",
+    icon: FileText,
+    name: "Company Registration & Setup",
+    pricing: "Project from R8 500",
+    pain: "Paralyzed by paperwork. Compliance feels like a maze.",
+    outcome: "Your business registered, structured, and ready to trade.",
+    idealFor: "New founders, expanding businesses",
     features: [
-      "Grant research & identification",
-      "Application writing & editing",
-      "Award submissions",
-      "Funding strategy consultation",
-      "Compliance documentation",
+      "CIPC company registration",
+      "Tax registration (SARS)",
+      "B-BBEE compliance setup",
+      "Banking & merchant accounts",
+      "Shareholder agreements",
     ],
   },
   {
-    icon: Plane,
-    name: "Executive Travel & Experiences",
-    pricing: "Project from R12 000",
-    pain: "Wasting hours on logistics. Trips that don't match your standards.",
-    outcome: "Travel planned like business — flawlessly, without the admin.",
-    idealFor: "Executives, HNWIs, corporate teams",
+    icon: Users,
+    name: "Corporate Events & Retreats",
+    pricing: "Project from R15 000",
+    pain: "Events that fall flat. Team offsites that feel like admin burdens.",
+    outcome: "Experiences that build culture, align teams, and create momentum.",
+    idealFor: "Leadership teams, HR directors, founders",
     features: [
-      "Itinerary design & booking",
-      "Executive travel coordination",
-      "Corporate retreat planning",
-      "VIP experience curation",
-      "24/7 travel support",
+      "Strategic retreats & offsites",
+      "Team building experiences",
+      "Incentive trip planning",
+      "Management conferences",
+      "Full logistics coordination",
     ],
   },
 ];
@@ -159,7 +160,7 @@ const Services = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="bg-background border-l-2 border-primary p-8"
+                className="bg-card rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-border/50"
               >
                 <div className="flex items-start gap-4">
                   <service.icon size={24} className="text-primary shrink-0 mt-1" strokeWidth={1.5} />

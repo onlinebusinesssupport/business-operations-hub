@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Settings, Zap, Target, Globe, Award, Plane, ArrowRight } from "lucide-react";
+import { Settings, Zap, Target, Globe, FileText, Users, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const services = [
@@ -41,22 +41,22 @@ const services = [
     href: "/services/digital-presence",
   },
   {
-    icon: Award,
-    title: "Grants & Funding",
-    pain: "Leaving money on the table. Applications going nowhere.",
-    outcome: "Funding secured. Recognition earned.",
-    idealFor: "Impact-driven businesses, NGOs",
-    pricing: "Project from R25 000",
-    href: "/services/grants-awards",
+    icon: FileText,
+    title: "Company Registration & Setup",
+    pain: "Paralyzed by paperwork. Compliance feels like a maze.",
+    outcome: "Registered, structured, ready to trade.",
+    idealFor: "New founders, expanding businesses",
+    pricing: "Project from R8 500",
+    href: "/services/company-registration",
   },
   {
-    icon: Plane,
-    title: "Executive Travel & Experiences",
-    pain: "Wasting hours on logistics. Trips that don't match your standards.",
-    outcome: "Travel planned like business — flawlessly.",
-    idealFor: "Executives, HNWIs, corporate teams",
-    pricing: "Project from R12 000",
-    href: "/services/travel-activities",
+    icon: Users,
+    title: "Corporate Events & Retreats",
+    pain: "Events that fall flat. Offsites feel like admin burdens.",
+    outcome: "Experiences that build culture and momentum.",
+    idealFor: "Leadership teams, HR directors",
+    pricing: "Project from R15 000",
+    href: "/services/corporate-events",
   },
 ];
 
@@ -81,7 +81,7 @@ const ServicesPreview = () => {
           </p>
         </motion.div>
 
-        <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-divider">
+        <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, i) => (
             <motion.div
               key={service.title}
@@ -92,7 +92,7 @@ const ServicesPreview = () => {
             >
               <Link
                 to={service.href}
-                className="group bg-secondary p-8 md:p-10 flex flex-col h-full hover:bg-background transition-colors duration-200"
+                className="group bg-card rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-8 md:p-10 flex flex-col h-full border border-border/50 hover:border-primary/30"
               >
                 <service.icon size={22} className="text-foreground group-hover:text-primary transition-colors mb-5" strokeWidth={1.5} />
                 <h3 className="font-display text-xl font-bold text-foreground">
