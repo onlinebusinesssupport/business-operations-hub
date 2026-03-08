@@ -286,10 +286,14 @@ const ChatWindow = ({ lockedRecipientId, lockedRecipientName, showInbox = true }
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground truncate mt-0.5">{conv.last_message}</p>
-                  <p className="text-[10px] text-muted-foreground/60 mt-0.5">
-                    {formatMsgTime(conv.last_at)}
+                  <p className="text-xs text-muted-foreground truncate mt-0.5">
+                    {conv.last_message || <span className="italic text-muted-foreground/40">No messages yet</span>}
                   </p>
+                  {conv.last_at && (
+                    <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+                      {formatMsgTime(conv.last_at)}
+                    </p>
+                  )}
                 </button>
               ))
             )}
