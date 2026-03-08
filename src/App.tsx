@@ -57,6 +57,7 @@ import AdminOnboardingQueue from "./pages/admin/AdminOnboardingQueue";
 import AdminAccountant from "./pages/admin/AdminAccountant";
 import AdminFinance from "./pages/admin/AdminFinance";
 import AdminSubscribers from "./pages/admin/AdminSubscribers";
+import AdminEmails from "./pages/admin/AdminEmails";
 
 // Service detail pages
 import DigitalPresence from "./pages/services/DigitalPresence";
@@ -69,6 +70,7 @@ import Reviews from "./pages/Reviews";
 import ReviewSubmit from "./pages/ReviewSubmit";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import PortalEmails from "./pages/portal/Emails";
 
 const queryClient = new QueryClient();
 
@@ -123,6 +125,7 @@ const App = () => (
             <Route path="/portal/reports" element={<ProtectedRoute><DashboardLayout portal="client"><ClientReports /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/files" element={<ProtectedRoute><DashboardLayout portal="client"><Files /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/billing" element={<ProtectedRoute><DashboardLayout portal="client"><Billing /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/portal/emails" element={<ProtectedRoute><DashboardLayout portal="client"><PortalEmails /></DashboardLayout></ProtectedRoute>} />
             <Route path="/portal/settings" element={<ProtectedRoute><DashboardLayout portal="client"><ClientSettings /></DashboardLayout></ProtectedRoute>} />
 
             {/* Admin */}
@@ -141,6 +144,7 @@ const App = () => (
             <Route path="/admin/finance" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminFinance /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/accountant" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminAccountant /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/subscribers" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminSubscribers /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/emails" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminEmails /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminSettings /></DashboardLayout></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />

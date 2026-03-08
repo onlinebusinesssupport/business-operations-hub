@@ -196,6 +196,53 @@ export type Database = {
         }
         Relationships: []
       }
+      client_emails: {
+        Row: {
+          body_html: string | null
+          body_text: string | null
+          client_id: string | null
+          created_at: string
+          id: string
+          sent_at: string | null
+          sent_by: string
+          status: string
+          subject: string
+          to_email: string
+        }
+        Insert: {
+          body_html?: string | null
+          body_text?: string | null
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          sent_at?: string | null
+          sent_by: string
+          status?: string
+          subject: string
+          to_email: string
+        }
+        Update: {
+          body_html?: string | null
+          body_text?: string | null
+          client_id?: string | null
+          created_at?: string
+          id?: string
+          sent_at?: string | null
+          sent_by?: string
+          status?: string
+          subject?: string
+          to_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_emails_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           account_owner: string | null

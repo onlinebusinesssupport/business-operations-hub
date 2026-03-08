@@ -17,3 +17,5 @@ project_id = "nibnxnfxsypmaijmgcgk"
     verify_jwt = false
   [functions.sign-document]
     verify_jwt = false
+  [functions.send-client-email]
+    verify_jwt = false
