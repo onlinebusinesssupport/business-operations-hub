@@ -447,7 +447,7 @@ const PartnerCockpit = ({ client, onBack, onUpdateField }: PartnerCockpitProps) 
         )}
 
         {activeTab === "billing" && (
-          <BillingTab
+          <AdminBillingTab
             client={client}
             invoices={invoices}
             paidTotal={paidTotal}
