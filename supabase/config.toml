@@ -21,3 +21,5 @@ project_id = "nibnxnfxsypmaijmgcgk"
     verify_jwt = false
   [functions.notify-new-message]
     verify_jwt = false
+  [functions.leko-insights]
+    verify_jwt = false
