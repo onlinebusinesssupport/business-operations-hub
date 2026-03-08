@@ -232,6 +232,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          lifecycle_stage: string
           message: string | null
           name: string
           service_interest: string | null
@@ -243,6 +244,7 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          lifecycle_stage?: string
           message?: string | null
           name: string
           service_interest?: string | null
@@ -254,6 +256,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          lifecycle_stage?: string
           message?: string | null
           name?: string
           service_interest?: string | null

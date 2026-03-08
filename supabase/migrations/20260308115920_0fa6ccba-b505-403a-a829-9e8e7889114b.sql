@@ -1,0 +1,1 @@
+ALTER TABLE public.contact_submissions ADD COLUMN lifecycle_stage text NOT NULL DEFAULT 'new_inquiry';
