@@ -77,26 +77,43 @@ const ChatWindow = ({ lockedRecipientId, lockedRecipientName, showInbox = true }
     enabled: !!user?.id && isAdmin,
   });
 
+  // ─── Fetch ALL clients for inbox (admin) ───
+  const { data: clients = [] } = useQuery({
+    queryKey: ["chat-clients"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("clients")
+        .select("id, name, contact_profile_id, profiles:contact_profile_id(user_id, full_name, email)")
+        .eq("subscription_status", "active")
+        .order("name");
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!user?.id && isAdmin && showInbox,
+  });
+
   const getDisplayName = useCallback((userId: string) => {
     if (lockedRecipientId && userId === lockedRecipientId) return lockedRecipientName || "Support";
     const profile = profiles.find((p) => p.user_id === userId);
-    return profile?.full_name || profile?.company_name || profile?.email || "User";
-  }, [profiles, lockedRecipientId, lockedRecipientName]);
+    if (profile) return profile.full_name || profile.company_name || profile.email || "User";
+    // Fallback to client name
+    const client = clients.find((c: any) => (c.profiles as any)?.user_id === userId);
+    if (client) return client.name;
+    return "User";
+  }, [profiles, clients, lockedRecipientId, lockedRecipientName]);
 
-  // ─── Build conversation list (admin only) ───
+  // ─── Build conversation list from ALL clients + message data ───
   const conversations: Conversation[] = (() => {
     if (!user?.id || !showInbox) return [];
-    const convMap = new Map<string, Conversation>();
 
+    // Build message-based conversation map
+    const msgMap = new Map<string, { last_message: string; last_at: string; unread: number }>();
     allMessages.forEach((msg) => {
       const otherId = msg.sender_id === user.id ? msg.recipient_id : msg.sender_id;
-      const existing = convMap.get(otherId);
+      const existing = msgMap.get(otherId);
       const isUnread = msg.recipient_id === user.id && !msg.is_read;
-
       if (!existing || new Date(msg.created_at) > new Date(existing.last_at)) {
-        convMap.set(otherId, {
-          user_id: otherId,
-          display_name: getDisplayName(otherId),
+        msgMap.set(otherId, {
           last_message: msg.content,
           last_at: msg.created_at,
           unread: (existing?.unread || 0) + (isUnread ? 1 : 0),
@@ -106,9 +123,41 @@ const ChatWindow = ({ lockedRecipientId, lockedRecipientName, showInbox = true }
       }
     });
 
-    return Array.from(convMap.values()).sort(
-      (a, b) => new Date(b.last_at).getTime() - new Date(a.last_at).getTime()
-    );
+    // Merge: all clients + any conversations with non-client users
+    const convMap = new Map<string, Conversation>();
+
+    // Add all active clients (even without messages)
+    clients.forEach((client: any) => {
+      const clientUserId = (client.profiles as any)?.user_id;
+      if (!clientUserId || clientUserId === user.id) return;
+      const msgData = msgMap.get(clientUserId);
+      convMap.set(clientUserId, {
+        user_id: clientUserId,
+        display_name: client.name || (client.profiles as any)?.full_name || "Client",
+        last_message: msgData?.last_message || "",
+        last_at: msgData?.last_at || "",
+        unread: msgData?.unread || 0,
+      });
+    });
+
+    // Add any conversations with users not in clients list
+    msgMap.forEach((data, otherId) => {
+      if (!convMap.has(otherId)) {
+        convMap.set(otherId, {
+          user_id: otherId,
+          display_name: getDisplayName(otherId),
+          ...data,
+        });
+      }
+    });
+
+    return Array.from(convMap.values()).sort((a, b) => {
+      // Conversations with messages first, sorted by recency
+      if (a.last_at && !b.last_at) return -1;
+      if (!a.last_at && b.last_at) return 1;
+      if (a.last_at && b.last_at) return new Date(b.last_at).getTime() - new Date(a.last_at).getTime();
+      return a.display_name.localeCompare(b.display_name);
+    });
   })();
 
   const filteredConversations = conversations.filter(
@@ -237,10 +286,14 @@ const ChatWindow = ({ lockedRecipientId, lockedRecipientName, showInbox = true }
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground truncate mt-0.5">{conv.last_message}</p>
-                  <p className="text-[10px] text-muted-foreground/60 mt-0.5">
-                    {formatMsgTime(conv.last_at)}
+                  <p className="text-xs text-muted-foreground truncate mt-0.5">
+                    {conv.last_message || <span className="italic text-muted-foreground/40">No messages yet</span>}
                   </p>
+                  {conv.last_at && (
+                    <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+                      {formatMsgTime(conv.last_at)}
+                    </p>
+                  )}
                 </button>
               ))
             )}
