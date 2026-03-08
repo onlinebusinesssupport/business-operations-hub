@@ -54,6 +54,7 @@ import AdminRevenue from "./pages/admin/AdminRevenue";
 import AdminLeadPipeline from "./pages/admin/AdminLeadPipeline";
 import AdminReviews from "./pages/admin/AdminReviews";
 import AdminOnboardingQueue from "./pages/admin/AdminOnboardingQueue";
+import AdminAccountant from "./pages/admin/AdminAccountant";
 
 // Service detail pages
 import DigitalPresence from "./pages/services/DigitalPresence";
