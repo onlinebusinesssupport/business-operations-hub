@@ -192,6 +192,9 @@ const Media = () => {
             <p className="mt-4 text-sm text-muted-foreground">
               No spam. Just practical perspectives on building structured, scalable businesses in South Africa.
             </p>
+            <div className="mt-8 max-w-sm mx-auto">
+              <NewsletterForm source="media" />
+            </div>
           </motion.div>
         </div>
       </section>
