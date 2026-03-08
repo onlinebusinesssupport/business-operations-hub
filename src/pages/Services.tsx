@@ -90,7 +90,7 @@ const services = [
   {
     icon: Users,
     name: "Corporate Events & Retreats",
-    pricing: "Project from R15 000",
+    pricing: "Custom quote",
     pain: "Events that fall flat. Team offsites that feel like admin burdens.",
     outcome: "Experiences that build culture, align teams, and create momentum.",
     idealFor: "Leadership teams, HR directors, founders",
