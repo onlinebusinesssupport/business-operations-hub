@@ -13,6 +13,7 @@ const services = [
     pain: "Drowning in admin while your business runs on memory and maybes.",
     outcome: "The backbone that lets you focus on growth — not fires.",
     idealFor: "Scaling founders, 5–30 person teams",
+    href: "/services/operations",
     features: [
       "Calendar & inbox governance",
       "Meeting preparation & follow-ups",
@@ -29,6 +30,7 @@ const services = [
     pain: "Manual processes eating hours. No one knows the workflow except you.",
     outcome: "Systems that run while you sleep — documented, reliable, scalable.",
     idealFor: "Operators eliminating bottlenecks",
+    href: "/services/automation",
     features: [
       "Workflow automation design",
       "CRM & tool integrations",
@@ -44,6 +46,7 @@ const services = [
     pain: "Inconsistent pipeline. Feast-or-famine revenue cycles.",
     outcome: "Predictable demand, engineered — not hoped for.",
     idealFor: "Founders ready to scale revenue",
+    href: "/services/lead-engine",
     features: [
       "Lead generation strategy",
       "Outbound campaign management",
@@ -59,6 +62,7 @@ const services = [
     pain: "Your brand looks amateur. Competitors are outpacing you online.",
     outcome: "A digital presence that commands respect and converts.",
     idealFor: "Professionals, consultants, creators",
+    href: "/services/digital-presence",
     features: [
       "Social media management",
       "Content strategy & creation",
@@ -74,6 +78,7 @@ const services = [
     pain: "Paralyzed by paperwork. Compliance feels like a maze.",
     outcome: "Your business registered, structured, and ready to trade.",
     idealFor: "New founders, expanding businesses",
+    href: "/services/company-registration",
     features: [
       "CIPC company registration",
       "Tax registration (SARS)",
@@ -89,6 +94,7 @@ const services = [
     pain: "Events that fall flat. Team offsites that feel like admin burdens.",
     outcome: "Experiences that build culture, align teams, and create momentum.",
     idealFor: "Leadership teams, HR directors, founders",
+    href: "/services/corporate-events",
     features: [
       "Strategic retreats & offsites",
       "Team building experiences",
@@ -160,28 +166,39 @@ const Services = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="bg-card rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-border/50"
               >
-                <div className="flex items-start gap-4">
-                  <service.icon size={24} className="text-primary shrink-0 mt-1" strokeWidth={1.5} />
-                  <div className="flex-1">
-                    <h3 className="font-display text-xl font-bold text-foreground">{service.name}</h3>
-                    <p className="mt-1 text-sm font-medium text-primary">{service.pricing}</p>
+                <Link
+                  to={service.href}
+                  className="group block bg-card rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 p-8 border border-border/50 hover:border-primary/40 hover:-translate-y-1"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-lg bg-secondary group-hover:bg-primary/10 transition-colors duration-300">
+                      <service.icon size={24} className="text-primary shrink-0" strokeWidth={1.5} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-display text-xl font-bold text-foreground group-hover:text-primary transition-colors">{service.name}</h3>
+                      <p className="mt-1 text-sm font-medium text-primary">{service.pricing}</p>
+                    </div>
+                    <ArrowRight size={18} className="text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 mt-1" />
                   </div>
-                </div>
-                <p className="mt-4 text-sm italic text-muted-foreground">{service.pain}</p>
-                <p className="mt-2 text-sm font-medium text-foreground/80">{service.outcome}</p>
-                <p className="mt-3 text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60">
-                  Ideal for: {service.idealFor}
-                </p>
-                <ul className="mt-4 space-y-2">
-                  {service.features.map((f) => (
-                    <li key={f} className="text-sm text-foreground/80 flex items-start gap-2">
-                      <span className="mt-1.5 h-1.5 w-1.5 bg-primary shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
+                  <p className="mt-4 text-sm italic text-muted-foreground">{service.pain}</p>
+                  <p className="mt-2 text-sm font-medium text-foreground/80">{service.outcome}</p>
+                  <p className="mt-3 text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60">
+                    Ideal for: {service.idealFor}
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    {service.features.slice(0, 4).map((f) => (
+                      <li key={f} className="text-sm text-foreground/70 flex items-start gap-2">
+                        <span className="mt-1.5 h-1.5 w-1.5 bg-primary/60 group-hover:bg-primary shrink-0 transition-colors" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6 flex items-center gap-2 text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span>View full details</span>
+                    <ArrowRight size={12} />
+                  </div>
+                </Link>
               </motion.div>
             ))}
           </div>
