@@ -87,7 +87,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </nav>
 
         <div className="px-3 py-4 border-t border-background/10">
-          <button className="flex items-center gap-3 px-3 py-2 text-sm text-background/50 hover:text-background transition-colors w-full rounded-md hover:bg-background/10">
+          <button 
+            onClick={signOut}
+            className="flex items-center gap-3 px-3 py-2 text-sm text-background/50 hover:text-background transition-colors w-full rounded-md hover:bg-background/10"
+          >
             <LogOut size={17} strokeWidth={1.5} />
             Sign Out
           </button>
