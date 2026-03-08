@@ -109,6 +109,14 @@ const AdminSettings = () => {
     setTasks(updated);
   };
 
+  const handleDragEnd = useCallback((result: DropResult) => {
+    if (!result.destination) return;
+    const reordered = Array.from(tasks);
+    const [moved] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, moved);
+    setTasks(reordered);
+  }, [tasks]);
+
   const resetToDefaults = () => {
     setTasks(DEFAULT_TASKS);
     setBrandName("THE BUSINESS SUPPORT STUDIO™");
