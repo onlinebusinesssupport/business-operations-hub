@@ -55,6 +55,7 @@ import AdminLeadPipeline from "./pages/admin/AdminLeadPipeline";
 import AdminReviews from "./pages/admin/AdminReviews";
 import AdminOnboardingQueue from "./pages/admin/AdminOnboardingQueue";
 import AdminAccountant from "./pages/admin/AdminAccountant";
+import AdminFinance from "./pages/admin/AdminFinance";
 import AdminSubscribers from "./pages/admin/AdminSubscribers";
 
 // Service detail pages
@@ -137,6 +138,7 @@ const App = () => (
             <Route path="/admin/pipeline" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminLeadPipeline /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/onboarding" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminOnboardingQueue /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/reviews" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminReviews /></DashboardLayout></ProtectedRoute>} />
+            <Route path="/admin/finance" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminFinance /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/accountant" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminAccountant /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/subscribers" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminSubscribers /></DashboardLayout></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><DashboardLayout portal="admin"><AdminSettings /></DashboardLayout></ProtectedRoute>} />
