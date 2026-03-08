@@ -161,6 +161,9 @@ const ClientSettings = () => {
         </div>
       </motion.div>
 
+      {/* Currency */}
+      <CurrencySection />
+
       {/* Security */}
       <motion.div {...fade} transition={{ duration: 0.3, delay: 0.15 }}>
         <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4 flex items-center gap-2">
@@ -177,5 +180,51 @@ const ClientSettings = () => {
     </div>
   );
 };
+
+function CurrencySection() {
+  const { currency, setCurrency } = useCurrency();
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: 0.12 }}
+    >
+      <p className="text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase mb-4 flex items-center gap-2">
+        <Coins size={12} strokeWidth={1.5} />
+        Currency
+      </p>
+      <div className="border border-border p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-foreground">Display Currency</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Choose how amounts are shown across your workspace.</p>
+          </div>
+          <div className="flex border border-border">
+            <button
+              onClick={() => setCurrency("ZAR")}
+              className={`text-xs px-4 py-2 transition-colors font-medium ${
+                currency === "ZAR"
+                  ? "bg-foreground text-background border-foreground"
+                  : "bg-background text-muted-foreground border-border hover:border-foreground/30"
+              }`}
+            >
+              R ZAR
+            </button>
+            <button
+              onClick={() => setCurrency("USD")}
+              className={`text-xs px-4 py-2 transition-colors font-medium ${
+                currency === "USD"
+                  ? "bg-foreground text-background border-foreground"
+                  : "bg-background text-muted-foreground border-border hover:border-foreground/30"
+              }`}
+            >
+              $ USD
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default ClientSettings;
