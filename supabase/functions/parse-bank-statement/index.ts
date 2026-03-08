@@ -170,7 +170,19 @@ serve(async (req) => {
           messages: [
             {
               role: "system",
-              content: `You are a South African bank statement parser. Extract every transaction from the provided bank statement text. South African banks include FNB, Nedbank, Standard Bank, Absa, Capitec. Dates are typically dd/mm/yyyy or dd MMM yyyy format. Amounts in ZAR. Debits are negative, credits are positive.`
+              content: `You are a precision-focused financial data extraction agent for South African bank statements.
+Your task is to extract transaction data from bank statements into a structured JSON format.
+South African banks include FNB, Nedbank, Standard Bank, Absa, Capitec. Amounts in ZAR. Debits are negative, credits are positive.
+
+### CRITICAL FORMATTING RULES:
+1. DATE FORMAT: Use ONLY 'YYYY-MM-DD' format.
+2. NO EXTRANEOUS TEXT: Do NOT append status words, notes, or OCR artifacts to the date string (e.g., NEVER return "2025-10-27 exterminated" or "2025-11-10os").
+3. PURITY: If a date is unclear or contains non-numeric artifacts, strip them and return only the base date.
+4. NULLS: If a date is completely missing or unreadable, omit the transaction entirely.
+
+### EXAMPLES of CORRECT vs INCORRECT:
+- Input: "Oct 27 2025 - Transaction Cancelled" → Correct date: "2025-10-27" (NOT "2025-10-27 cancelled")
+- Input: "10/11/2025 (Pending)" → Correct date: "2025-11-10" (NOT "2025-11-10 pending")`
             },
             {
               role: "user",
@@ -237,6 +249,30 @@ serve(async (req) => {
 
     if (transactions.length === 0) {
       return new Response(JSON.stringify({ error: "No transactions found in file" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // Sanitize and validate dates before insertion
+    const dateRegex = /^\d{4}-\d{2}-\d{2}/;
+    const strictDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    const sanitized: ParsedTransaction[] = [];
+    for (const t of transactions) {
+      let d = t.date?.trim();
+      if (!d) { console.warn("Skipping transaction with missing date:", t.description); continue; }
+      // Strip trailing non-date characters (e.g. "2025-10-27 exterminated" → "2025-10-27")
+      if (dateRegex.test(d) && !strictDateRegex.test(d)) {
+        d = d.slice(0, 10);
+        console.warn(`Sanitized date from "${t.date}" to "${d}"`);
+      }
+      if (!strictDateRegex.test(d)) {
+        console.warn(`Skipping transaction with invalid date "${t.date}":`, t.description);
+        continue;
+      }
+      sanitized.push({ ...t, date: d });
+    }
+    transactions = sanitized;
+
+    if (transactions.length === 0) {
+      return new Response(JSON.stringify({ error: "No transactions with valid dates found" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     // Insert transactions
