@@ -9,7 +9,7 @@ export interface LekoInsight {
   title: string;
   body: string;
   action: { label: string; route: string } | null;
-  severity: "critical" | "warning" | "info" | "positive";
+  severity: InsightSeverity;
 }
 
 interface LekoContextType {
