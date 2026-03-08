@@ -28,6 +28,7 @@ import {
   Mail,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import LekoInsightPanel from "./LekoInsightPanel";
 import PageTransition from "./PageTransition";
 
 /* ─── Nav configs ─── */
