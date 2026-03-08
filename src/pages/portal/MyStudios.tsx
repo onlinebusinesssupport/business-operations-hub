@@ -21,7 +21,7 @@ interface Pod {
   client_id: string;
   name: string;
   status: string;
-  config: Record<string, unknown> | null;
+  config: unknown;
   created_at: string;
 }
 
