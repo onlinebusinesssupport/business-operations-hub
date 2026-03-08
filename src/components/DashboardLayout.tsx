@@ -57,6 +57,7 @@ const adminNav = [
   { label: "Revenue", href: "/admin/revenue", icon: DollarSign },
   { label: "Finance", href: "/admin/finance", icon: BarChart3 },
   { label: "Accountant", href: "/admin/accountant", icon: BarChart3 },
+  { label: "Emails", href: "/admin/emails", icon: Mail },
   { label: "Subscribers", href: "/admin/subscribers", icon: Mail },
   { label: "System Health", href: "/admin/settings", icon: Settings },
 ];
