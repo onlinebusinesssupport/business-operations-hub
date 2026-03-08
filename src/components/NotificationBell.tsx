@@ -64,10 +64,6 @@ const NotificationBell = () => {
           setNotifications((prev) => [newNotif, ...prev.slice(0, 19)]);
           setUnreadCount((c) => c + 1);
         }
-          const audio = new Audio("/notification.mp3");
-          audio.volume = 0.3;
-          audio.play().catch(() => {});
-        }
       )
       .subscribe();
 
