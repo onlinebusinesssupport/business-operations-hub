@@ -1,22 +1,19 @@
 project_id = "nibnxnfxsypmaijmgcgk"
 
-[functions.leko-chat]
-verify_jwt = false
-
-[functions.approve-application]
-verify_jwt = false
-
-[functions.activate-pod]
-verify_jwt = false
-
-[functions.sign-document]
-verify_jwt = false
-
-[functions.notify-new-lead]
-verify_jwt = false
-
-[functions.parse-bank-statement]
-verify_jwt = false
-
-[functions.categorise-transactions]
-verify_jwt = false
+[functions]
+  [functions.activate-pod]
+    verify_jwt = false
+  [functions.approve-application]
+    verify_jwt = false
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.categorise-transactions]
+    verify_jwt = false
+  [functions.leko-chat]
+    verify_jwt = false
+  [functions.notify-new-lead]
+    verify_jwt = false
+  [functions.parse-bank-statement]
+    verify_jwt = false
+  [functions.sign-document]
+    verify_jwt = false
