@@ -171,14 +171,12 @@ const Login = () => {
           <Link to="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
             Forgot your password?
           </Link>
-          {portalType === "client" && (
-            <p className="text-xs text-muted-foreground">
-              No account?{" "}
-              <Link to="/apply" className="text-foreground hover:underline">
-                Apply for access
-              </Link>
-            </p>
-          )}
+          <p className="text-xs text-muted-foreground">
+            No account?{" "}
+            <Link to="/apply" className="text-foreground hover:underline">
+              Apply for access
+            </Link>
+          </p>
         </div>
       </motion.div>
     </div>
