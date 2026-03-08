@@ -345,6 +345,16 @@ const AdminClients = () => {
           )}
         </motion.div>
       )}
+
+      <LekoRiskGuard
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDeleteClient}
+        loading={deleteLoading}
+        entityType="Client"
+        entityName={deleteTarget?.name || ""}
+        risks={deleteTarget ? getClientRisks(deleteTarget) : []}
+      />
     </div>
   );
 };
