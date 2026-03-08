@@ -11,9 +11,11 @@ import { format } from "date-fns";
 
 interface SubscriberRow {
   email: string;
+  full_name?: string;
   source: string;
   date: string;
   is_active: boolean;
+  popi_consent?: boolean;
   origin: "newsletter" | "contact" | "application";
   id?: string;
 }
@@ -41,9 +43,11 @@ const AdminSubscribers = () => {
       seen.add(key);
       rows.push({
         email: s.email,
+        full_name: s.full_name || undefined,
         source: s.source || "newsletter",
         date: s.subscribed_at,
         is_active: s.is_active,
+        popi_consent: s.popi_consent ?? false,
         origin: "newsletter",
         id: s.id,
       });
@@ -98,9 +102,9 @@ const AdminSubscribers = () => {
   }, [subscribers, search, sourceFilter]);
 
   const exportCsv = () => {
-    const header = "Email,Source,Date,Active,Origin\n";
+    const header = "Full Name,Email,Source,Date,Active,POPI Consent,Origin\n";
     const body = filtered
-      .map((r) => `${r.email},${r.source},${format(new Date(r.date), "yyyy-MM-dd")},${r.is_active},${r.origin}`)
+      .map((r) => `"${r.full_name || ""}",${r.email},${r.source},${format(new Date(r.date), "yyyy-MM-dd")},${r.is_active},${r.popi_consent ?? ""},${r.origin}`)
       .join("\n");
     const blob = new Blob([header + body], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -167,24 +171,27 @@ const AdminSubscribers = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Source</TableHead>
               <TableHead>Date</TableHead>
+              <TableHead>POPI</TableHead>
               <TableHead>Active</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground py-12">Loading...</TableCell>
+                <TableCell colSpan={6} className="text-center text-muted-foreground py-12">Loading...</TableCell>
               </TableRow>
             ) : filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground py-12">No subscribers found</TableCell>
+                <TableCell colSpan={6} className="text-center text-muted-foreground py-12">No subscribers found</TableCell>
               </TableRow>
             ) : (
               filtered.map((row, i) => (
                 <TableRow key={`${row.email}-${i}`}>
+                  <TableCell className="text-sm">{row.full_name || <span className="text-muted-foreground">—</span>}</TableCell>
                   <TableCell className="font-medium text-sm">{row.email}</TableCell>
                   <TableCell>
                     <Badge variant={sourceBadgeColor(row.source) as any} className="text-[10px] uppercase tracking-wider">
@@ -193,6 +200,17 @@ const AdminSubscribers = () => {
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {format(new Date(row.date), "dd MMM yyyy")}
+                  </TableCell>
+                  <TableCell>
+                    {row.origin === "newsletter" ? (
+                      row.popi_consent ? (
+                        <Badge variant="default" className="text-[10px]">Yes</Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-[10px]">No</Badge>
+                      )
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     {row.origin === "newsletter" ? (
