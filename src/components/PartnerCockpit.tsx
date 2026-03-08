@@ -1,9 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Gauge, ListChecks, FolderOpen, MessageSquare, DollarSign,
   BarChart3, Settings, AlertTriangle, CheckCircle2, Clock, Plus, X,
-  Loader2, Upload, Send, Eye, EyeOff, Star, Users
+  Loader2, Upload, Send, Eye, EyeOff, Star, Users, Download, FileCheck
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
