@@ -251,6 +251,30 @@ South African banks include FNB, Nedbank, Standard Bank, Absa, Capitec. Amounts 
       return new Response(JSON.stringify({ error: "No transactions found in file" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    // Sanitize and validate dates before insertion
+    const dateRegex = /^\d{4}-\d{2}-\d{2}/;
+    const strictDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    const sanitized: ParsedTransaction[] = [];
+    for (const t of transactions) {
+      let d = t.date?.trim();
+      if (!d) { console.warn("Skipping transaction with missing date:", t.description); continue; }
+      // Strip trailing non-date characters (e.g. "2025-10-27 exterminated" → "2025-10-27")
+      if (dateRegex.test(d) && !strictDateRegex.test(d)) {
+        d = d.slice(0, 10);
+        console.warn(`Sanitized date from "${t.date}" to "${d}"`);
+      }
+      if (!strictDateRegex.test(d)) {
+        console.warn(`Skipping transaction with invalid date "${t.date}":`, t.description);
+        continue;
+      }
+      sanitized.push({ ...t, date: d });
+    }
+    transactions = sanitized;
+
+    if (transactions.length === 0) {
+      return new Response(JSON.stringify({ error: "No transactions with valid dates found" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     // Insert transactions
     const rows = transactions.map(t => ({
       statement_id,
