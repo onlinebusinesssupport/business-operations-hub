@@ -1,5 +1,4 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { sendLovableEmail } from 'npm:@lovable.dev/email-js'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,8 +6,7 @@ const corsHeaders = {
 }
 
 const SITE_NAME = 'Support Studio'
-const SENDER_DOMAIN = 'notify.www.supportstudio.co.za'
-const FROM_DOMAIN = 'notify.www.supportstudio.co.za'
+const FROM_ADDRESS = `${SITE_NAME} <noreply@notify.www.supportstudio.co.za>`
 
 function wrapHtml(subject: string, bodyHtml: string): string {
   return `<!DOCTYPE html>
@@ -43,9 +41,9 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
-  const apiKey = Deno.env.get('LOVABLE_API_KEY')
-  if (!apiKey) {
-    return new Response(JSON.stringify({ error: 'Server config error' }), {
+  const resendKey = Deno.env.get('RESEND_API_KEY')
+  if (!resendKey) {
+    return new Response(JSON.stringify({ error: 'Server config error: missing RESEND_API_KEY' }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
@@ -64,14 +62,13 @@ Deno.serve(async (req) => {
     { global: { headers: { Authorization: authHeader } } }
   )
 
-  const token = authHeader.replace('Bearer ', '')
-  const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token)
-  if (claimsError || !claimsData?.claims) {
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
-  const userId = claimsData.claims.sub as string
+  const userId = user.id
 
   // Check admin role
   const serviceClient = createClient(
@@ -109,25 +106,48 @@ Deno.serve(async (req) => {
   const html = wrapHtml(body.subject, body.body_html)
   const text = stripHtml(body.body_html)
 
-  let result: { message_id?: string }
+  // Send via Resend
+  let resendResult: { id?: string }
   try {
-    result = await sendLovableEmail(
-      {
-        run_id: crypto.randomUUID(),
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: FROM_ADDRESS,
         to: body.to_email,
-        from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
-        sender_domain: SENDER_DOMAIN,
         subject: body.subject,
         html,
         text,
-        purpose: 'transactional',
-      },
-      { apiKey }
-    )
+      }),
+    })
+
+    const resBody = await res.json()
+
+    if (!res.ok) {
+      console.error('Resend API error:', res.status, resBody)
+
+      await serviceClient.from('client_emails').insert({
+        client_id: body.client_id || null,
+        sent_by: userId,
+        to_email: body.to_email,
+        subject: body.subject,
+        body_html: body.body_html,
+        body_text: text,
+        status: 'failed',
+      })
+
+      return new Response(JSON.stringify({ error: 'Failed to send email', details: resBody }), {
+        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    resendResult = resBody
   } catch (error) {
     console.error('Email send failed:', error)
 
-    // Log failed email
     await serviceClient.from('client_emails').insert({
       client_id: body.client_id || null,
       sent_by: userId,
@@ -155,7 +175,7 @@ Deno.serve(async (req) => {
   })
 
   return new Response(
-    JSON.stringify({ success: true, message_id: result.message_id }),
+    JSON.stringify({ success: true, message_id: resendResult.id }),
     { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
   )
 })
