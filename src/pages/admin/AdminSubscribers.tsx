@@ -43,9 +43,11 @@ const AdminSubscribers = () => {
       seen.add(key);
       rows.push({
         email: s.email,
+        full_name: s.full_name || undefined,
         source: s.source || "newsletter",
         date: s.subscribed_at,
         is_active: s.is_active,
+        popi_consent: s.popi_consent ?? false,
         origin: "newsletter",
         id: s.id,
       });
