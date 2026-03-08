@@ -9,6 +9,7 @@ import { KanbanBoard, KanbanColumn } from "@/components/KanbanBoard";
 import InlineEdit from "@/components/InlineEdit";
 import { logActivity } from "@/lib/activity";
 import { formatCurrency } from "@/lib/currency";
+import { getComplianceDisplay } from "@/lib/mask";
 import PartnerCockpit from "@/components/PartnerCockpit";
 import LekoRiskGuard from "@/components/LekoRiskGuard";
 
