@@ -22,17 +22,26 @@ const CallToAction = () => {
           </h2>
           <p className="mt-6 text-base leading-relaxed text-primary-foreground/70 max-w-lg">
             We work with a limited number of partners at any given time. 
-            If you're building something serious, apply to explore whether our model is the right support layer for your growth.
+            If you're building something serious, start a conversation to explore whether our model is the right support layer for your growth.
           </p>
-          <div className="mt-10">
-            <Link to="/apply">
+          <div className="mt-10 flex flex-col sm:flex-row gap-4">
+            <Link to="/contact">
               <Button
                 size="lg"
                 variant="outline"
                 className="text-sm tracking-[0.1em] uppercase px-8 gap-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
               >
-                Enter the Studio
+                Start a Conversation
                 <ArrowRight size={16} />
+              </Button>
+            </Link>
+            <Link to="/services">
+              <Button
+                size="lg"
+                variant="ghost"
+                className="text-sm tracking-[0.1em] uppercase px-8 text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/5"
+              >
+                View Services
               </Button>
             </Link>
           </div>

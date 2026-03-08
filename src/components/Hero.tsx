@@ -50,15 +50,15 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
             className="mt-12 flex flex-col sm:flex-row gap-4"
           >
-            <Link to="/apply">
+            <Link to="/contact">
               <Button size="lg" className="text-sm tracking-[0.1em] uppercase px-8 gap-2">
-                Enter the Studio
+                Start a Conversation
                 <ArrowRight size={16} />
               </Button>
             </Link>
             <Link to="/services">
               <Button variant="outline" size="lg" className="text-sm tracking-[0.1em] uppercase px-8">
-                Explore Services
+                View Services
               </Button>
             </Link>
           </motion.div>

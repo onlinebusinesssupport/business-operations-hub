@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 const tiers = [
   {
@@ -98,6 +99,18 @@ const Services = () => {
           >
             Choose the level of operational support that fits your stage. Every engagement includes a dedicated client portal with transparent reporting.
           </motion.p>
+          <motion.div
+            {...fadeUp}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="mt-8"
+          >
+            <Link to="/contact">
+              <Button size="lg" className="text-sm tracking-wide gap-2">
+                Start a Conversation
+                <ArrowRight size={16} />
+              </Button>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
@@ -251,16 +264,17 @@ const Services = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-4 opacity-70"
           >
-            Book a consultation and we'll work out the right support for where you are now.
+            Start a conversation and we'll work out the right support for where you are now.
           </motion.p>
           <motion.div
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-8"
+            className="mt-8 flex gap-4 justify-center flex-wrap"
           >
             <Link to="/contact">
-              <Button size="lg" className="text-sm tracking-wide px-8">
-                Book a Consultation
+              <Button size="lg" className="text-sm tracking-wide px-8 gap-2">
+                Start a Conversation
+                <ArrowRight size={16} />
               </Button>
             </Link>
           </motion.div>
