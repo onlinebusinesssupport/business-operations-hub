@@ -14,6 +14,7 @@ import InlineEdit from "@/components/InlineEdit";
 import { logActivity } from "@/lib/activity";
 import { ActivityFeed } from "@/components/ActivityFeed";
 import CrmModule from "@/components/CrmModule";
+import { maskSensitive, getComplianceDisplay } from "@/lib/mask";
 import ReputationDashboard from "@/components/ReputationDashboard";
 import AdminBillingTab from "@/components/AdminBillingTab";
 
