@@ -237,12 +237,17 @@ const Billing = () => {
                       </button>
                     )}
                     {canUploadPop && (
+                      <Button size="sm" variant="default" onClick={() => initPaystackMut.mutate(inv.id)} disabled={initPaystackMut.isPending} className="text-[10px] h-7 px-2 gap-1">
+                        {initPaystackMut.isPending ? <Loader2 size={11} className="animate-spin" /> : <CreditCard size={11} />} Pay Now
+                      </Button>
+                    )}
+                    {canUploadPop && (
                       <Button size="sm" variant="outline" onClick={() => setPopDialog(inv)} className="text-[10px] h-7 px-2 gap-1">
-                        <Upload size={11} /> Upload POP
+                        <Upload size={11} /> POP
                       </Button>
                     )}
                     {inv.status === "awaiting_confirmation" && (
-                      <span className="flex items-center gap-1 text-[10px] text-purple-600"><FileCheck size={12} /> Submitted</span>
+                      <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><FileCheck size={12} /> Submitted</span>
                     )}
                   </div>
                 </div>
