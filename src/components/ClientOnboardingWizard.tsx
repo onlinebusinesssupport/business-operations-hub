@@ -461,9 +461,8 @@ const ClientOnboardingWizard = ({ onComplete, clientId, prefill }: ClientOnboard
                     <div><span className="text-muted-foreground">Address:</span> <span className={physicalAddress ? "text-emerald-500" : "text-amber-500"}>{physicalAddress ? "Provided" : "Missing"}</span></div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
         </div>
       </div>
 
