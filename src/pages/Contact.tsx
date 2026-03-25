@@ -80,6 +80,21 @@ const Contact = () => {
           source: "Contact Form",
         },
       });
+
+      // 4. Email notification to admin
+      supabase.functions.invoke("notify-admin", {
+        body: {
+          event_type: "new_lead",
+          user_email: email.trim(),
+          full_name: name.trim(),
+          business_name: company.trim() || undefined,
+          details: {
+            service_interest: serviceInterest || "Not specified",
+            connect_preference: connectPreference || "Not specified",
+            source_page: "/contact",
+          },
+        },
+      }).catch((err) => console.error("notify-admin error:", err));
     }
 
     setSubmitted(true);
