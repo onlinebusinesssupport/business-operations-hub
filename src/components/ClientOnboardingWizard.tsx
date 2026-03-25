@@ -410,12 +410,12 @@ const ClientOnboardingWizard = ({ onComplete, clientId, prefill }: ClientOnboard
                     <Input value={taxReference} onChange={(e) => setTaxReference(e.target.value)} placeholder="e.g. 0123456789 (optional)" />
                   </div>
                 )}
-              </motion.div>
+              </div>
             )}
 
             {/* Step 3: Service Selection */}
             {step === 2 && (
-              <motion.div key="services" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="space-y-6">
+              <div className="space-y-6">
                 <div>
                   <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">Step 3</p>
                   <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Service Selection</h2>
