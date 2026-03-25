@@ -69,6 +69,22 @@ const Billing = () => {
     if (data?.signedUrl) window.open(data.signedUrl, "_blank");
   };
 
+  const initPaystackMut = useMutation({
+    mutationFn: async (invoiceId: string) => {
+      const { data, error } = await supabase.functions.invoke("paystack-init", {
+        body: { invoice_id: invoiceId },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data?.authorization_url) {
+        window.location.href = data.authorization_url;
+      }
+    },
+    onError: (e: any) => toast({ title: "Payment error", description: e.message, variant: "destructive" }),
+  });
+
   const uploadPopMut = useMutation({
     mutationFn: async () => {
       if (!popDialog || !clientId) throw new Error("Missing context");
