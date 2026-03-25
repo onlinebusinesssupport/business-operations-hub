@@ -279,10 +279,9 @@ const ClientOnboardingWizard = ({ onComplete, clientId, prefill }: ClientOnboard
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 md:px-12 py-8">
         <div className="max-w-xl mx-auto">
-          <AnimatePresence mode="wait">
             {/* Step 1: Client Profile */}
             {step === 0 && (
-              <motion.div key="profile" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="space-y-6">
+              <div className="space-y-6">
                 <div>
                   <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">Step 1</p>
                   <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Client Profile</h2>
