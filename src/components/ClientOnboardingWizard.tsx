@@ -339,12 +339,12 @@ const ClientOnboardingWizard = ({ onComplete, clientId, prefill }: ClientOnboard
                     </div>
                   </motion.div>
                 )}
-              </motion.div>
+              </div>
             )}
 
             {/* Step 2: Compliance & Identity */}
             {step === 1 && (
-              <motion.div key="compliance" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="space-y-6">
+              <div className="space-y-6">
                 <div>
                   <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">Step 2</p>
                   <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Compliance & Identity</h2>
