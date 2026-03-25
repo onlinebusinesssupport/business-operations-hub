@@ -509,6 +509,7 @@ export type Database = {
           invoice_date: string
           invoice_number: string | null
           paid_date: string | null
+          paystack_reference: string | null
           pop_details: Json | null
           pop_file_path: string | null
           services: string[] | null
@@ -527,6 +528,7 @@ export type Database = {
           invoice_date?: string
           invoice_number?: string | null
           paid_date?: string | null
+          paystack_reference?: string | null
           pop_details?: Json | null
           pop_file_path?: string | null
           services?: string[] | null
@@ -545,6 +547,7 @@ export type Database = {
           invoice_date?: string
           invoice_number?: string | null
           paid_date?: string | null
+          paystack_reference?: string | null
           pop_details?: Json | null
           pop_file_path?: string | null
           services?: string[] | null
