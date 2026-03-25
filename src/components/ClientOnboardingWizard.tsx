@@ -232,11 +232,6 @@ const ClientOnboardingWizard = ({ onComplete, clientId, prefill }: ClientOnboard
     }
   };
 
-  const slideVariants = {
-    enter: { opacity: 0, x: 40 },
-    center: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -40 },
-  };
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
