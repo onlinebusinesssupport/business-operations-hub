@@ -222,6 +222,20 @@ const ClientOnboardingWizard = ({ onComplete, clientId, prefill }: ClientOnboard
         })
         .eq("user_id", user.id);
 
+      // Notify admin of completed onboarding
+      supabase.functions.invoke("notify-admin", {
+        body: {
+          event_type: "onboarding_complete",
+          user_email: email,
+          full_name: fullName,
+          business_name: businessName,
+          details: {
+            business_type: businessType,
+            services: selectedServices,
+          },
+        },
+      }).catch((err) => console.error("notify-admin error:", err));
+
       toast.success("Onboarding complete! Your workspace is ready.");
       onComplete();
     } catch (err: any) {

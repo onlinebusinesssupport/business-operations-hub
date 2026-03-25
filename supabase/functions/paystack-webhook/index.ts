@@ -83,6 +83,31 @@ Deno.serve(async (req) => {
           channel: event.data.channel,
         },
       });
+
+      // Notify admin of successful payment
+      try {
+        await fetch(
+          `${Deno.env.get("SUPABASE_URL")}/functions/v1/notify-admin`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              event_type: "payment_confirmed",
+              user_email: event.data.customer?.email || metadata?.email || "",
+              full_name: event.data.customer?.first_name || metadata?.full_name || "",
+              business_name: metadata?.business_name || "",
+              details: {
+                amount: event.data.amount / 100,
+                currency: event.data.currency,
+                reference,
+                invoice_id: invoiceId,
+              },
+            }),
+          }
+        );
+      } catch (notifyErr) {
+        console.error("notify-admin error:", notifyErr);
+      }
     }
 
     return new Response(JSON.stringify({ received: true }), {
