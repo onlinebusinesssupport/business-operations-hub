@@ -42,6 +42,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (session?.user) {
           // Use setTimeout to avoid Supabase auth deadlock
           setTimeout(() => checkRole(session.user.id), 0);
+
+          // Notify admin on new signup (first sign-in after registration)
+          if (_event === "SIGNED_IN" && session.user.created_at) {
+            const createdAt = new Date(session.user.created_at).getTime();
+            const now = Date.now();
+            // If account was created less than 60 seconds ago, treat as new signup
+            if (now - createdAt < 60_000) {
+              supabase.functions.invoke("notify-admin", {
+                body: {
+                  event_type: "new_signup",
+                  user_email: session.user.email,
+                  full_name: session.user.user_metadata?.full_name || "",
+                  business_name: session.user.user_metadata?.company_name || "",
+                },
+              }).catch((err) => console.error("notify-admin error:", err));
+            }
+          }
         } else {
           setIsAdmin(false);
         }
