@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ArrowRight, ArrowLeft, User, Building2, Shield, FileText, Briefcase,
   Upload, Check, Sparkles, AlertCircle, Loader2,
@@ -232,11 +232,6 @@ const ClientOnboardingWizard = ({ onComplete, clientId, prefill }: ClientOnboard
     }
   };
 
-  const slideVariants = {
-    enter: { opacity: 0, x: 40 },
-    center: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -40 },
-  };
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
@@ -279,10 +274,9 @@ const ClientOnboardingWizard = ({ onComplete, clientId, prefill }: ClientOnboard
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 md:px-12 py-8">
         <div className="max-w-xl mx-auto">
-          <AnimatePresence mode="wait">
             {/* Step 1: Client Profile */}
             {step === 0 && (
-              <motion.div key="profile" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="space-y-6">
+              <div className="space-y-6">
                 <div>
                   <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">Step 1</p>
                   <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Client Profile</h2>
@@ -340,12 +334,12 @@ const ClientOnboardingWizard = ({ onComplete, clientId, prefill }: ClientOnboard
                     </div>
                   </motion.div>
                 )}
-              </motion.div>
+              </div>
             )}
 
             {/* Step 2: Compliance & Identity */}
             {step === 1 && (
-              <motion.div key="compliance" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="space-y-6">
+              <div className="space-y-6">
                 <div>
                   <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">Step 2</p>
                   <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Compliance & Identity</h2>
@@ -411,12 +405,12 @@ const ClientOnboardingWizard = ({ onComplete, clientId, prefill }: ClientOnboard
                     <Input value={taxReference} onChange={(e) => setTaxReference(e.target.value)} placeholder="e.g. 0123456789 (optional)" />
                   </div>
                 )}
-              </motion.div>
+              </div>
             )}
 
             {/* Step 3: Service Selection */}
             {step === 2 && (
-              <motion.div key="services" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }} className="space-y-6">
+              <div className="space-y-6">
                 <div>
                   <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase mb-2">Step 3</p>
                   <h2 className="font-display text-2xl font-bold text-foreground uppercase tracking-tight">Service Selection</h2>
@@ -462,9 +456,8 @@ const ClientOnboardingWizard = ({ onComplete, clientId, prefill }: ClientOnboard
                     <div><span className="text-muted-foreground">Address:</span> <span className={physicalAddress ? "text-emerald-500" : "text-amber-500"}>{physicalAddress ? "Provided" : "Missing"}</span></div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
         </div>
       </div>
 
