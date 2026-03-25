@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { DollarSign, FileText, Clock, Inbox, Download, Upload, Loader2, X, FileCheck } from "lucide-react";
+import { DollarSign, FileText, Clock, Inbox, Download, Upload, Loader2, X, FileCheck, CreditCard } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -68,6 +68,22 @@ const Billing = () => {
     const { data } = await supabase.storage.from("invoice-files").createSignedUrl(path, 300);
     if (data?.signedUrl) window.open(data.signedUrl, "_blank");
   };
+
+  const initPaystackMut = useMutation({
+    mutationFn: async (invoiceId: string) => {
+      const { data, error } = await supabase.functions.invoke("paystack-init", {
+        body: { invoice_id: invoiceId },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data?.authorization_url) {
+        window.location.href = data.authorization_url;
+      }
+    },
+    onError: (e: any) => toast({ title: "Payment error", description: e.message, variant: "destructive" }),
+  });
 
   const uploadPopMut = useMutation({
     mutationFn: async () => {
@@ -221,12 +237,17 @@ const Billing = () => {
                       </button>
                     )}
                     {canUploadPop && (
+                      <Button size="sm" variant="default" onClick={() => initPaystackMut.mutate(inv.id)} disabled={initPaystackMut.isPending} className="text-[10px] h-7 px-2 gap-1">
+                        {initPaystackMut.isPending ? <Loader2 size={11} className="animate-spin" /> : <CreditCard size={11} />} Pay Now
+                      </Button>
+                    )}
+                    {canUploadPop && (
                       <Button size="sm" variant="outline" onClick={() => setPopDialog(inv)} className="text-[10px] h-7 px-2 gap-1">
-                        <Upload size={11} /> Upload POP
+                        <Upload size={11} /> POP
                       </Button>
                     )}
                     {inv.status === "awaiting_confirmation" && (
-                      <span className="flex items-center gap-1 text-[10px] text-purple-600"><FileCheck size={12} /> Submitted</span>
+                      <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><FileCheck size={12} /> Submitted</span>
                     )}
                   </div>
                 </div>

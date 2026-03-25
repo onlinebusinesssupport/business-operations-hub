@@ -23,3 +23,7 @@ project_id = "nibnxnfxsypmaijmgcgk"
     verify_jwt = false
   [functions.leko-insights]
     verify_jwt = false
+  [functions.paystack-init]
+    verify_jwt = false
+  [functions.paystack-webhook]
+    verify_jwt = false
