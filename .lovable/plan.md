@@ -1,61 +1,52 @@
 
 ## Goal
 
-Reposition The Business Support Studio™ from a founder-led ("Dylan Mgobhozi") brand into a studio/agency that supplies the best Virtual Assistants, Setters, and remote/virtual talent for businesses. Update contact details everywhere. Keep all existing service packages and pricing untouched.
+Rework the "Environments we've operated in" section on `/about` so it conveys depth of experience as a **studio capability**, not a personal CV. Remove org names, job titles, dates, and the location-by-role mapping. Keep the credibility, lose the literalness.
 
-## New brand facts (apply globally)
+## Approach
 
-- Email: `thebusinesssupportstudio@gmail.com` (replaces `thequitehelpinghand@gmail.com`)
-- Phone: `+27 62 889 6021` / displayed as `062 889 6021` (replaces `+27 74 953 4914`)
-- WhatsApp link: `https://wa.me/27628896021`
-- `tel:` link: `tel:+27628896021`
-- No personal founder attribution. Replace "Dylan", "Dylan Mgobhozi", "Founder" mentions with the studio voice ("our team", "the studio", "The Business Support Studio™").
-- Information Officer (legal pages, POPIA): change from "Dylan Mgobhozi" to "The Business Support Studio™ — Information Officer" (generic role, same email).
+Replace the 8-card org/role grid with a **"Sectors we've operated across"** layout: 4 industry domain pillars, each showing what the studio brings out of that world — not who worked where or when.
 
-## New positioning line
+Each pillar = one card with:
+- Sector name (e.g. Hospitality & Service)
+- One-line "what this gives us" capability statement
+- 2–3 short skill tags (operational outcomes, not job titles)
 
-"South Africa's studio for elite Virtual Assistants, Appointment Setters, and remote operators — matched, managed, and embedded into your business."
+### Proposed pillars
 
-## Files to update
+1. **Hospitality & Service Operations** — service standards, guest-grade communication, calm under pressure.
+   Tags: SOPs · Service design · Crisis handling
+2. **Corporate & Executive Support** — inbox, calendar, and decision-flow management at executive tempo.
+   Tags: Exec ops · Stakeholder mgmt · Confidentiality
+3. **Corporate Travel & Logistics** — coordinating people, suppliers, and timelines without things slipping.
+   Tags: Vendor coordination · Itineraries · Budget control
+4. **Nonprofit & Impact Operations** — running lean teams that have to deliver public outcomes with limited resources.
+   Tags: Grants ops · Reporting · Award submissions
 
-1. `src/pages/About.tsx`
-   - Remove the personal founder section (photo block, "Dylan Mgobhozi · Founder", paragraphs about his career arc).
-   - Replace with a studio-origin narrative: a remote-talent studio built to give SA founders access to vetted VAs, setters, and operators. Keep the Experience Map / trust signals reframed as the studio's collective experience instead of one person's CV.
-   - First-person "I/Me" copy → first-person plural "we/our team".
+### Credibility strip (replaces the city list)
 
-2. `src/pages/Contact.tsx`
-   - Replace all email + phone + WhatsApp references with the new ones.
+A single quiet row of numbers, no names:
+- 15+ years combined operating experience
+- 4 sectors
+- 7+ awards delivered for client and partner organisations
+- Operating across South Africa & globally
 
-3. `src/components/Footer.tsx`
-   - Update email + phone links.
-   - Tagline can stay; optionally tighten to mention VA/setter talent.
+## Copy changes
 
-4. `src/pages/Privacy.tsx` and `src/pages/Terms.tsx`
-   - Replace email and Information Officer references. Keep legal entity ("The Business Support Studio (Pty) Ltd", Johannesburg).
+- Eyebrow stays: `OPERATIONAL EXPERIENCE`
+- Heading changes from "Environments we've operated in." → **"Sectors we've operated across."**
+- Subhead changes from a decade-of-leadership line → "The studio is built on operator experience from four high-pressure sectors. Every Virtual Assistant, Setter, and remote operator we place inherits these standards."
 
-5. `src/pages/Reviews.tsx`
-   - Replace every "Dylan" with "the studio" / "our team" / "The Business Support Studio™" (form labels, response attribution, intro copy).
+## Files
 
-6. `src/components/OnboardingWizard.tsx`
-   - Change `— Dylan, Founder` signature to `— The Business Support Studio™ team`.
+- `src/pages/About.tsx`
+  - Replace the `experienceMap` array with a new `sectors` array (4 items, sector + capability + tags).
+  - Replace the org-card grid render with a 4-card sector grid (keep the same motion/timing pattern and `Briefcase`/`Award` icon usage feel, but no org name, role, period, location, or highlight fields).
+  - Replace the city pills row with the credibility strip above.
+  - Keep section background, borders, spacing, animations.
 
-7. `src/pages/admin/AdminSettings.tsx`
-   - Update displayed admin name/email to the new studio email (keep the field, just change the seed value).
+## Out of scope
 
-8. Light positioning refresh on:
-   - `src/components/Hero.tsx`
-   - `src/components/ServicesPreview.tsx` / `src/components/ServiceTiers.tsx`
-   - `src/pages/Services.tsx`
-   - Add a clear VA / Setter / Remote-talent angle to the headline and supporting copy. **Do not change package names, scope, deliverables, or pricing.**
-
-## Out of scope (explicitly not changing)
-
-- Service tier structures, package contents, prices.
-- Database schema, edge functions, auth, billing logic.
-- Studios infrastructure (Digital Presence, Lead Engine, Automation, Operations, Travel & Activities, Grants & Awards) — these stay as the productised packages; the VA/Setter framing wraps around them.
-- Memory entries about Dylan as founder will need refreshing afterwards, but no code depends on them.
-
-## Validation
-
-- Grep the repo after changes for `Dylan`, `Mgobhozi`, `thequitehelpinghand`, `4914`, `749534914` — should return zero results.
-- Visually check Home, About, Contact, Footer, Privacy, Terms, Reviews, Onboarding modal.
+- No changes to other About sections (hero, story, values, who-we-serve, philosophy).
+- No copy changes elsewhere on the site.
+- No removal of the section — it stays, just reframed.

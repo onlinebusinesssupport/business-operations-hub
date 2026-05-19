@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { MapPin, Briefcase, Award, ArrowRight } from "lucide-react";
+import { Briefcase, Award, ArrowRight } from "lucide-react";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
@@ -35,66 +35,34 @@ const values = [
   },
 ];
 
-const experienceMap = [
+const sectors = [
   {
-    org: "MOLLO Catering & Food Services",
-    role: "Client Relationship Associate",
-    location: "Johannesburg",
-    period: "2024 – Present",
-    domain: "Corporate Services",
+    name: "Hospitality & Service Operations",
+    capability:
+      "Service standards, guest-grade communication, and calm under pressure — the kind of operating discipline built inside hotels and high-touch service environments.",
+    tags: ["SOPs", "Service design", "Crisis handling"],
   },
   {
-    org: "Honest Travel | Corporate Division",
-    role: "Head of Corporate Travel Management",
-    location: "Johannesburg",
-    period: "2023 – 2024",
-    domain: "Corporate Travel",
+    name: "Corporate & Executive Support",
+    capability:
+      "Inbox, calendar, and decision-flow management at executive tempo. Quiet, structured support for people whose time can't be wasted.",
+    tags: ["Exec ops", "Stakeholder mgmt", "Confidentiality"],
   },
   {
-    org: "Modern Centric Holdings & Foundation",
-    role: "Executive Support Manager",
-    location: "Johannesburg",
-    period: "2020 – 2023",
-    domain: "Nonprofit & Executive Ops",
-    highlight: "7 awards secured incl. 4 TopCo Empowerment Awards",
+    name: "Corporate Travel & Logistics",
+    capability:
+      "Coordinating people, suppliers, and timelines across borders without things slipping. Built for moving parts and tight margins.",
+    tags: ["Vendor coordination", "Itineraries", "Budget control"],
   },
   {
-    org: "Once in Joburg Hotel",
-    role: "Hotel General Manager",
-    location: "Johannesburg",
-    period: "2017 – 2020",
-    domain: "Hospitality Leadership",
-    highlight: "Best 4-Star Graded Hotel in Gauteng",
-  },
-  {
-    org: "Southern Sun The Ridge & StayEasy",
-    role: "Cluster Deputy General Manager",
-    location: "Mpumalanga",
-    period: "2014 – 2017",
-    domain: "Hospitality Operations",
-  },
-  {
-    org: "Southern Sun Katherine Street",
-    role: "Assistant Front Office Manager",
-    location: "Cape Town",
-    period: "2013 – 2014",
-    domain: "Hospitality",
-  },
-  {
-    org: "Garden Court de Waal",
-    role: "Guest Services Team Leader",
-    location: "Cape Town",
-    period: "2009 – 2012",
-    domain: "Hospitality",
-  },
-  {
-    org: "Garden Court Marine Parade",
-    role: "Switchboard Operator",
-    location: "Durban",
-    period: "2008 – 2010",
-    domain: "Hospitality",
+    name: "Nonprofit & Impact Operations",
+    capability:
+      "Running lean teams that have to deliver public outcomes with limited resources — and prove it on paper afterwards.",
+    tags: ["Grants ops", "Reporting", "Award submissions"],
+    highlight: "7+ awards delivered across client and partner organisations",
   },
 ];
+
 
 const whoWeServe = [
   {
@@ -187,7 +155,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* Experience Map */}
+      {/* Sectors */}
       <section className="py-20 border-t border-divider bg-secondary">
         <div className="container mx-auto px-6 lg:px-8">
           <motion.div {...fadeUp}>
@@ -195,60 +163,67 @@ const About = () => {
               OPERATIONAL EXPERIENCE
             </span>
             <h2 className="mt-4 font-display text-2xl md:text-3xl font-bold text-foreground">
-              Environments we've operated in.
+              Sectors we've operated across.
             </h2>
             <p className="mt-3 text-sm text-muted-foreground max-w-xl">
-              Over a decade of hands-on leadership across industries that demand precision, adaptability, and real-time execution.
+              The studio is built on operator experience from four high-pressure sectors. Every Virtual Assistant, Setter, and remote operator we place inherits these standards.
             </p>
           </motion.div>
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-px bg-divider">
-            {experienceMap.map((exp, i) => (
+            {sectors.map((s, i) => (
               <motion.div
-                key={exp.org}
+                key={s.name}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.4, delay: i * 0.06 }}
-                className="bg-secondary p-6 md:p-8 space-y-3 group hover:bg-card transition-colors duration-300"
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                className="bg-secondary p-6 md:p-8 space-y-4 group hover:bg-card transition-colors duration-300"
               >
                 <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-display text-sm font-bold text-foreground group-hover:text-primary transition-colors">
-                      {exp.org}
-                    </h3>
-                    <p className="text-xs text-muted-foreground mt-1">{exp.role}</p>
-                  </div>
-                  <Briefcase size={14} className="text-muted-foreground/40 shrink-0 mt-0.5" />
+                  <h3 className="font-display text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                    {s.name}
+                  </h3>
+                  <Briefcase size={14} className="text-muted-foreground/40 shrink-0 mt-1" />
                 </div>
-                <div className="flex items-center gap-4 text-[10px] text-muted-foreground">
-                  <span className="flex items-center gap-1"><MapPin size={10} /> {exp.location}</span>
-                  <span>{exp.period}</span>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {s.capability}
+                </p>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {s.tags.map((t) => (
+                    <span key={t} className="inline-block text-[10px] px-2 py-0.5 bg-primary/10 text-primary font-medium">
+                      {t}
+                    </span>
+                  ))}
                 </div>
-                <span className="inline-block text-[10px] px-2 py-0.5 bg-primary/10 text-primary font-medium">
-                  {exp.domain}
-                </span>
-                {exp.highlight && (
+                {s.highlight && (
                   <div className="flex items-center gap-1.5 pt-1">
                     <Award size={11} className="text-primary shrink-0" />
-                    <span className="text-[10px] text-primary font-medium">{exp.highlight}</span>
+                    <span className="text-[10px] text-primary font-medium">{s.highlight}</span>
                   </div>
                 )}
               </motion.div>
             ))}
           </div>
 
-          {/* Location summary */}
-          <motion.div {...fadeUp} transition={{ delay: 0.3 }} className="mt-8 flex flex-wrap items-center gap-6">
-            {["Durban", "Cape Town", "Mpumalanga", "Johannesburg"].map((city) => (
-              <div key={city} className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-primary" />
-                <span className="text-xs text-muted-foreground">{city}</span>
+          {/* Credibility strip */}
+          <motion.div {...fadeUp} transition={{ delay: 0.3 }} className="mt-10 pt-8 border-t border-divider grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { value: "15+", label: "Years combined operating experience" },
+              { value: "4", label: "Sectors of operator depth" },
+              { value: "7+", label: "Awards delivered for client & partner orgs" },
+              { value: "SA · Global", label: "Where we operate" },
+            ].map((stat) => (
+              <div key={stat.label} className="space-y-1.5">
+                <p className="font-display text-xl md:text-2xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground leading-relaxed">{stat.label}</p>
               </div>
             ))}
           </motion.div>
         </div>
       </section>
+
+
 
       {/* Trust Signal */}
       <section className="py-12 border-t border-divider">
