@@ -19,7 +19,7 @@ const Terms = () => {
 
             <h2>2. Company Information</h2>
             <p><strong>The Business Support Studio (Pty) Ltd</strong><br />Registered in the Republic of South Africa<br />Operating remotely across South Africa and international markets</p>
-            <p>Contact:<br />📧 <a href="mailto:thequitehelpinghand@gmail.com" className="text-primary hover:underline">thequitehelpinghand@gmail.com</a><br />📍 Johannesburg, South Africa</p>
+            <p>Contact:<br />📧 <a href="mailto:thebusinesssupportstudio@gmail.com" className="text-primary hover:underline">thebusinesssupportstudio@gmail.com</a><br />📍 Johannesburg, South Africa</p>
 
             <h2>3. Scope of Services</h2>
             <p>The Studio provides business enablement services, including but not limited to:</p>
@@ -161,7 +161,7 @@ const Terms = () => {
 
             <h2>24. Contact</h2>
             <p>For legal or contractual queries:</p>
-            <p>📧 <a href="mailto:thequitehelpinghand@gmail.com" className="text-primary hover:underline">thequitehelpinghand@gmail.com</a><br />Subject: Legal / Terms Query</p>
+            <p>📧 <a href="mailto:thebusinesssupportstudio@gmail.com" className="text-primary hover:underline">thebusinesssupportstudio@gmail.com</a><br />Subject: Legal / Terms Query</p>
           </div>
         </div>
       </main>

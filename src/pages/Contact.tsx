@@ -123,8 +123,8 @@ const Contact = () => {
             className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl"
           >
             Please complete the contact form below to learn more about our services. We custom quote based on support needs. On the form below, you will indicate how you would like to connect. If you'd like to connect via phone or Zoom, you will be taken to our calendar after submitting. If you have questions, please drop us a line at{" "}
-            <a href="mailto:thequitehelpinghand@gmail.com" className="text-foreground font-medium underline underline-offset-4 hover:text-primary transition-colors">
-              thequitehelpinghand@gmail.com
+            <a href="mailto:thebusinesssupportstudio@gmail.com" className="text-foreground font-medium underline underline-offset-4 hover:text-primary transition-colors">
+              thebusinesssupportstudio@gmail.com
             </a>.
           </motion.p>
         </div>
@@ -294,8 +294,8 @@ const Contact = () => {
                     <Mail size={16} className="mt-0.5 text-primary shrink-0" />
                     <div>
                       <span className="text-xs font-medium text-foreground uppercase tracking-wide block mb-1">Email</span>
-                      <a href="mailto:thequitehelpinghand@gmail.com" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                        thequitehelpinghand@gmail.com
+                      <a href="mailto:thebusinesssupportstudio@gmail.com" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        thebusinesssupportstudio@gmail.com
                       </a>
                     </div>
                   </div>
@@ -304,8 +304,8 @@ const Contact = () => {
                     <Phone size={16} className="mt-0.5 text-primary shrink-0" />
                     <div>
                       <span className="text-xs font-medium text-foreground uppercase tracking-wide block mb-1">Phone</span>
-                      <a href="tel:+27749534914" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                        +27 74 953 4914
+                      <a href="tel:+27628896021" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        062 889 6021
                       </a>
                     </div>
                   </div>
@@ -337,7 +337,7 @@ const Contact = () => {
 
                 <div>
                   <a
-                    href="https://wa.me/27749534914"
+                    href="https://wa.me/27628896021"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-xs text-primary font-medium hover:underline"
