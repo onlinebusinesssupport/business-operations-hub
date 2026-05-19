@@ -69,7 +69,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="mailto:thequitehelpinghand@gmail.com"
+                  href="mailto:thebusinesssupportstudio@gmail.com"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Email
@@ -77,10 +77,10 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="tel:+27749534914"
+                  href="tel:+27628896021"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  +27 74 953 4914
+                  062 889 6021
                 </a>
               </li>
             </ul>
