@@ -13,7 +13,7 @@ const Footer = () => {
               THE BUSINESS SUPPORT STUDIO™
             </span>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Support that moves at your speed.
+              Elite Virtual Assistants, Setters & remote operators — matched, managed, embedded.
             </p>
             <Link to="/contact" className="mt-4 inline-block">
               <Button size="sm" className="text-xs tracking-wide gap-1.5">
