@@ -25,7 +25,7 @@ const Privacy = () => {
 
             <h2>2. Who We Are</h2>
             <p><strong>The Business Support Studio (Pty) Ltd</strong><br />Johannesburg, South Africa<br />Operating remotely across South Africa and globally</p>
-            <p>Contact:<br />📧 <a href="mailto:thequitehelpinghand@gmail.com" className="text-primary hover:underline">thequitehelpinghand@gmail.com</a></p>
+            <p>Contact:<br />📧 <a href="mailto:thebusinesssupportstudio@gmail.com" className="text-primary hover:underline">thebusinesssupportstudio@gmail.com</a></p>
             <p>For purposes of POPIA, we act as the Responsible Party when determining how personal data is processed.</p>
 
             <h2>3. Scope of this Policy</h2>
@@ -210,12 +210,12 @@ const Privacy = () => {
 
             <h2>19. Information Officer</h2>
             <p>In compliance with POPIA and PAIA, the Studio has appointed an Information Officer.</p>
-            <p><strong>Information Officer:</strong><br />Dylan Mgobhozi<br />📧 <a href="mailto:thequitehelpinghand@gmail.com" className="text-primary hover:underline">thequitehelpinghand@gmail.com</a><br />📍 Johannesburg, South Africa</p>
+            <p><strong>Information Officer:</strong><br />The Business Support Studio™ — Information Officer<br />📧 <a href="mailto:thebusinesssupportstudio@gmail.com" className="text-primary hover:underline">thebusinesssupportstudio@gmail.com</a><br />📍 Johannesburg, South Africa</p>
             <p>All data-related queries, objections, and access requests should be directed to the Information Officer.</p>
 
             <h2>20. Access and Correction Requests</h2>
             <p>To exercise your data rights, contact:</p>
-            <p>📧 <a href="mailto:thequitehelpinghand@gmail.com" className="text-primary hover:underline">thequitehelpinghand@gmail.com</a><br />Subject: Privacy Request</p>
+            <p>📧 <a href="mailto:thebusinesssupportstudio@gmail.com" className="text-primary hover:underline">thebusinesssupportstudio@gmail.com</a><br />Subject: Privacy Request</p>
             <p>Please include your name, nature of request, and relevant details. We may verify identity before processing requests.</p>
 
             <h2>21. Complaints</h2>
@@ -234,7 +234,7 @@ const Privacy = () => {
 
             <h2>24. Contact</h2>
             <p>For privacy-related queries:</p>
-            <p>📧 <a href="mailto:thequitehelpinghand@gmail.com" className="text-primary hover:underline">thequitehelpinghand@gmail.com</a><br />Subject: Privacy / POPIA Query</p>
+            <p>📧 <a href="mailto:thebusinesssupportstudio@gmail.com" className="text-primary hover:underline">thebusinesssupportstudio@gmail.com</a><br />Subject: Privacy / POPIA Query</p>
           </div>
         </div>
       </main>

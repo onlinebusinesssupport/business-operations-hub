@@ -32,7 +32,7 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
             className="mt-6 text-xl md:text-2xl font-display font-medium text-foreground/80"
           >
-            The private operating system for South African founders who are done with chaos.
+            South Africa's studio for elite Virtual Assistants, Appointment Setters, and remote operators.
           </motion.p>
 
           <motion.p
@@ -41,7 +41,7 @@ const Hero = () => {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
             className="mt-4 text-base md:text-lg leading-relaxed text-muted-foreground max-w-xl"
           >
-            Operational support. Systems that scale. Digital presence that commands respect. All managed from one calm, private studio — built for founders who move fast and expect excellence.
+            Vetted talent. Managed delivery. Embedded into your business. We match founders and lean teams with remote operators who execute — across operations, sales, social, automation, and admin.
           </motion.p>
 
           <motion.div

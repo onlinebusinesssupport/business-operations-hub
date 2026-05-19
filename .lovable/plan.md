@@ -1,78 +1,61 @@
 
-## Paystack Integration Plan
+## Goal
 
-### What this enables
-Clients can pay invoices directly from the Billing portal via Paystack (card, bank transfer, mobile money). When payment is confirmed by Paystack's webhook, the invoice status auto-updates to `paid` — no manual "Upload POP" step needed.
+Reposition The Business Support Studio™ from a founder-led ("Dylan Mgobhozi") brand into a studio/agency that supplies the best Virtual Assistants, Setters, and remote/virtual talent for businesses. Update contact details everywhere. Keep all existing service packages and pricing untouched.
 
----
+## New brand facts (apply globally)
 
-### How it Works
+- Email: `thebusinesssupportstudio@gmail.com` (replaces `thequitehelpinghand@gmail.com`)
+- Phone: `+27 62 889 6021` / displayed as `062 889 6021` (replaces `+27 74 953 4914`)
+- WhatsApp link: `https://wa.me/27628896021`
+- `tel:` link: `tel:+27628896021`
+- No personal founder attribution. Replace "Dylan", "Dylan Mgobhozi", "Founder" mentions with the studio voice ("our team", "the studio", "The Business Support Studio™").
+- Information Officer (legal pages, POPIA): change from "Dylan Mgobhozi" to "The Business Support Studio™ — Information Officer" (generic role, same email).
 
-```text
-Client clicks "Pay Now" on an invoice
-        ↓
-Edge Function: paystack-init
-Creates a Paystack transaction, returns a payment URL
-        ↓
-Client is redirected to Paystack's hosted checkout
-        ↓
-Paystack calls our webhook (Edge Function: paystack-webhook)
-        ↓
-Webhook verifies the payment & updates invoice status → "paid"
-        ↓
-Client sees invoice marked Paid in real-time
-```
+## New positioning line
 
----
+"South Africa's studio for elite Virtual Assistants, Appointment Setters, and remote operators — matched, managed, and embedded into your business."
 
-### Steps
+## Files to update
 
-**1. Secret Required**
-You need a Paystack Secret Key from your [Paystack dashboard](https://dashboard.paystack.com/#/settings/developer) under Settings → API Keys.
+1. `src/pages/About.tsx`
+   - Remove the personal founder section (photo block, "Dylan Mgobhozi · Founder", paragraphs about his career arc).
+   - Replace with a studio-origin narrative: a remote-talent studio built to give SA founders access to vetted VAs, setters, and operators. Keep the Experience Map / trust signals reframed as the studio's collective experience instead of one person's CV.
+   - First-person "I/Me" copy → first-person plural "we/our team".
 
-I will store it securely as `PAYSTACK_SECRET_KEY`. The publishable key goes in the frontend to initialize the popup (optional).
+2. `src/pages/Contact.tsx`
+   - Replace all email + phone + WhatsApp references with the new ones.
 
-**2. New Edge Function: `paystack-init`**
-- Accepts `invoice_id` and `client_email`
-- Calls `https://api.paystack.co/transaction/initialize`
-- Returns `authorization_url` for redirect
+3. `src/components/Footer.tsx`
+   - Update email + phone links.
+   - Tagline can stay; optionally tighten to mention VA/setter talent.
 
-**3. New Edge Function: `paystack-webhook`**
-- Receives Paystack webhook events (event: `charge.success`)
-- Verifies HMAC signature using `PAYSTACK_SECRET_KEY`
-- Looks up the invoice by `reference` stored in `metadata`
-- Updates invoice status to `paid` and sets `paid_date`
-- Logs to `activity_log` with action `PAYSTACK_PAYMENT_CONFIRMED`
+4. `src/pages/Privacy.tsx` and `src/pages/Terms.tsx`
+   - Replace email and Information Officer references. Keep legal entity ("The Business Support Studio (Pty) Ltd", Johannesburg).
 
-**4. Database: `invoices` table**
-Add a `paystack_reference` column (text, nullable) to link the Paystack transaction reference to the invoice.
+5. `src/pages/Reviews.tsx`
+   - Replace every "Dylan" with "the studio" / "our team" / "The Business Support Studio™" (form labels, response attribution, intro copy).
 
-**5. Billing UI update (`src/pages/portal/Billing.tsx`)**
-- Replace/augment "Upload POP" with a **"Pay Now"** button for invoices with status `sent` or `overdue`
-- On click: calls `paystack-init` edge function, then opens Paystack's hosted checkout URL
-- Keep the existing manual POP upload as a fallback for EFT clients
+6. `src/components/OnboardingWizard.tsx`
+   - Change `— Dylan, Founder` signature to `— The Business Support Studio™ team`.
 
----
+7. `src/pages/admin/AdminSettings.tsx`
+   - Update displayed admin name/email to the new studio email (keep the field, just change the seed value).
 
-### Technical Notes
-- Paystack charges in **kobo (ZAR cents)** — amount × 100 in the API call
-- The webhook URL to register in Paystack dashboard will be: `https://nibnxnfxsypmaijmgcgk.supabase.co/functions/v1/paystack-webhook`
-- Signature verification uses `X-Paystack-Signature` header with HMAC SHA512
+8. Light positioning refresh on:
+   - `src/components/Hero.tsx`
+   - `src/components/ServicesPreview.tsx` / `src/components/ServiceTiers.tsx`
+   - `src/pages/Services.tsx`
+   - Add a clear VA / Setter / Remote-talent angle to the headline and supporting copy. **Do not change package names, scope, deliverables, or pricing.**
 
----
+## Out of scope (explicitly not changing)
 
-### Files to Create/Edit
+- Service tier structures, package contents, prices.
+- Database schema, edge functions, auth, billing logic.
+- Studios infrastructure (Digital Presence, Lead Engine, Automation, Operations, Travel & Activities, Grants & Awards) — these stay as the productised packages; the VA/Setter framing wraps around them.
+- Memory entries about Dylan as founder will need refreshing afterwards, but no code depends on them.
 
-| File | Action |
-|------|--------|
-| Migration SQL | Add `paystack_reference` column to `invoices` |
-| `supabase/functions/paystack-init/index.ts` | New edge function |
-| `supabase/functions/paystack-webhook/index.ts` | New edge function |
-| `src/pages/portal/Billing.tsx` | Add "Pay Now" button |
+## Validation
 
----
-
-### What I Need From You First
-Before I can implement this, I need you to add your **Paystack Secret Key**. Once you confirm you want to proceed, I'll prompt you to enter it securely — I won't ask for it until you're ready.
-
-Shall I proceed?
+- Grep the repo after changes for `Dylan`, `Mgobhozi`, `thequitehelpinghand`, `4914`, `749534914` — should return zero results.
+- Visually check Home, About, Contact, Footer, Privacy, Terms, Reviews, Onboarding modal.

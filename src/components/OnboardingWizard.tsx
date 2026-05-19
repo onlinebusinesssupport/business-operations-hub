@@ -233,7 +233,7 @@ const OnboardingWizard = ({ onComplete, initialName }: OnboardingWizardProps) =>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Welcome to {brandName} — Clarity builds momentum. Systems build freedom.
           </p>
-          <p className="text-xs text-muted-foreground/70 italic">— Dylan, Founder</p>
+          <p className="text-xs text-muted-foreground/70 italic">— The Business Support Studio™ team</p>
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: "100%" }}

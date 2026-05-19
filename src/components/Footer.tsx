@@ -13,7 +13,7 @@ const Footer = () => {
               THE BUSINESS SUPPORT STUDIO™
             </span>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Support that moves at your speed.
+              Elite Virtual Assistants, Setters & remote operators — matched, managed, embedded.
             </p>
             <Link to="/contact" className="mt-4 inline-block">
               <Button size="sm" className="text-xs tracking-wide gap-1.5">
@@ -69,7 +69,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="mailto:thequitehelpinghand@gmail.com"
+                  href="mailto:thebusinesssupportstudio@gmail.com"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Email
@@ -77,10 +77,10 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="tel:+27749534914"
+                  href="tel:+27628896021"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  +27 74 953 4914
+                  062 889 6021
                 </a>
               </li>
             </ul>

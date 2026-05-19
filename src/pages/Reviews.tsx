@@ -166,7 +166,7 @@ const Reviews = () => {
             <div className="max-w-2xl">
               <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium">CLIENT REVIEWS</span>
               <h1 className="mt-4 font-display text-3xl md:text-4xl font-bold text-foreground">
-                What clients say about working with Dylan
+                What clients say about working with the studio
               </h1>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
                 Real feedback from real businesses. Every review is verified and tied to completed work with SUPPORT STUDIO™.
@@ -196,7 +196,7 @@ const Reviews = () => {
                     <div className="text-center space-y-4 py-8">
                       <CheckCircle2 size={40} className="mx-auto text-primary" />
                       <h2 className="font-display text-xl font-bold text-foreground">Thank you.</h2>
-                      <p className="text-sm text-muted-foreground">Your honesty helps Dylan improve and grow. Your trust is never taken lightly.</p>
+                      <p className="text-sm text-muted-foreground">Your honesty helps our team improve and grow. Your trust is never taken lightly.</p>
                       <p className="text-xs text-muted-foreground">Your review will appear publicly within 24 hours after being acknowledged.</p>
                       <Button onClick={() => setShowWriteReview(false)} variant="outline" size="sm" className="text-xs">Close</Button>
                     </div>
@@ -211,7 +211,7 @@ const Reviews = () => {
 
                       {step === 0 && (
                         <p className="text-sm text-muted-foreground text-center">
-                          Dylan cares deeply about doing meaningful work. This takes 60 seconds — your honesty helps him improve and grow.
+                          Our team cares deeply about doing meaningful work. This takes 60 seconds — your honesty helps us improve and grow.
                         </p>
                       )}
 
@@ -219,11 +219,11 @@ const Reviews = () => {
                         {step === 0 && (
                           <motion.div key="s0" {...fade} className="space-y-6">
                             <div className="space-y-3">
-                              <label className="text-sm font-medium text-foreground">Overall, how would you rate your experience working with Dylan?</label>
+                              <label className="text-sm font-medium text-foreground">Overall, how would you rate your experience working with the studio?</label>
                               <div className="flex justify-center"><StarRating value={form.score_overall} onChange={(v) => set("score_overall", v)} size={28} /></div>
                             </div>
                             <div className="space-y-3">
-                              <label className="text-sm font-medium text-foreground">Which service did Dylan support you with?</label>
+                              <label className="text-sm font-medium text-foreground">Which service did our team support you with?</label>
                               <div className="flex flex-wrap gap-2">
                                 {SERVICE_OPTIONS.map((s) => (
                                   <button key={s} type="button" onClick={() => toggleArray("services_reviewed", s)}
@@ -254,7 +254,7 @@ const Reviews = () => {
                         {step === 2 && (
                           <motion.div key="s2" {...fade} className="space-y-5">
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">Did Dylan's service deliver strong value?</label>
+                              <label className="text-sm font-medium text-foreground">Did our service deliver strong value?</label>
                               <div className="space-y-2">
                                 {VALUE_OPTIONS.map((v) => (
                                   <button key={v.value} type="button" onClick={() => set("value_rating", v.value)}
@@ -265,7 +265,7 @@ const Reviews = () => {
                               </div>
                             </div>
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">What impact did Dylan's work have?</label>
+                              <label className="text-sm font-medium text-foreground">What impact did our work have?</label>
                               <div className="flex flex-wrap gap-2">
                                 {IMPACT_OPTIONS.map((i) => (
                                   <button key={i} type="button" onClick={() => toggleArray("impact_areas", i)}
@@ -276,7 +276,7 @@ const Reviews = () => {
                               </div>
                             </div>
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">Biggest change after working with Dylan?</label>
+                              <label className="text-sm font-medium text-foreground">Biggest change after working with the studio?</label>
                               <textarea value={form.biggest_transformation} onChange={(e) => set("biggest_transformation", e.target.value)}
                                 rows={2} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring resize-none" />
                             </div>
@@ -285,7 +285,7 @@ const Reviews = () => {
                         {step === 3 && (
                           <motion.div key="s3" {...fade} className="space-y-5">
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">How likely are you to recommend Dylan? (0–10)</label>
+                              <label className="text-sm font-medium text-foreground">How likely are you to recommend the studio? (0–10)</label>
                               <div className="flex gap-1 justify-center flex-wrap">
                                 {Array.from({ length: 11 }).map((_, i) => (
                                   <button key={i} type="button" onClick={() => set("nps_score", i)}
@@ -299,12 +299,12 @@ const Reviews = () => {
                               )}
                             </div>
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">What almost stopped you from working with Dylan?</label>
+                              <label className="text-sm font-medium text-foreground">What almost stopped you from working with the studio?</label>
                               <textarea value={form.almost_stopped} onChange={(e) => set("almost_stopped", e.target.value)}
                                 rows={2} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring resize-none" />
                             </div>
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">Anything you wish Dylan did better?</label>
+                              <label className="text-sm font-medium text-foreground">Anything you wish we did better?</label>
                               <textarea value={form.improvement_suggestion} onChange={(e) => set("improvement_suggestion", e.target.value)}
                                 rows={2} placeholder="Optional" className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring resize-none" />
                             </div>
@@ -313,7 +313,7 @@ const Reviews = () => {
                         {step === 4 && (
                           <motion.div key="s4" {...fade} className="space-y-5">
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">Can Dylan share your feedback publicly?</label>
+                              <label className="text-sm font-medium text-foreground">Can we share your feedback publicly?</label>
                               <div className="space-y-2">
                                 {VISIBILITY_OPTIONS.map((v) => (
                                   <button key={v.value} type="button" onClick={() => set("visibility", v.value)}
@@ -334,7 +334,7 @@ const Reviews = () => {
                               </motion.div>
                             )}
                             <div className="space-y-2">
-                              <label className="text-sm font-medium text-foreground">Describe working with Dylan in one sentence</label>
+                              <label className="text-sm font-medium text-foreground">Describe working with the studio in one sentence</label>
                               <textarea value={form.one_sentence} onChange={(e) => set("one_sentence", e.target.value)}
                                 rows={2} className="w-full px-3 py-2 text-sm bg-background border border-border focus:outline-none focus:ring-1 focus:ring-ring resize-none" />
                             </div>
@@ -461,7 +461,7 @@ const Reviews = () => {
                 {/* Admin reply shown publicly */}
                 {r.admin_reply && (
                   <div className="bg-secondary/50 border border-border p-3 space-y-1">
-                    <p className="text-[10px] font-medium text-primary uppercase tracking-wider">Response from Dylan · SUPPORT STUDIO™</p>
+                    <p className="text-[10px] font-medium text-primary uppercase tracking-wider">Response from the studio · SUPPORT STUDIO™</p>
                     <p className="text-sm text-foreground">{r.admin_reply}</p>
                   </div>
                 )}
