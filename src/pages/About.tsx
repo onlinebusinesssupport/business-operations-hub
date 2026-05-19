@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { MapPin, Briefcase, Award, ArrowRight } from "lucide-react";
+import { Briefcase, Award, ArrowRight } from "lucide-react";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
