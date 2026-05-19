@@ -4,7 +4,6 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { MapPin, Briefcase, Award, ArrowRight } from "lucide-react";
-import portrait from "@/assets/portrait.png";
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
@@ -135,7 +134,7 @@ const About = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mt-6 font-display text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-foreground"
           >
-            The private studio behind modern businesses.
+            The studio behind elite remote operators.
           </motion.h1>
           <motion.div
             {...fadeUp}
@@ -143,17 +142,17 @@ const About = () => {
             className="mt-8 space-y-4"
           >
             <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-              SUPPORT STUDIO™ is the operational backbone for founders, creators, and growing teams building in fast-moving markets.
+              THE BUSINESS SUPPORT STUDIO™ is South Africa's home for elite Virtual Assistants, Appointment Setters, and remote operators — matched, managed, and embedded into the businesses that hire us.
             </p>
             <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-              We exist for operators navigating scale without the infrastructure to support it — the builders turning momentum into real businesses.
+              We exist for founders, creators, and lean teams who need real execution capacity without the cost and complexity of building it in-house.
             </p>
             <div className="pt-4 space-y-1">
-              <p className="text-base font-medium text-foreground">This is not advisory.</p>
-              <p className="text-base font-medium text-foreground">This is execution.</p>
+              <p className="text-base font-medium text-foreground">This is not a freelancer marketplace.</p>
+              <p className="text-base font-medium text-foreground">This is managed remote talent.</p>
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground pt-2">
-              We design operational systems, manage digital presence, and build the support infrastructure that allows modern companies to grow with clarity and control.
+              We vet, train, and supervise every operator on our roster — so the work lands clean, on time, and inside the systems your business already runs on.
             </p>
           </motion.div>
         </div>
@@ -161,57 +160,30 @@ const About = () => {
 
       {/* Our Story */}
       <section className="py-20 border-t border-divider">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
-            <div className="md:col-span-5">
-              <motion.div {...fadeUp} className="space-y-6">
-                <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium">
-                  OUR STORY
-                </span>
-                <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
-                  Built from the inside of operations.
-                </h2>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true, margin: "-80px" }}
-                  transition={{ duration: 0.7, delay: 0.15 }}
-                  className="mt-6"
-                >
-                  <img
-                    src={portrait}
-                    alt="Dylan Mgobhozi — Founder, SUPPORT STUDIO™"
-                    className="w-full max-w-[320px] aspect-[3/4] object-cover grayscale hover:grayscale-0 transition-all duration-500"
-                  />
-                  <p className="mt-3 text-xs text-muted-foreground">
-                    Dylan Mgobhozi · Founder
-                  </p>
-                </motion.div>
-              </motion.div>
-            </div>
-            <div className="md:col-span-7">
-              <motion.div {...fadeUp} transition={{ duration: 0.6, delay: 0.1 }} className="space-y-6">
-                <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-                  SUPPORT STUDIO™ was founded by Dylan Mgobhozi, an operations strategist with over a decade of experience building and stabilising high-performance environments across hospitality, corporate services, and executive operations.
-                </p>
-                <p className="text-base leading-relaxed text-muted-foreground">
-                  His career spans roles from front-line service to senior operational leadership — including General Manager, Head of Corporate Travel Management, and Executive Support Manager across corporate and nonprofit sectors.
-                </p>
-                <p className="text-base leading-relaxed text-muted-foreground">
-                  Working inside fast-paced organisations revealed a consistent pattern: <span className="text-foreground font-medium">Most growing businesses don't fail from lack of ideas — they stall from lack of operational structure.</span>
-                </p>
-                <p className="text-base leading-relaxed text-muted-foreground">
-                  Founders were moving fast, but without the systems required to sustain that speed.
-                </p>
-                <p className="text-base leading-relaxed text-muted-foreground">
-                  SUPPORT STUDIO™ was built to close that gap. Not as a virtual assistant service, but as an operational partner — combining structured execution, systems thinking, and real-world delivery experience.
-                </p>
-                <p className="text-base leading-relaxed text-muted-foreground">
-                  Today, the studio supports founders, lean teams, and modern operators across Southern Africa and globally — building the infrastructure behind businesses that are scaling in real time.
-                </p>
-              </motion.div>
-            </div>
-          </div>
+        <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+          <motion.div {...fadeUp} className="space-y-6">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium">
+              OUR STORY
+            </span>
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
+              Built from the inside of operations.
+            </h2>
+            <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
+              THE BUSINESS SUPPORT STUDIO™ was built by operators who spent years inside hospitality, corporate services, and executive operations — the kind of environments where things either run, or they don't.
+            </p>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              That experience exposed a consistent pattern: <span className="text-foreground font-medium">Most growing businesses don't fail from lack of ideas — they stall from lack of operational capacity.</span>
+            </p>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              Founders were moving fast. The work was piling up. Hiring full-time was too slow and too expensive. Freelancer marketplaces were noisy and unmanaged.
+            </p>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              The studio was built to close that gap — a curated bench of Virtual Assistants, Setters, and remote operators, vetted and supervised by our team, ready to plug into your business without the overhead of an internal hire.
+            </p>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              Today, we support founders, creators, and lean teams across Southern Africa and globally — the operational backbone behind businesses scaling in real time.
+            </p>
+          </motion.div>
         </div>
       </section>
 
