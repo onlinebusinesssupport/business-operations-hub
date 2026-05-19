@@ -155,7 +155,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* Experience Map */}
+      {/* Sectors */}
       <section className="py-20 border-t border-divider bg-secondary">
         <div className="container mx-auto px-6 lg:px-8">
           <motion.div {...fadeUp}>
@@ -163,60 +163,67 @@ const About = () => {
               OPERATIONAL EXPERIENCE
             </span>
             <h2 className="mt-4 font-display text-2xl md:text-3xl font-bold text-foreground">
-              Environments we've operated in.
+              Sectors we've operated across.
             </h2>
             <p className="mt-3 text-sm text-muted-foreground max-w-xl">
-              Over a decade of hands-on leadership across industries that demand precision, adaptability, and real-time execution.
+              The studio is built on operator experience from four high-pressure sectors. Every Virtual Assistant, Setter, and remote operator we place inherits these standards.
             </p>
           </motion.div>
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-px bg-divider">
-            {experienceMap.map((exp, i) => (
+            {sectors.map((s, i) => (
               <motion.div
-                key={exp.org}
+                key={s.name}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.4, delay: i * 0.06 }}
-                className="bg-secondary p-6 md:p-8 space-y-3 group hover:bg-card transition-colors duration-300"
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                className="bg-secondary p-6 md:p-8 space-y-4 group hover:bg-card transition-colors duration-300"
               >
                 <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-display text-sm font-bold text-foreground group-hover:text-primary transition-colors">
-                      {exp.org}
-                    </h3>
-                    <p className="text-xs text-muted-foreground mt-1">{exp.role}</p>
-                  </div>
-                  <Briefcase size={14} className="text-muted-foreground/40 shrink-0 mt-0.5" />
+                  <h3 className="font-display text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                    {s.name}
+                  </h3>
+                  <Briefcase size={14} className="text-muted-foreground/40 shrink-0 mt-1" />
                 </div>
-                <div className="flex items-center gap-4 text-[10px] text-muted-foreground">
-                  <span className="flex items-center gap-1"><MapPin size={10} /> {exp.location}</span>
-                  <span>{exp.period}</span>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {s.capability}
+                </p>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {s.tags.map((t) => (
+                    <span key={t} className="inline-block text-[10px] px-2 py-0.5 bg-primary/10 text-primary font-medium">
+                      {t}
+                    </span>
+                  ))}
                 </div>
-                <span className="inline-block text-[10px] px-2 py-0.5 bg-primary/10 text-primary font-medium">
-                  {exp.domain}
-                </span>
-                {exp.highlight && (
+                {s.highlight && (
                   <div className="flex items-center gap-1.5 pt-1">
                     <Award size={11} className="text-primary shrink-0" />
-                    <span className="text-[10px] text-primary font-medium">{exp.highlight}</span>
+                    <span className="text-[10px] text-primary font-medium">{s.highlight}</span>
                   </div>
                 )}
               </motion.div>
             ))}
           </div>
 
-          {/* Location summary */}
-          <motion.div {...fadeUp} transition={{ delay: 0.3 }} className="mt-8 flex flex-wrap items-center gap-6">
-            {["Durban", "Cape Town", "Mpumalanga", "Johannesburg"].map((city) => (
-              <div key={city} className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-primary" />
-                <span className="text-xs text-muted-foreground">{city}</span>
+          {/* Credibility strip */}
+          <motion.div {...fadeUp} transition={{ delay: 0.3 }} className="mt-10 pt-8 border-t border-divider grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { value: "15+", label: "Years combined operating experience" },
+              { value: "4", label: "Sectors of operator depth" },
+              { value: "7+", label: "Awards delivered for client & partner orgs" },
+              { value: "SA · Global", label: "Where we operate" },
+            ].map((stat) => (
+              <div key={stat.label} className="space-y-1.5">
+                <p className="font-display text-xl md:text-2xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground leading-relaxed">{stat.label}</p>
               </div>
             ))}
           </motion.div>
         </div>
       </section>
+
+
 
       {/* Trust Signal */}
       <section className="py-12 border-t border-divider">
