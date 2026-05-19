@@ -35,66 +35,34 @@ const values = [
   },
 ];
 
-const experienceMap = [
+const sectors = [
   {
-    org: "MOLLO Catering & Food Services",
-    role: "Client Relationship Associate",
-    location: "Johannesburg",
-    period: "2024 – Present",
-    domain: "Corporate Services",
+    name: "Hospitality & Service Operations",
+    capability:
+      "Service standards, guest-grade communication, and calm under pressure — the kind of operating discipline built inside hotels and high-touch service environments.",
+    tags: ["SOPs", "Service design", "Crisis handling"],
   },
   {
-    org: "Honest Travel | Corporate Division",
-    role: "Head of Corporate Travel Management",
-    location: "Johannesburg",
-    period: "2023 – 2024",
-    domain: "Corporate Travel",
+    name: "Corporate & Executive Support",
+    capability:
+      "Inbox, calendar, and decision-flow management at executive tempo. Quiet, structured support for people whose time can't be wasted.",
+    tags: ["Exec ops", "Stakeholder mgmt", "Confidentiality"],
   },
   {
-    org: "Modern Centric Holdings & Foundation",
-    role: "Executive Support Manager",
-    location: "Johannesburg",
-    period: "2020 – 2023",
-    domain: "Nonprofit & Executive Ops",
-    highlight: "7 awards secured incl. 4 TopCo Empowerment Awards",
+    name: "Corporate Travel & Logistics",
+    capability:
+      "Coordinating people, suppliers, and timelines across borders without things slipping. Built for moving parts and tight margins.",
+    tags: ["Vendor coordination", "Itineraries", "Budget control"],
   },
   {
-    org: "Once in Joburg Hotel",
-    role: "Hotel General Manager",
-    location: "Johannesburg",
-    period: "2017 – 2020",
-    domain: "Hospitality Leadership",
-    highlight: "Best 4-Star Graded Hotel in Gauteng",
-  },
-  {
-    org: "Southern Sun The Ridge & StayEasy",
-    role: "Cluster Deputy General Manager",
-    location: "Mpumalanga",
-    period: "2014 – 2017",
-    domain: "Hospitality Operations",
-  },
-  {
-    org: "Southern Sun Katherine Street",
-    role: "Assistant Front Office Manager",
-    location: "Cape Town",
-    period: "2013 – 2014",
-    domain: "Hospitality",
-  },
-  {
-    org: "Garden Court de Waal",
-    role: "Guest Services Team Leader",
-    location: "Cape Town",
-    period: "2009 – 2012",
-    domain: "Hospitality",
-  },
-  {
-    org: "Garden Court Marine Parade",
-    role: "Switchboard Operator",
-    location: "Durban",
-    period: "2008 – 2010",
-    domain: "Hospitality",
+    name: "Nonprofit & Impact Operations",
+    capability:
+      "Running lean teams that have to deliver public outcomes with limited resources — and prove it on paper afterwards.",
+    tags: ["Grants ops", "Reporting", "Award submissions"],
+    highlight: "7+ awards delivered across client and partner organisations",
   },
 ];
+
 
 const whoWeServe = [
   {
